@@ -75,6 +75,7 @@ export interface ExerciseResult {
   target_muscle: string
   secondary_muscles: string[]
   gif_url: string | null
+  image_url: string | null   // JPG fallback cuando no hay GIF
   instructions: string[]
 }
 
@@ -155,7 +156,12 @@ interface DraftExercise {
   exercise_id: string | null
   name: string
   gif_url: string | null
+  image_url: string | null
   body_part: string | null
+  target_muscle: string | null
+  equipment: string | null
+  secondary_muscles: string[]
+  instructions: string[]
   sets: number
   reps: string
   rest_secs: number
@@ -173,7 +179,12 @@ function newDraftExercise(ex?: ExerciseResult): DraftExercise {
     exercise_id: ex?.id ?? null,
     name: ex?.name ?? '',
     gif_url: ex?.gif_url ?? null,
+    image_url: ex?.image_url ?? null,
     body_part: ex?.body_part ?? null,
+    target_muscle: ex?.target_muscle ?? null,
+    equipment: ex?.equipment ?? null,
+    secondary_muscles: ex?.secondary_muscles ?? [],
+    instructions: ex?.instructions ?? [],
     sets: 3, reps: '10', rest_secs: 90,
     tempo: '', weight_note: '', exercise_notes: '',
   }
@@ -313,6 +324,31 @@ export default function RoutinesClient({
 
     if (rErr || !routine) { setRoutineError(rErr?.message ?? 'Error al crear la rutina.'); setSavingRoutine(false); return }
 
+    // Upsert exercises into the exercises table first (so FK constraint is satisfied)
+    const exercisesWithId = routineForm.exercises.filter(ex => ex.exercise_id)
+    if (exercisesWithId.length > 0) {
+      const { error: upsertErr } = await supabase.from('exercises').upsert(
+        exercisesWithId.map(ex => ({
+          id:                ex.exercise_id!,
+          name:              ex.name.trim() || 'Ejercicio',
+          body_part:         ex.body_part ?? null,
+          target_muscle:     ex.target_muscle ?? null,
+          equipment:         ex.equipment ?? null,
+          secondary_muscles: ex.secondary_muscles ?? [],
+          gif_url:           ex.gif_url ?? ex.image_url ?? null,
+          instructions:      ex.instructions ?? [],
+          source:            'api',
+        })),
+        { onConflict: 'id', ignoreDuplicates: false }
+      )
+      if (upsertErr) {
+        console.error('Error upserting exercises:', upsertErr)
+        setRoutineError('Error al guardar los datos de los ejercicios: ' + upsertErr.message)
+        setSavingRoutine(false)
+        return
+      }
+    }
+
     const exercisesToInsert = routineForm.exercises.map((ex, idx) => ({
       routine_id:      routine.id,
       exercise_id:     ex.exercise_id || null,
@@ -327,7 +363,7 @@ export default function RoutinesClient({
     }))
 
     const { error: exErr } = await supabase.from('routine_exercises').insert(exercisesToInsert)
-    if (exErr) { setRoutineError('Rutina creada, pero error al guardar ejercicios.'); setSavingRoutine(false); return }
+    if (exErr) { setRoutineError('Rutina creada, pero error al guardar ejercicios: ' + exErr.message); setSavingRoutine(false); return }
 
     // Enrich for display
     const newRoutine: Routine = {
@@ -339,7 +375,7 @@ export default function RoutinesClient({
         order_index: idx, tempo: ex.tempo || null,
         weight_note: ex.weight_note || null, exercise_notes: ex.exercise_notes || null,
         exercise_id: ex.exercise_id,
-        exercises: ex.exercise_id ? { id: ex.exercise_id, name: ex.name, gif_url: ex.gif_url, body_part: ex.body_part, target_muscle: null, equipment: null } : null,
+        exercises: ex.exercise_id ? { id: ex.exercise_id, name: ex.name, gif_url: ex.gif_url ?? ex.image_url, body_part: ex.body_part, target_muscle: null, equipment: null } : null,
       })),
     }
     setRoutines(prev => [newRoutine, ...prev])
@@ -550,12 +586,13 @@ export default function RoutinesClient({
                         className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/8 relative"
                         title={ex.name}
                       >
-                        {ex.exercises?.gif_url ? (
+                        {(ex.exercises?.gif_url) ? (
                           <img
                             src={ex.exercises.gif_url}
                             alt={ex.name}
                             className="w-full h-full object-cover"
                             loading="lazy"
+                            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
@@ -688,7 +725,8 @@ export default function RoutinesClient({
                     <span className="text-[10px] text-white/20 font-black w-6 flex-shrink-0">{String(idx+1).padStart(2,'0')}</span>
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
                       {ex.exercises?.gif_url ? (
-                        <img src={ex.exercises.gif_url} alt={ex.name} className="w-full h-full object-cover" />
+                        <img src={ex.exercises.gif_url} alt={ex.name} className="w-full h-full object-cover"
+                          onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <span className="material-symbols-outlined text-[16px] text-white/20">fitness_center</span>
@@ -820,10 +858,11 @@ export default function RoutinesClient({
                 {routineForm.exercises.map((ex, idx) => (
                   <div key={ex._key} className="bg-white/3 border border-white/8 rounded-xl p-3">
                     <div className="flex items-start gap-3">
-                      {/* GIF */}
+                      {/* Imagen del ejercicio */}
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
-                        {ex.gif_url ? (
-                          <img src={ex.gif_url} alt={ex.name} className="w-full h-full object-cover" />
+                        {(ex.gif_url || ex.image_url) ? (
+                          <img src={(ex.gif_url ?? ex.image_url)!} alt={ex.name} className="w-full h-full object-cover"
+                            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <span className="material-symbols-outlined text-[16px] text-white/20">fitness_center</span>
@@ -985,10 +1024,10 @@ export default function RoutinesClient({
             {/* Preview panel (shown when exercise selected) */}
             {previewEx && (
               <div className="mx-4 mb-3 flex-shrink-0 bg-white/3 border border-white/10 rounded-2xl overflow-hidden flex gap-0">
-                {previewEx.gif_url && (
+                {(previewEx.gif_url || previewEx.image_url) && (
                   <div className="w-28 h-28 flex-shrink-0 bg-black">
                     <img
-                      src={previewEx.gif_url}
+                      src={(previewEx.gif_url ?? previewEx.image_url)!}
                       alt={previewEx.name}
                       className="w-full h-full object-cover"
                       onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
@@ -1045,9 +1084,9 @@ export default function RoutinesClient({
                       >
                         {/* GIF / imagen */}
                         <div className="aspect-square bg-[#0a0a0a] relative overflow-hidden">
-                          {ex.gif_url ? (
+                          {(ex.gif_url || ex.image_url) ? (
                             <img
-                              src={ex.gif_url}
+                              src={(ex.gif_url ?? ex.image_url)!}
                               alt={ex.name}
                               className="w-full h-full object-cover"
                               loading="lazy"
@@ -1058,7 +1097,7 @@ export default function RoutinesClient({
                               }}
                             />
                           ) : null}
-                          <div hidden={!!ex.gif_url} className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                          <div hidden={!!(ex.gif_url || ex.image_url)} className="absolute inset-0 flex flex-col items-center justify-center gap-1">
                             <span className="material-symbols-outlined text-3xl text-white/10">fitness_center</span>
                           </div>
                           {isSelected && (

@@ -32,7 +32,8 @@ export default async function AdminLayout({
       />
       <div className="flex h-screen overflow-hidden">
         <AdminSidebar locale={params.locale} adminName={profile?.full_name ?? 'Admin'} />
-        <main className="flex-1 overflow-y-auto hide-scrollbar">
+        {/* pt-14 compensa el header fijo del mobile (h-14); en desktop no aplica */}
+        <main className="flex-1 overflow-y-auto hide-scrollbar pt-14 lg:pt-0">
           <AdminPageTransition>
             {children}
           </AdminPageTransition>

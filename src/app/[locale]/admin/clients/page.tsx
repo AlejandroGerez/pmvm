@@ -19,12 +19,22 @@ export default async function AdminClientsPage({ params }: { params: { locale: s
     adminClient.auth.admin.listUsers(),
   ])
 
-  const emailMap: Record<string, string> = {}
-  users?.forEach((u) => { emailMap[u.id] = u.email ?? '' })
+  // Mapa id → { email, provider, avatar_url }
+  const userMeta: Record<string, { email: string; provider: string; avatar_url: string | null }> = {}
+  users?.forEach((u) => {
+    const provider = u.app_metadata?.provider ?? 'email'
+    const avatar_url =
+      u.user_metadata?.avatar_url ??
+      u.user_metadata?.picture ??
+      null
+    userMeta[u.id] = { email: u.email ?? '', provider, avatar_url }
+  })
 
   const clientsWithEmail = (clients ?? []).map((c: any) => ({
     ...c,
-    email: emailMap[c.id] ?? '',
+    email:      userMeta[c.id]?.email      ?? '',
+    provider:   userMeta[c.id]?.provider   ?? 'email',
+    avatar_url: userMeta[c.id]?.avatar_url ?? null,
   }))
 
   return <AdminClientsClient locale={params.locale} clients={clientsWithEmail} />
