@@ -786,7 +786,7 @@ export default function V4Page() {
               {
                 id: 'monthly', name: 'Plan Mensual', price: 100, days: 30, badge: null, color: '#00e3fd',
                 desc: 'Perfecto para empezar. Un mes de entrenamiento personalizado.',
-                features: ['Rutina personalizada en Trainerize', 'Seguimiento semanal de progreso', 'Chat directo con tu coach', 'Acceso al dashboard personal'],
+                features: ['Rutina personalizada en tu dashboard', 'Seguimiento semanal de progreso', 'Chat directo con tu coach', 'Acceso al dashboard personal'],
               },
               {
                 id: 'quarterly', name: 'Plan Trimestral', price: 150, days: 90, badge: 'MÁS POPULAR', color: '#c1ed00',

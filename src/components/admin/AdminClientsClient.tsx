@@ -139,7 +139,9 @@ export default function AdminClientsClient({ locale, clients }: Props) {
           <p className="font-label text-[10px] uppercase tracking-widest text-white/30">No hay clientes registrados todavía</p>
         </motion.div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-white/20 text-xs">Sin resultados para "{search}"</div>
+        <div className="text-center py-16 text-white/20 text-xs">
+          Sin resultados para &quot;{search}&quot;
+        </div>
       ) : (
         <motion.div className="space-y-2" variants={stagger} initial="hidden" animate="visible">
           {filtered.map((client) => {

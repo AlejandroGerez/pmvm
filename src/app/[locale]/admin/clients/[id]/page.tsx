@@ -69,8 +69,6 @@ export default async function AdminClientDetailPage({
       <AdminClientTabs
         clientId={params.id}
         locale={params.locale}
-        clientEmail={clientEmail}
-        clientName={profile.full_name ?? undefined}
         routines={routines ?? []}
         progress={progress ?? []}
         messages={messages ?? []}

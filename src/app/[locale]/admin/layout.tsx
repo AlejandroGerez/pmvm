@@ -25,11 +25,6 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[#0e0e0e] text-white font-body">
-      {/* Material Symbols — loaded via link for guaranteed icon rendering */}
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
-      />
       <div className="flex h-screen overflow-hidden">
         <AdminSidebar locale={params.locale} adminName={profile?.full_name ?? 'Admin'} />
         {/* pt-14 compensa el header fijo del mobile (h-14); en desktop no aplica */}

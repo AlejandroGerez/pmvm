@@ -26,22 +26,22 @@ const t = {
       expires: 'Vence el',
       ctaNew: 'Configurar mi cuenta →',
       ctaRenew: 'Ir a mi Dashboard →',
-      stepsTitle: 'Cómo empezar en Trainerize',
+      stepsTitle: 'Cómo empezar en R3SET',
       steps: (email: string) => [
-        'Descargá la app <strong>ABC Trainerize</strong> desde el App Store o Google Play',
-        `Tocá <strong>"Sign up"</strong> e ingresá tu email: <strong>${email}</strong>`,
-        'Seguí los pasos para configurar tu contraseña',
-        '¡Listo! En breve tu coach va a cargar tus rutinas',
+        'Revisá tu email: te enviamos un enlace para acceder al <strong>dashboard</strong> de R3SET',
+        `Iniciá sesión con tu email: <strong>${email}</strong>`,
+        'Completá tu perfil si te lo pedimos',
+        'En breve tu coach va a cargar tus rutinas',
       ],
-      renewNote: 'Ya tenés tu cuenta en Trainerize. Seguí usando tus credenciales habituales — tus rutinas actualizadas ya están disponibles.',
+      renewNote: 'Ya tenés tu cuenta en R3SET. Seguí usando tus credenciales habituales — tus rutinas actualizadas ya están disponibles.',
       coachNote: 'Tu coach va a revisar tu progreso y asignarte el plan para este período.',
       footer: 'Si tenés alguna duda, respondé este email.',
     },
     wa: {
       new: (name: string, plan: string) =>
-        `¡Hola ${name}! 🎉\n\nTu *${plan} R3SET* ya está activo.\n\n*Para empezar:*\n1️⃣ Descargá la app *ABC Trainerize*\n2️⃣ Registrate con tu email\n3️⃣ Tu coach va a cargar tus rutinas en breve\n\n¡Vamos con todo! 💪`,
+        `¡Hola ${name}! 🎉\n\nTu *${plan} R3SET* ya está activo.\n\n*Para empezar:*\n1️⃣ Revisá tu email para el enlace al dashboard\n2️⃣ Ingresá con tu email\n3️⃣ Tu coach va a cargar tus rutinas en breve\n\n¡Vamos con todo! 💪`,
       renew: (name: string, plan: string) =>
-        `¡Hola ${name}! 🔄\n\nTu *${plan} R3SET* fue renovado exitosamente.\n\nSeguí usando *ABC Trainerize* con tus credenciales habituales — tu plan ya fue actualizado.\n\n¡Seguimos! 💪`,
+        `¡Hola ${name}! 🔄\n\nTu *${plan} R3SET* fue renovado exitosamente.\n\nSeguí usando el *dashboard R3SET* con tus credenciales habituales — tu plan ya fue actualizado.\n\n¡Seguimos! 💪`,
     },
   },
   en: {
@@ -59,22 +59,22 @@ const t = {
       expires: 'Expires on',
       ctaNew: 'Set up my account →',
       ctaRenew: 'Go to my Dashboard →',
-      stepsTitle: 'How to get started with Trainerize',
+      stepsTitle: 'How to get started with R3SET',
       steps: (email: string) => [
-        'Download the <strong>ABC Trainerize</strong> app from the App Store or Google Play',
-        `Tap <strong>"Sign up"</strong> and enter your email: <strong>${email}</strong>`,
-        'Follow the steps to set up your password',
-        'Done! Your coach will load your routines shortly',
+        'Check your email: we sent a link to the R3SET <strong>dashboard</strong>',
+        `Sign in with your email: <strong>${email}</strong>`,
+        'Complete your profile if we ask you to',
+        'Your coach will load your routines shortly',
       ],
-      renewNote: 'You already have your Trainerize account. Keep using your usual credentials — your updated routines are already available.',
+      renewNote: 'You already have your R3SET account. Keep using your usual credentials — your updated routines are already available.',
       coachNote: 'Your coach will review your progress and assign your plan for this period.',
       footer: 'If you have any questions, just reply to this email.',
     },
     wa: {
       new: (name: string, plan: string) =>
-        `Hi ${name}! 🎉\n\nYour *${plan} R3SET* is now active.\n\n*To get started:*\n1️⃣ Download the *ABC Trainerize* app\n2️⃣ Sign up with your email\n3️⃣ Your coach will load your routines shortly\n\nLet's go! 💪`,
+        `Hi ${name}! 🎉\n\nYour *${plan} R3SET* is now active.\n\n*To get started:*\n1️⃣ Check your email for the dashboard link\n2️⃣ Sign in with your email\n3️⃣ Your coach will load your routines shortly\n\nLet's go! 💪`,
       renew: (name: string, plan: string) =>
-        `Hi ${name}! 🔄\n\nYour *${plan} R3SET* was successfully renewed.\n\nKeep using *ABC Trainerize* with your usual credentials — your plan has been updated.\n\nKeep it up! 💪`,
+        `Hi ${name}! 🔄\n\nYour *${plan} R3SET* was successfully renewed.\n\nKeep using the *R3SET dashboard* with your usual credentials — your plan has been updated.\n\nKeep it up! 💪`,
     },
   },
   pt: {
@@ -92,22 +92,22 @@ const t = {
       expires: 'Expira em',
       ctaNew: 'Configurar minha conta →',
       ctaRenew: 'Ir para o meu Dashboard →',
-      stepsTitle: 'Como começar no Trainerize',
+      stepsTitle: 'Como começar no R3SET',
       steps: (email: string) => [
-        'Baixe o app <strong>ABC Trainerize</strong> na App Store ou Google Play',
-        `Toque em <strong>"Sign up"</strong> e insira seu email: <strong>${email}</strong>`,
-        'Siga os passos para configurar sua senha',
-        'Pronto! Em breve seu coach vai carregar suas rotinas',
+        'Verifique seu email: enviamos um link para o <strong>dashboard</strong> R3SET',
+        `Entre com seu email: <strong>${email}</strong>`,
+        'Complete seu perfil se pedirmos',
+        'Em breve seu coach vai carregar suas rotinas',
       ],
-      renewNote: 'Você já tem sua conta no Trainerize. Continue usando suas credenciais habituais — suas rotinas atualizadas já estão disponíveis.',
+      renewNote: 'Você já tem sua conta no R3SET. Continue usando suas credenciais habituais — suas rotinas atualizadas já estão disponíveis.',
       coachNote: 'Seu coach vai revisar seu progresso e atribuir seu plano para este período.',
       footer: 'Se tiver alguma dúvida, responda este email.',
     },
     wa: {
       new: (name: string, plan: string) =>
-        `Olá ${name}! 🎉\n\nSeu *${plan} R3SET* já está ativo.\n\n*Para começar:*\n1️⃣ Baixe o app *ABC Trainerize*\n2️⃣ Cadastre-se com seu email\n3️⃣ Seu coach vai carregar suas rotinas em breve\n\nVamos nessa! 💪`,
+        `Olá ${name}! 🎉\n\nSeu *${plan} R3SET* já está ativo.\n\n*Para começar:*\n1️⃣ Verifique seu email para o link do dashboard\n2️⃣ Entre com seu email\n3️⃣ Seu coach vai carregar suas rotinas em breve\n\nVamos nessa! 💪`,
       renew: (name: string, plan: string) =>
-        `Olá ${name}! 🔄\n\nSeu *${plan} R3SET* foi renovado com sucesso.\n\nContinue usando o *ABC Trainerize* com suas credenciais habituais — seu plano já foi atualizado.\n\nContinue assim! 💪`,
+        `Olá ${name}! 🔄\n\nSeu *${plan} R3SET* foi renovado com sucesso.\n\nContinue usando o *dashboard R3SET* com suas credenciais habituais — seu plano já foi atualizado.\n\nContinue assim! 💪`,
     },
   },
 }

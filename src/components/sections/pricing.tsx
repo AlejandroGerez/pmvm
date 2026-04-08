@@ -15,7 +15,7 @@ const plans = [
     description:
       "Perfecto para empezar. Un mes de entrenamiento personalizado y seguimiento.",
     features: [
-      "Rutina personalizada en Trainerize",
+      "Rutina personalizada en tu dashboard",
       "Seguimiento semanal de progreso",
       "Chat directo con tu coach",
       "Acceso al dashboard personal",

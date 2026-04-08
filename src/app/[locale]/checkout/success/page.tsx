@@ -60,7 +60,7 @@ export default async function CheckoutSuccessPage({
         <p className="text-white/50 mb-8 text-sm leading-relaxed">
           {isPending
             ? 'Tu pago está siendo procesado. Recibirás un email cuando se confirme.'
-            : 'Tu pago fue aprobado. En minutos recibirás un email y WhatsApp con tus accesos a Trainerize.'}
+            : 'Tu pago fue aprobado. En minutos recibirás un email y WhatsApp con el acceso a tu cuenta y al dashboard R3SET.'}
         </p>
 
         {/* Plan info */}
@@ -87,9 +87,9 @@ export default async function CheckoutSuccessPage({
               Próximos pasos
             </p>
             {[
-              'Revisá tu email para las credenciales de Trainerize',
-              'Descargá la app Trainerize en tu celular',
-              'Ingresá con tu email y la contraseña inicial: R3SET2024',
+              'Revisá tu email: ahí está el enlace y los datos para entrar al dashboard',
+              'Ingresá al sitio desde el correo y usá tu email para iniciar sesión',
+              'Completá tu perfil si te lo pedimos',
               '¡Empezá con tus rutinas personalizadas!',
             ].map((step, i) => (
               <div key={i} className="flex items-start gap-3 mb-3 last:mb-0">

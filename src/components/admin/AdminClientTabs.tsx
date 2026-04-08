@@ -11,14 +11,12 @@ interface Message { id: string; content: string; sender_role: 'client' | 'traine
 interface Props {
   clientId: string
   locale: string
-  clientEmail?: string
-  clientName?: string
   routines: Routine[]
   progress: ProgressRecord[]
   messages: Message[]
 }
 
-export default function AdminClientTabs({ clientId, locale, clientEmail, clientName, routines: initialRoutines, progress: initialProgress, messages: initialMessages }: Props) {
+export default function AdminClientTabs({ clientId, locale, routines: initialRoutines, progress: initialProgress, messages: initialMessages }: Props) {
   const [tab, setTab] = useState<'routines' | 'progress' | 'messages'>('routines')
   const [routines, setRoutines] = useState(initialRoutines)
   const [progress, setProgress] = useState(initialProgress)
@@ -142,7 +140,6 @@ export default function AdminClientTabs({ clientId, locale, clientEmail, clientN
     setProgress((prev) => prev.filter((p) => p.id !== id))
   }
 
-  // Send message — saves to Supabase and mirrors to Trainerize via Zapier
   const handleSendMsg = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newMsg.trim() || sendingMsg) return
@@ -151,17 +148,7 @@ export default function AdminClientTabs({ clientId, locale, clientEmail, clientN
     const { data } = await supabase.from('messages').insert({
       client_id: clientId, content, sender_role: 'trainer', read: false,
     }).select().single()
-    if (data) {
-      setMessages((prev) => [...prev, data])
-      // Mirror to Trainerize via Zapier (fire-and-forget)
-      if (clientEmail) {
-        fetch('/api/zapier/send-message', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ client_email: clientEmail, client_name: clientName, message_content: content, message_id: data.id }),
-        }).catch(() => {}) // silent fail — Supabase already saved it
-      }
-    }
+    if (data) setMessages((prev) => [...prev, data])
     setNewMsg(''); setSendingMsg(false)
   }
 
@@ -368,15 +355,10 @@ export default function AdminClientTabs({ clientId, locale, clientEmail, clientN
       {/* ── MENSAJES ── */}
       {tab === 'messages' && (
         <div className="flex flex-col h-[520px] bg-surface-container-low overflow-hidden">
-          {/* Header with Trainerize sync badge */}
           <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-[#00e3fd] text-sm">chat</span>
               <span className="font-label text-[10px] uppercase tracking-widest text-white/40">Canal de Mensajes</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-[#00e3fd]/10 px-2 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00e3fd] animate-pulse" />
-              <span className="font-label text-[9px] uppercase tracking-widest text-[#00e3fd]">Sync Trainerize</span>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-3 hide-scrollbar">
@@ -416,7 +398,7 @@ export default function AdminClientTabs({ clientId, locale, clientEmail, clientN
               type="text"
               value={newMsg}
               onChange={(e) => setNewMsg(e.target.value)}
-              placeholder="Mensaje al cliente → se sincroniza con Trainerize"
+              placeholder="Escribí un mensaje al cliente…"
               className="flex-1 bg-white/5 border border-white/10 px-4 py-2.5 text-white text-sm font-body placeholder-white/20 focus:outline-none focus:border-[#c1ed00] transition-colors"
             />
             <button

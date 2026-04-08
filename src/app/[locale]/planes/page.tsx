@@ -16,7 +16,7 @@ const plans = [
     color: '#00e3fd',
     description: 'Perfecto para empezar. Un mes de entrenamiento personalizado y seguimiento.',
     features: [
-      'Rutina personalizada en Trainerize',
+      'Rutina personalizada en tu dashboard',
       'Seguimiento semanal de progreso',
       'Chat directo con tu coach',
       'Acceso al dashboard personal',
@@ -248,7 +248,7 @@ export default function PlanesPage({ params }: { params: { locale: string } }) {
           <h3 className="text-center font-black text-xl mb-8 text-white/60">Preguntas frecuentes</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
-              { q: '¿Cómo recibo mis accesos?', a: 'Al confirmar el pago, recibís un email y un WhatsApp con tus credenciales de Trainerize para acceder a tus rutinas.' },
+              { q: '¿Cómo recibo mis accesos?', a: 'Al confirmar el pago, recibís un email y un WhatsApp con el acceso a tu cuenta y al dashboard de R3SET para ver tus rutinas.' },
               { q: '¿Puedo cambiar de plan?', a: 'Sí, cuando venza tu plan actual podés adquirir cualquier otro. Te recomendamos continuar con el trimestral.' },
               { q: '¿El pago es seguro?', a: 'Sí. Procesamos todos los pagos a través de Mercado Pago, la plataforma de pagos más usada en Argentina.' },
               { q: '¿Qué pasa cuando vence mi plan?', a: 'Recibirás una notificación antes del vencimiento. Podés renovar cuando quieras desde tu dashboard.' },
