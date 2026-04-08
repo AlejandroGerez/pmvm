@@ -57,13 +57,11 @@ export async function POST(req: NextRequest) {
         email: user.email,
       },
       back_urls: {
-        success: `${siteUrl}/es/checkout/success?sub=${subscription.id}`,
-        failure: `${siteUrl}/es/checkout/failure?sub=${subscription.id}`,
-        pending: `${siteUrl}/es/checkout/success?sub=${subscription.id}&status=pending`,
+        success: `${siteUrl}/${locale ?? 'es'}/checkout/success?sub=${subscription.id}`,
+        failure: `${siteUrl}/${locale ?? 'es'}/checkout/failure?sub=${subscription.id}`,
+        pending: `${siteUrl}/${locale ?? 'es'}/checkout/success?sub=${subscription.id}&status=pending`,
       },
-      // auto_return solo funciona con URLs públicas (no localhost)
-      // En producción descomentar la siguiente línea:
-      // auto_return: 'approved',
+      auto_return: 'approved',
       notification_url: `${siteUrl}/api/mp/webhook`,
       external_reference: subscription.id,
       metadata: {

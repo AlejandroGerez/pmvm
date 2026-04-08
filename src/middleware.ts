@@ -51,18 +51,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}/login`, request.url))
   }
 
-  // Ruta admin → verificar que sea admin
-  if (isAdminRoute && user) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.role !== 'admin') {
-      return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
-    }
-  }
+  // Nota: el check de rol admin se hace en admin/layout.tsx con createAdminClient()
+  // para evitar problemas de RLS en el Edge Runtime del middleware.
 
   // Con sesión en login → redirige al dashboard
   if (isLoginRoute && user) {

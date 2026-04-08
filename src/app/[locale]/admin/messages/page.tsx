@@ -1,10 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export default async function AdminMessagesPage({ params }: { params: { locale: string } }) {
-  const supabase = createClient()
+  const supabase = createAdminClient()
 
-  // Obtener el último mensaje de cada cliente
+  // Obtener el último mensaje de cada cliente (admin client bypasses RLS)
   const { data: clients } = await supabase
     .from('profiles')
     .select(`

@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import AdminSidebar from '@/components/admin/AdminSidebar'
 import AdminPageTransition from '@/components/admin/AdminPageTransition'
 
@@ -14,7 +14,8 @@ export default async function AdminLayout({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/${params.locale}/login`)
 
-  const { data: profile } = await supabase
+  // Use admin client to bypass RLS when reading the profile role
+  const { data: profile } = await createAdminClient()
     .from('profiles')
     .select('role, full_name')
     .eq('id', user.id)

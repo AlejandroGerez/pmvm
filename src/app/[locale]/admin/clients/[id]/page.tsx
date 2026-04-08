@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import AdminClientTabs from '@/components/admin/AdminClientTabs'
 import Link from 'next/link'
@@ -21,7 +21,7 @@ export default async function AdminClientDetailPage({
     supabase.from('routines').select('*, routine_exercises(*)').eq('client_id', params.id).order('created_at', { ascending: false }),
     supabase.from('progress').select('*').eq('client_id', params.id).order('created_at', { ascending: false }),
     supabase.from('messages').select('*').eq('client_id', params.id).order('created_at', { ascending: true }),
-    supabase.auth.admin.listUsers(),
+    createAdminClient().auth.admin.listUsers(),
   ])
 
   if (!profile) notFound()

@@ -12,6 +12,7 @@ interface AdminSidebarProps {
 
 const navItems = [
   { href: 'admin',                 label: 'Dashboard',  icon: 'dashboard' },
+  { href: 'admin/goals',           label: 'Metas',      icon: 'track_changes' },
   { href: 'admin/routines',        label: 'Rutinas',    icon: 'fitness_center' },
   { href: 'admin/clients',         label: 'Clientes',   icon: 'group' },
   { href: 'admin/messages',        label: 'Mensajes',   icon: 'chat' },

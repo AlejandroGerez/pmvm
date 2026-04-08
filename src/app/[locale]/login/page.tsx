@@ -71,7 +71,7 @@ export default function LoginPage({
     setError(null)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
       setError(error.message.includes('Invalid') ? t.errorInvalid : t.errorGeneric)
@@ -79,7 +79,20 @@ export default function LoginPage({
       return
     }
 
-    const redirectTo = searchParams?.redirect || `/${params.locale}/dashboard`
+    // Check role to redirect admin → /admin, client → /dashboard
+    let redirectTo = searchParams?.redirect || `/${params.locale}/dashboard`
+    if (authData?.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', authData.user.id)
+        .single()
+
+      if (profile?.role === 'admin') {
+        redirectTo = `/${params.locale}/admin`
+      }
+    }
+
     router.push(redirectTo)
     router.refresh()
   }

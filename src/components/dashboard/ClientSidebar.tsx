@@ -11,6 +11,7 @@ interface Props {
 
 const navItems = [
   { href: 'dashboard',          label: 'Inicio',     icon: 'home' },
+  { href: 'dashboard/goals',    label: 'Metas',      icon: 'track_changes' },
   { href: 'dashboard/routines', label: 'Rutinas',    icon: 'fitness_center' },
   { href: 'dashboard/messages', label: 'Mensajes',   icon: 'chat' },
   { href: 'dashboard/progress', label: 'Progreso',   icon: 'monitoring' },

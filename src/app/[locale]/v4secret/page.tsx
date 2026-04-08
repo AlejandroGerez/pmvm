@@ -5,12 +5,34 @@ import { useParams, useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { useEffect, useState, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import V4SplashManager from '@/components/v4/V4SplashScreen'
+import { Menu, X, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react'
+import type { User } from '@supabase/supabase-js'
+
+interface ActiveSub { plan_id: string }
 
 /* ── Pricing Card ──────────────────────────────────────────── */
-function PricingCard({ plan, locale }: { plan: any; locale: string }) {
+function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; activeSub: ActiveSub | null }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
+
+  // Determine state relative to active subscription
+  const isCurrent = activeSub?.plan_id === plan.id
+  const planTier = { monthly: 1, quarterly: 2, semiannual: 3 }
+  const currentTier = activeSub ? (planTier[activeSub.plan_id as keyof typeof planTier] ?? 0) : 0
+  const thisTier = planTier[plan.id as keyof typeof planTier] ?? 0
+  const isUpgrade = activeSub && thisTier > currentTier
+  const isTopPlan = plan.id === 'semiannual'
+  const hasActiveSub = !!activeSub
+
+  let btnLabel = 'COMPRAR AHORA'
+  if (hasActiveSub) {
+    if (isCurrent) btnLabel = 'RENOVAR PLAN'
+    else if (isUpgrade && isTopPlan) btnLabel = 'PLAN COMPLETO'
+    else if (isUpgrade) btnLabel = 'MEJORAR PLAN'
+    else btnLabel = 'CAMBIAR PLAN'
+  }
 
   const handleBuy = async () => {
     setLoading(true)
@@ -36,18 +58,27 @@ function PricingCard({ plan, locale }: { plan: any; locale: string }) {
     }
   }
 
+  // Semiannual subscriber sees a "complete" state, no need to push more
+  const isComplete = activeSub?.plan_id === 'semiannual' && plan.id === 'semiannual'
+
   return (
     <div className={`relative flex flex-col rounded-none p-6 lg:p-8 border transition-all duration-300 hover:-translate-y-1 ${
       plan.badge === 'MÁS POPULAR'
         ? 'border-[#c1ed00]/40 bg-[#c1ed00]/[0.04] shadow-[0_0_50px_rgba(193,237,0,0.08)] scale-[1.02]'
         : 'border-white/10 bg-surface-container hover:border-white/20'
     }`}>
-      {plan.badge && (
+      {/* Badge: active plan indicator overrides default badge */}
+      {isCurrent ? (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest font-label uppercase bg-white text-[#0e0e0e]">
+          TU PLAN ACTUAL
+        </div>
+      ) : plan.badge ? (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest font-label uppercase"
           style={{ backgroundColor: plan.color, color: '#0e0e0e' }}>
           {plan.badge}
         </div>
-      )}
+      ) : null}
+
       <p className="font-label text-xs font-bold tracking-widest uppercase mb-2" style={{ color: plan.color }}>{plan.days} días</p>
       <h3 className="font-headline text-2xl font-black mb-3">{plan.name}</h3>
       <div className="flex items-baseline gap-1 mb-3">
@@ -64,11 +95,18 @@ function PricingCard({ plan, locale }: { plan: any; locale: string }) {
         ))}
       </ul>
       {error && <p className="text-red-400 text-xs mb-3 text-center bg-red-400/10 rounded py-2 px-3 font-label">{error}</p>}
-      <button onClick={handleBuy} disabled={loading}
-        className="w-full py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-        style={{ backgroundColor: loading ? '#333' : plan.color, color: '#0e0e0e' }}>
-        {loading ? 'PROCESANDO...' : 'COMPRAR AHORA'}
-      </button>
+
+      {isComplete ? (
+        <div className="w-full py-3.5 text-center font-headline font-black text-sm tracking-widest uppercase border border-white/10 text-white/30">
+          ✓ YA TENÉS EL MEJOR PLAN
+        </div>
+      ) : (
+        <button onClick={handleBuy} disabled={loading}
+          className="w-full py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+          style={{ backgroundColor: loading ? '#333' : plan.color, color: '#0e0e0e' }}>
+          {loading ? 'PROCESANDO...' : btnLabel}
+        </button>
+      )}
     </div>
   )
 }
@@ -146,11 +184,21 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
 export default function V4Page() {
   const params = useParams()
   const locale = (params?.locale as string) ?? 'es'
-  const [session, setSession] = useState<any>(null)
+  const router = useRouter()
+
+  // Auth
+  const [user, setUser] = useState<User | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Active subscription
+  const [activeSub, setActiveSub] = useState<ActiveSub | null>(null)
+
+  // Scroll
   const { scrollY } = useScroll()
   const heroY = useTransform(scrollY, [0, 600], [0, 150])
   const heroOpacity = useTransform(scrollY, [0, 400], [1, 0.3])
-  const navBg = useTransform(scrollY, [0, 100], [0, 0.9])
   const [navSolid, setNavSolid] = useState(false)
 
   useEffect(() => {
@@ -158,60 +206,221 @@ export default function V4Page() {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+      setAuthLoading(false)
+      if (user) {
+        supabase
+          .from('subscriptions')
+          .select('plan_id')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .gt('expires_at', new Date().toISOString())
+          .order('expires_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+          .then(({ data }) => setActiveSub(data))
+      }
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
   }, [])
 
   useEffect(() => {
-    const unsub = scrollY.on('change', (v) => setNavSolid(v > 80))
+    const unsub = scrollY.on('change', (v) => {
+      setNavSolid(v > 80)
+      if (v > 80) setMobileMenuOpen(false)
+    })
     return unsub
   }, [scrollY])
+
+  const handleLogout = async () => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    await supabase.auth.signOut()
+    setUser(null)
+    setUserMenuOpen(false)
+    setMobileMenuOpen(false)
+    router.refresh()
+  }
+
+  const displayName = user?.user_metadata?.full_name ?? user?.email?.split('@')[0] ?? ''
+  const initial = displayName[0]?.toUpperCase() ?? 'U'
 
   const smoothScroll = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const href = e.currentTarget.getAttribute('href')
     if (!href?.startsWith('#')) return
     e.preventDefault()
+    setMobileMenuOpen(false)
     const el = document.querySelector(href)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   return (
-    <>
+    <V4SplashManager>
       {/* ── Top Nav ───────────────────────────────────────────────── */}
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 h-16 transition-all duration-500 ${
-          navSolid ? 'bg-[#0e0e0e]/95 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.6)]' : 'bg-transparent'
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          navSolid ? 'bg-[#0e0e0e]/95 backdrop-blur-xl shadow-[0_4px_40px_rgba(0,0,0,0.6)]' : 'bg-transparent'
         }`}
         initial={{ y: -80 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
-        <div className="flex items-center gap-4">
-          <button className="md:hidden text-[#D1FF26]">
-            <span className="material-symbols-outlined">menu</span>
-          </button>
-          <span className="text-2xl font-black text-[#D1FF26] font-headline tracking-[-0.04em] uppercase">METODO R3SET</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex items-center gap-8 mr-6">
+        <div className="flex items-center justify-between px-5 sm:px-6 h-16">
+          {/* Logo */}
+          <span className="text-xl sm:text-2xl font-black text-[#D1FF26] font-headline tracking-[-0.04em] uppercase">METODO R3SET</span>
+
+          {/* Desktop nav links */}
+          <div className="hidden md:flex items-center gap-8">
             <a href="#method" onClick={smoothScroll} className="font-label text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors duration-300">Método</a>
             <a href="#coach" onClick={smoothScroll} className="font-label text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors duration-300">Coach</a>
             <a href="#pricing" onClick={smoothScroll} className="font-label text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors duration-300">Programas</a>
           </div>
-          {session ? (
-            <Link href={`/${locale}/dashboard`} className="bg-[#cefc22] text-[#3b4a00] px-5 py-2 font-headline font-bold text-xs tracking-widest uppercase hover:opacity-90 active:scale-95 transition-all">
-              Mi Área
-            </Link>
-          ) : (
-            <>
-              <Link href={`/${locale}/login`} className="hidden sm:block text-white/40 hover:text-white font-label text-xs tracking-widest uppercase transition-colors">
-                Login
-              </Link>
-              <Link href={`/${locale}/register`} className="bg-[#cefc22] text-[#3b4a00] px-5 py-2 font-headline font-bold text-xs tracking-widest uppercase hover:opacity-90 active:scale-95 transition-all">
-                Comenzar
-              </Link>
-            </>
-          )}
+
+          {/* Desktop auth */}
+          <div className="hidden md:flex items-center gap-3">
+            {!authLoading && (
+              user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-2 border border-white/15 hover:border-[#c1ed00]/40 px-2.5 py-1.5 rounded transition-all"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-[#c1ed00] flex items-center justify-center text-[#0e0e0e] font-black text-[11px]">
+                      {initial}
+                    </div>
+                    <span className="text-[11px] font-semibold text-white/70 max-w-[90px] truncate">{displayName}</span>
+                    <ChevronDown className="w-3 h-3 text-white/30" />
+                  </button>
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <>
+                        <div className="fixed inset-0 z-10" onClick={() => setUserMenuOpen(false)} />
+                        <motion.div
+                          className="absolute right-0 top-full mt-2 w-48 bg-[#161616] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+                          initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                          transition={{ duration: 0.15 }}
+                        >
+                          {activeSub && (
+                            <div className="px-4 py-2 border-b border-white/8">
+                              <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold">Plan activo</p>
+                              <p className="text-xs text-[#c1ed00] font-bold capitalize">{activeSub.plan_id}</p>
+                            </div>
+                          )}
+                          <Link href={`/${locale}/dashboard`} onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors">
+                            <LayoutDashboard className="w-4 h-4" /> Mi Dashboard
+                          </Link>
+                          <div className="border-t border-white/8" />
+                          <button onClick={handleLogout}
+                            className="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-red-400/60 hover:text-red-400 hover:bg-red-400/5 transition-colors">
+                            <LogOut className="w-4 h-4" /> Cerrar sesión
+                          </button>
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link href={`/${locale}/login`}
+                    className="text-[11px] font-semibold tracking-widest uppercase text-white/50 hover:text-white transition-colors px-3 py-2 border border-white/15 hover:border-white/30 rounded">
+                    Login
+                  </Link>
+                  <Link href={`/${locale}/register`}
+                    className="bg-[#cefc22] text-[#3b4a00] px-5 py-2 font-headline font-bold text-xs tracking-widest uppercase hover:opacity-90 active:scale-95 transition-all">
+                    Comenzar
+                  </Link>
+                </div>
+              )
+            )}
+          </div>
+
+          {/* Mobile: auth indicator + burger */}
+          <div className="md:hidden flex items-center gap-3">
+            {!authLoading && user && (
+              <div className="w-7 h-7 rounded-full bg-[#c1ed00] flex items-center justify-center text-[#0e0e0e] font-black text-[11px]">
+                {initial}
+              </div>
+            )}
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white/70 hover:text-[#c1ed00] transition-colors p-1">
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              className="md:hidden absolute top-full left-0 right-0 bg-[#0e0e0e]/98 backdrop-blur-xl border-t border-white/8"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="px-6 py-6 flex flex-col gap-5">
+                {/* Nav links */}
+                {[
+                  { href: '#method', label: 'Método' },
+                  { href: '#coach', label: 'Coach' },
+                  { href: '#pricing', label: 'Programas' },
+                ].map(({ href, label }) => (
+                  <a key={href} href={href} onClick={smoothScroll}
+                    className="text-sm font-bold tracking-[0.2em] uppercase text-white/60 hover:text-[#c1ed00] transition-colors">
+                    {label}
+                  </a>
+                ))}
+
+                <div className="border-t border-white/8 pt-4">
+                  {!authLoading && (
+                    user ? (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-9 h-9 rounded-full bg-[#c1ed00] flex items-center justify-center text-[#0e0e0e] font-black text-sm">
+                            {initial}
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-bold truncate max-w-[180px]">{displayName}</p>
+                            {activeSub && (
+                              <p className="text-[10px] text-[#c1ed00]/70 uppercase tracking-widest">Plan {activeSub.plan_id} activo</p>
+                            )}
+                          </div>
+                        </div>
+                        <Link href={`/${locale}/dashboard`} onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-center gap-2 py-3 border border-white/15 text-sm font-bold tracking-widest uppercase text-white/70 hover:text-white rounded">
+                          <LayoutDashboard className="w-4 h-4" /> Mi Dashboard
+                        </Link>
+                        <button onClick={handleLogout}
+                          className="flex items-center justify-center gap-2 py-3 border border-red-400/20 text-sm font-bold tracking-widest uppercase text-red-400/60 hover:text-red-400 rounded">
+                          <LogOut className="w-4 h-4" /> Cerrar sesión
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-2">
+                        <Link href={`/${locale}/login`} onClick={() => setMobileMenuOpen(false)}
+                          className="text-center py-3.5 border border-white/15 text-sm font-bold tracking-widest uppercase text-white/70 hover:text-white rounded">
+                          Iniciar sesión
+                        </Link>
+                        <Link href={`/${locale}/register`} onClick={() => setMobileMenuOpen(false)}
+                          className="text-center py-3.5 bg-[#c1ed00] text-[#0e0e0e] text-sm font-black tracking-widest uppercase rounded">
+                          Comenzar ahora
+                        </Link>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.nav>
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
@@ -590,7 +799,7 @@ export default function V4Page() {
                 features: ['Todo lo del plan trimestral', 'Plan nutricional básico incluido', 'Check-in quincenal por videollamada', 'Comunidad privada de alumnos'],
               },
             ].map((plan) => (
-              <PricingCard key={plan.id} plan={plan} locale={locale} />
+              <PricingCard key={plan.id} plan={plan} locale={locale} activeSub={activeSub} />
             ))}
           </div>
 
@@ -673,24 +882,31 @@ export default function V4Page() {
       </motion.footer>
 
       {/* ── Mobile Bottom Nav ─────────────────────────────────────── */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-20 bg-[#0e0e0e]/90 backdrop-blur-xl z-50 border-t border-white/5">
-        <a href="#method" className="flex flex-col items-center justify-center text-[#D1FF26] pt-2">
+      <nav className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-20 bg-[#0e0e0e]/95 backdrop-blur-xl z-40 border-t border-white/5">
+        <a href="#method" onClick={smoothScroll} className="flex flex-col items-center justify-center text-[#D1FF26] pt-2 active:scale-90 transition-all">
           <span className="material-symbols-outlined">psychology</span>
           <span className="font-label text-[10px] uppercase tracking-widest mt-1">Método</span>
         </a>
-        <a href="#coach" className="flex flex-col items-center justify-center text-white/40 pt-2 active:scale-90 transition-all">
-          <span className="material-symbols-outlined">restaurant</span>
-          <span className="font-label text-[10px] uppercase tracking-widest mt-1">Nutrición</span>
-        </a>
-        <a href="#method" className="flex flex-col items-center justify-center text-white/40 pt-2 active:scale-90 transition-all">
+        <a href="#coach" onClick={smoothScroll} className="flex flex-col items-center justify-center text-white/40 pt-2 active:scale-90 transition-all">
           <span className="material-symbols-outlined">fitness_center</span>
-          <span className="font-label text-[10px] uppercase tracking-widest mt-1">Entreno</span>
+          <span className="font-label text-[10px] uppercase tracking-widest mt-1">Coach</span>
         </a>
-        <Link href={`/${locale}/dashboard`} className="flex flex-col items-center justify-center text-white/40 pt-2 active:scale-90 transition-all">
-          <span className="material-symbols-outlined">insights</span>
-          <span className="font-label text-[10px] uppercase tracking-widest mt-1">Progreso</span>
-        </Link>
+        <a href="#pricing" onClick={smoothScroll} className="flex flex-col items-center justify-center text-white/40 pt-2 active:scale-90 transition-all">
+          <span className="material-symbols-outlined">bolt</span>
+          <span className="font-label text-[10px] uppercase tracking-widest mt-1">Planes</span>
+        </a>
+        {user ? (
+          <Link href={`/${locale}/dashboard`} className="flex flex-col items-center justify-center text-[#c1ed00]/70 pt-2 active:scale-90 transition-all">
+            <span className="material-symbols-outlined">dashboard</span>
+            <span className="font-label text-[10px] uppercase tracking-widest mt-1">Mi Área</span>
+          </Link>
+        ) : (
+          <Link href={`/${locale}/register`} className="flex flex-col items-center justify-center text-white/40 pt-2 active:scale-90 transition-all">
+            <span className="material-symbols-outlined">person_add</span>
+            <span className="font-label text-[10px] uppercase tracking-widest mt-1">Unirse</span>
+          </Link>
+        )}
       </nav>
-    </>
+    </V4SplashManager>
   )
 }

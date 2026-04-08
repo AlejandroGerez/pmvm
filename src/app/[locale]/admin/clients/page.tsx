@@ -1,19 +1,24 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 import AdminClientsClient from '@/components/admin/AdminClientsClient'
 
 export default async function AdminClientsPage({ params }: { params: { locale: string } }) {
-  const supabase = createClient()
+  const adminClient = createAdminClient()
 
-  const { data: clients } = await supabase
-    .from('profiles')
-    .select(`id, full_name, phone, goal, created_at, role,
-      routines(id, active),
-      messages(id, read, sender_role)`)
-    .eq('role', 'client')
-    .order('created_at', { ascending: false })
+  const [
+    { data: clients },
+    { data: { users } },
+  ] = await Promise.all([
+    // Use admin client to bypass RLS when listing all client profiles
+    adminClient
+      .from('profiles')
+      .select(`id, full_name, phone, goal, created_at, role,
+        routines(id, active),
+        messages(id, read, sender_role)`)
+      .eq('role', 'client')
+      .order('created_at', { ascending: false }),
+    adminClient.auth.admin.listUsers(),
+  ])
 
-  // Fetch emails from auth.users via admin API
-  const { data: { users } } = await supabase.auth.admin.listUsers()
   const emailMap: Record<string, string> = {}
   users?.forEach((u) => { emailMap[u.id] = u.email ?? '' })
 
