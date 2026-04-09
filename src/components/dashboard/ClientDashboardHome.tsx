@@ -91,7 +91,7 @@ export default function ClientDashboardHome({
               <p className="text-white/60 text-sm">Adquirí un plan para acceder a tus rutinas personalizadas</p>
             </div>
             <Link
-              href={`/${locale}/planes`}
+              href={`/${locale}#pricing`}
               className="flex-shrink-0 px-5 py-2.5 bg-[#c1ed00] text-[#0e0e0e] font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#d4ff00] transition-colors"
             >
               Ver planes →
@@ -296,7 +296,7 @@ function SubscriptionCard({ sub, locale }: { sub: ActiveSub; locale: string }) {
         {/* Renewal CTA (show when <= 14 days remaining) */}
         {daysRemaining <= 14 && (
           <Link
-            href={`/${locale}/planes`}
+            href={`/${locale}#pricing`}
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#c1ed00] text-[#0e0e0e] font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#d4ff00] transition-colors"
           >
             Renovar plan →

@@ -57,7 +57,7 @@ export default function CheckoutFailurePage({
         {/* CTAs */}
         <div className="flex flex-col gap-3">
           <Link
-            href={`/${params.locale}/planes`}
+            href={`/${params.locale}#pricing`}
             className="block py-3.5 rounded-xl font-black text-sm bg-[#c1ed00] text-[#0e0e0e] hover:bg-[#d4ff00] transition-colors"
           >
             INTENTAR DE NUEVO

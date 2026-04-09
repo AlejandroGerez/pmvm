@@ -77,7 +77,7 @@ export const Navbar = () => {
 					{/* Botón Planes — desktop */}
 					<div className='hidden sm:flex sm:items-center sm:mr-2'>
 						<Link
-							href={`/${locale}/planes`}
+							href={`/${locale}#pricing`}
 							className='px-4 py-2 rounded-lg bg-primaryColor text-darkColor text-xs font-black uppercase tracking-wider hover:opacity-90 transition-opacity'
 						>
 							Ver planes
@@ -129,7 +129,7 @@ export const Navbar = () => {
 										))}
 										{/* Botón Planes — mobile */}
 										<Link
-											href={`/${locale}/planes`}
+											href={`/${locale}#pricing`}
 											onClick={() => setIsOpen(false)}
 											className='w-40 text-center px-4 py-3 rounded-lg bg-primaryColor text-darkColor text-sm font-black uppercase tracking-wider hover:opacity-90 transition-opacity'
 										>

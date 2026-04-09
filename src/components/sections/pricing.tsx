@@ -1,259 +1,270 @@
 "use client";
-import React, { useState } from "react";
-import { useLocale } from "next-intl";
-import { useRouter } from "next/navigation";
-import { Check, Zap, Star, Shield } from "lucide-react";
+import React from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
+import pricingData from "@/data/plans.json";
+import { motion } from "framer-motion";
+import { Check, ChevronRight, ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+	DialogOverlay,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
+import DynamicIcon from "../common/icon";
 
-const plans = [
-  {
-    id: "monthly",
-    name: "Plan Mensual",
-    price: 100,
-    days: 30,
-    badge: null,
-    color: "#00e3fd",
-    description:
-      "Perfecto para empezar. Un mes de entrenamiento personalizado y seguimiento.",
-    features: [
-      "Rutina personalizada en tu dashboard",
-      "Seguimiento semanal de progreso",
-      "Chat directo con tu coach",
-      "Acceso al dashboard personal",
-      "Email + WhatsApp de bienvenida",
-    ],
-  },
-  {
-    id: "quarterly",
-    name: "Plan Trimestral",
-    price: 150,
-    days: 90,
-    badge: "MÁS POPULAR",
-    color: "#c1ed00",
-    description:
-      "3 meses para construir hábitos reales. (Precio de prueba en producción.)",
-    features: [
-      "Todo lo del plan mensual",
-      "Actualizaciones de rutina cada 4 semanas",
-      "Análisis de progreso mensual",
-      "Prioridad de respuesta del coach",
-      "Mejor relación costo/duración que el mensual",
-    ],
-  },
-  {
-    id: "semiannual",
-    name: "Plan Semestral",
-    price: 200,
-    days: 180,
-    badge: "MEJOR VALOR",
-    color: "#ff734a",
-    description:
-      "6 meses de transformación completa. (Precio de prueba en producción.)",
-    features: [
-      "Todo lo del plan trimestral",
-      "Plan nutricional básico incluido",
-      "Check-in quincenal por videollamada",
-      "Comunidad privada de alumnos",
-      "Máxima continuidad para resultados duraderos",
-    ],
-  },
-];
-
-function PlanCard({
-  plan,
-  locale,
-}: {
-  plan: (typeof plans)[0];
-  locale: string;
-}) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
-
-  const handleBuy = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await fetch("/api/mp/create-preference", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: plan.id, locale }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        if (res.status === 401) {
-          router.push(`/${locale}/login?redirect=/#pricing`);
-          return;
-        }
-        setError(data.error || "Error al procesar el pago");
-        return;
-      }
-      const url =
-        process.env.NODE_ENV === "production"
-          ? data.initPoint
-          : data.sandboxInitPoint;
-      window.location.href = url || data.initPoint;
-    } catch {
-      setError("Error de conexión. Intentá de nuevo.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const isPopular = plan.badge === "MÁS POPULAR";
-
-  return (
-    <div
-      className={`relative flex flex-col rounded-2xl p-6 lg:p-8 border transition-all duration-300 hover:-translate-y-1 ${
-        isPopular
-          ? "border-[#c1ed00]/40 bg-[#c1ed00]/[0.04] shadow-[0_0_50px_rgba(193,237,0,0.08)] scale-[1.02]"
-          : "border-white/10 bg-white/[0.02] hover:border-white/20"
-      }`}
-    >
-      {/* Badge */}
-      {plan.badge && (
-        <div
-          className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-black tracking-widest"
-          style={{ backgroundColor: plan.color, color: "#0e0e0e" }}
-        >
-          {plan.badge}
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="mb-6">
-        <p
-          className="text-xs font-bold tracking-widest uppercase mb-2"
-          style={{ color: plan.color }}
-        >
-          {plan.days} días
-        </p>
-        <h3 className="text-2xl font-black text-white mb-3">{plan.name}</h3>
-        <div className="flex items-baseline gap-1 mb-3">
-          <span className="text-sm text-white/40">ARS</span>
-          <span className="text-4xl font-black text-white">
-            ${plan.price.toLocaleString("es-AR")}
-          </span>
-        </div>
-        <p className="text-sm text-white/50 leading-relaxed">
-          {plan.description}
-        </p>
-      </div>
-
-      {/* Features */}
-      <ul className="space-y-3 mb-8 flex-1">
-        {plan.features.map((f, i) => (
-          <li key={i} className="flex items-start gap-3 text-sm text-white/70">
-            <Check
-              className="w-4 h-4 mt-0.5 flex-shrink-0"
-              style={{ color: plan.color }}
-            />
-            {f}
-          </li>
-        ))}
-      </ul>
-
-      {/* Error */}
-      {error && (
-        <p className="text-red-400 text-xs mb-3 text-center bg-red-400/10 rounded-lg py-2 px-3">
-          {error}
-        </p>
-      )}
-
-      {/* CTA */}
-      <button
-        onClick={handleBuy}
-        disabled={loading}
-        className="w-full py-3.5 rounded-xl font-black text-sm tracking-wide transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-        style={{
-          backgroundColor: loading ? "#333" : plan.color,
-          color: "#0e0e0e",
-        }}
-      >
-        {loading ? (
-          <span className="flex items-center justify-center gap-2">
-            <svg
-              className="animate-spin h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v8H4z"
-              />
-            </svg>
-            Procesando...
-          </span>
-        ) : (
-          "COMPRAR AHORA"
-        )}
-      </button>
-    </div>
-  );
-}
+const typedPricingData: any[] = pricingData;
 
 const Pricing = () => {
-  const locale = useLocale();
+	const { theme } = useTheme();
 
-  return (
-    <section
-      id="pricing"
-      className="relative bg-[#0e0e0e] py-20 lg:py-28 px-4 overflow-hidden"
-    >
-      {/* Ambient blobs */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c1ed00]/[0.03] blur-[160px] rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#00e3fd]/[0.03] blur-[140px] rounded-full translate-y-1/2 -translate-x-1/3 pointer-events-none" />
-
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Title */}
-        <div className="text-center mb-16">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-white/30 mb-3">
-            Elegí tu plan
-          </p>
-          <h2 className="text-4xl lg:text-6xl font-black tracking-tighter text-white mb-4">
-            EMPEZÁ TU
-            <br />
-            <span className="text-[#c1ed00] italic">TRANSFORMACIÓN.</span>
-          </h2>
-          <p className="text-white/50 max-w-lg mx-auto text-base leading-relaxed">
-            Entrenamiento personalizado, seguimiento real y un coach que te
-            acompaña. Elegí el plan que mejor se adapte a tus objetivos.
-          </p>
-        </div>
-
-        {/* Plans grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-16">
-          {plans.map((plan) => (
-            <PlanCard key={plan.id} plan={plan} locale={locale} />
-          ))}
-        </div>
-
-        {/* Trust signals */}
-        <div className="flex flex-wrap justify-center gap-8 text-white/30 text-xs">
-          <span className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-[#c1ed00]" />
-            Acceso inmediato al pagar
-          </span>
-          <span className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-[#00e3fd]" />
-            Pago seguro con Mercado Pago
-          </span>
-          <span className="flex items-center gap-2">
-            <Star className="w-4 h-4 text-[#ff734a]" />
-            Soporte por WhatsApp incluido
-          </span>
-        </div>
-      </div>
-    </section>
-  );
+	return (
+		<section
+			id='pricing'
+			style={{
+				backgroundImage:
+					theme === "light"
+						? "url(/images/background-texture.webp)"
+						: "url(/images/background-texture-dark.png)",
+			}}
+			className='h-full bg-cover bg-center bg-fixed bg-no-repeat dark:bg-gray-800 px-2'
+		>
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5 }}
+				className='container px-4 md:px-6'
+			>
+				<div className='container px-6 py-8 mx-auto'>
+					<div
+						className={`flex gap-6 mt-16 -mx-6 sm:gap-8 flex-wrap justify-center`}
+					>
+						{typedPricingData.map((plan, index) => (
+							<PlanCard plan={plan} key={index} />
+						))}
+					</div>
+				</div>
+			</motion.div>
+		</section>
+	);
 };
 
 export default Pricing;
+
+interface PlanCardProps {
+	plan: any;
+}
+const PlanCard = ({ plan }: PlanCardProps) => {
+	const t = useTranslations("general");
+	const locale = useLocale();
+	return (
+		<div
+			id='pricing'
+			className='px-4 sm:px-4 py-2 sm:py-4 mx-4 bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-95 border border-opacity-20 duration-1000 ease-in-out transform rounded-lg transition-transform max-w-[500px] cursor-pointer hover:bg-lightColor hover:bg-opacity-20
+		bg-white dark:bg-darkColor hover:text-darkColor hover:dark:text-lightColor hover:opacity-100'
+		>
+			<div className='text-base sm:text-lg bg-primaryColor text-darkColor text-center rounded-md mb-3 uppercase'>
+				{t("monthly_payment")}
+			</div>
+			<div className='text-2xl sm:text-4xl font-bold text-center'>
+				<p className='py-3'>{plan.title[locale]}</p>
+				{/* <p className='text-sm opacity-50 sm:min-h-[5rem]'>
+					{plan.description[locale]}
+				</p> */}
+			</div>
+			{/* <h4 className='mt-2 text-lg sm:text-2xl font-semibold text-primaryColor text-center'>
+				{plan.price[locale]}
+			</h4> */}
+			{/* <div className='mt-8 space-y-3.5 sm:space-y-4 sm:min-h-[32rem]'>
+				{plan.items.map((item: any, itemIndex: number) => {
+					const text = item[locale];
+					const truncatedText =
+						text.length > 160 ? `${text.slice(0, 160)}...` : text;
+					return (
+						<div key={itemIndex} className='flex items-center'>
+							<svg
+								xmlns='http://www.w3.org/2000/svg'
+								className='w-5 h-5 text-primaryColor min-w-[16px] flex-shrink-0'
+								viewBox='0 0 20 20'
+								fill='currentColor'
+							>
+								<path
+									fillRule='evenodd'
+									d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
+									clipRule='evenodd'
+								/>
+							</svg>
+							<TooltipProvider>
+								<Tooltip>
+									<TooltipTrigger asChild>
+										<span className='mx-4 text-[12px] sm:text-[14px]'>
+											{truncatedText}
+										</span>
+									</TooltipTrigger>
+									{text.length > 60 && <TooltipContent>{text}</TooltipContent>}
+								</Tooltip>
+							</TooltipProvider>
+						</div>
+					);
+				})}
+			</div> */}
+
+			<div className='mb-4'>
+				<p className='text-darkColor dark:text-lightColor text-sm opacity-90 sm:min-h-[5rem]'>
+					{plan.description[locale]}
+				</p>
+				{/* <p className='text-xl font-bold mt-2'>{plan.price[locale]}</p> */}
+			</div>
+			<Accordion
+				type='single'
+				collapsible
+				className='w-full mb-6 sm:min-h-[720px]'
+			>
+				{plan.items.map((item: any, itemIndex: number) => {
+					const text = item[locale];
+					const truncatedText =
+						text.length > 145 ? `${text.slice(0, 145)}...` : text;
+
+					return (
+						<AccordionItem
+							value={`item-${itemIndex}`}
+							key={itemIndex}
+							className='border-primaryColor'
+						>
+							<AccordionTrigger className='hover:text-primaryColor'>
+								<span className='flex items-center'>
+									<DynamicIcon
+										icon={item.icon}
+										className='text-primaryColor flex-shrink-0'
+									/>
+									<TooltipProvider>
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<span className='text-xs ml-2 text-darkColor dark:text-lightColor'>
+													{truncatedText}
+												</span>
+											</TooltipTrigger>
+											{text.length > 45 && (
+												<TooltipContent>{text}</TooltipContent>
+											)}
+										</Tooltip>
+									</TooltipProvider>
+								</span>
+							</AccordionTrigger>
+							<AccordionContent>{item.description[locale]}</AccordionContent>
+						</AccordionItem>
+					);
+				})}
+			</Accordion>
+
+			<div className='flex justify-center items-center gap-6 flex-col mt-8'>
+				<Link
+					href='https://form.jotform.com/242192994073362'
+					passHref
+					target='_blank'
+					className='relative h-[50px] w-40 overflow-hidden border border-primaryColor bg-primaryColor text-darkColor shadow-2xl transition-all before:absolute before:left-0 before:top-0 before:h-full before:w-0 before:duration-500 after:absolute after:right-0 after:top-0 after:h-full after:w-0 after:duration-500 hover:text-primaryColor hover:before:w-2/4 hover:before:bg-darkColor hover:after:w-2/4 hover:after:bg-darkColor
+				rounded-lg inline-flex text-[13px] items-center justify-center font-medium'
+				>
+					<span className='relative z-10 flex'>
+						{t("i_want_to_start")} <ArrowRightIcon />
+					</span>
+				</Link>
+				<Link
+					href='#contact'
+					className='relative h-[50px] w-40 overflow-hidden border border-primaryColor bg-transparent text-gray-700 dark:text-primaryColor shadow-2xl transition-all before:absolute before:left-0 before:top-0 before:h-full before:w-0 before:duration-500 after:absolute after:right-0 after:top-0 after:h-full after:w-0 after:duration-500 hover:text-darkColor hover:before:w-2/4 hover:before:bg-lightColor hover:after:w-2/4 hover:after:bg-lightColor hover:border-darkColor rounded-lg inline-flex text-[13px] justify-center items-center'
+				>
+					<span className='relative z-10'>{t("view_detail")}</span>
+				</Link>
+				{/* <Dialog>
+					<DialogTrigger asChild>
+						<Button
+							variant='outline'
+							className='relative h-[50px] w-40 overflow-hidden border border-primaryColor bg-lightColor text-darkColor shadow-2xl transition-all before:absolute before:left-0 before:top-0 before:h-full before:w-0 before:duration-500 after:absolute after:right-0 after:top-0 after:h-full after:w-0 after:duration-500 hover:text-darkColor hover:before:w-2/4 hover:before:bg-primaryColor hover:after:w-2/4 hover:after:bg-primaryColor hover:border-darkColor'
+						>
+							<span className='relative z-10'>{t("view_detail")}</span>
+						</Button>
+					</DialogTrigger>
+					<DialogContent className='mx-auto max-w-[22rem] sm:max-w-md bg-white dark:bg-darkColor max-h-[95vh] overflow-y-auto'>
+						<DialogHeader>
+							<DialogTitle className='text-2xl text-primaryColor'>
+								{plan.title[locale]}
+							</DialogTitle>
+						</DialogHeader>
+						<div className='mb-4'>
+							<p className='text-sm text-muted-foreground'>
+								{plan.description[locale]}
+							</p>
+							<p className='text-xl font-bold mt-2'>{plan.price[locale]}</p>
+						</div>
+						<Accordion type='single' collapsible className='w-full mb-6'>
+							{plan.items.map((item: any, itemIndex: number) => {
+								const text = item[locale];
+								const truncatedText =
+									text.length > 145 ? `${text.slice(0, 145)}...` : text;
+
+								return (
+									<AccordionItem
+										value={`item-${itemIndex}`}
+										key={itemIndex}
+										className='border-primaryColor'
+									>
+										<AccordionTrigger className='hover:text-primaryColor'>
+											<span className='flex items-center'>
+												<DynamicIcon
+													icon={item.icon}
+													className='text-primaryColor'
+												/>
+												<TooltipProvider>
+													<Tooltip>
+														<TooltipTrigger asChild>
+															<span className='text-xs ml-2 text-darkColor dark:text-lightColor'>
+																{truncatedText}
+															</span>
+														</TooltipTrigger>
+														{text.length > 45 && (
+															<TooltipContent>{text}</TooltipContent>
+														)}
+													</Tooltip>
+												</TooltipProvider>
+											</span>
+										</AccordionTrigger>
+										<AccordionContent>
+											{item.description[locale]}
+										</AccordionContent>
+									</AccordionItem>
+								);
+							})}
+						</Accordion>
+						<Button
+							className='relative h-[50px] w-40 overflow-hidden border border-primaryColor bg-primaryColor text-darkColor shadow-2xl transition-all before:absolute before:left-0 before:top-0 before:h-full before:w-0 before:duration-500 after:absolute after:right-0 after:top-0 after:h-full after:w-0 after:duration-500 hover:text-primaryColor hover:before:w-2/4 hover:before:bg-darkColor hover:after:w-2/4 hover:after:bg-darkColor
+					mx-auto'
+						>
+							<span className='relative z-10 flex'>
+								{t("i_want_to_start")}
+								<ChevronRight className='ml-2 h-4 w-4' />
+							</span>
+						</Button>
+					</DialogContent>
+				</Dialog> */}
+			</div>
+		</div>
+	);
+};
