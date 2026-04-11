@@ -7,16 +7,22 @@ export default async function AdminClientsPage({ params }: { params: { locale: s
   const [
     { data: clients },
     { data: { users } },
+    { data: trainers },
   ] = await Promise.all([
-    // Use admin client to bypass RLS when listing all client profiles
     adminClient
       .from('profiles')
-      .select(`id, full_name, phone, goal, created_at, role,
+      .select(`id, full_name, phone, goal, created_at, role, trainer_id,
         routines(id, active),
         messages(id, read, sender_role)`)
       .eq('role', 'client')
       .order('created_at', { ascending: false }),
     adminClient.auth.admin.listUsers(),
+    // Todos los admins disponibles como trainers
+    adminClient
+      .from('profiles')
+      .select('id, full_name, phone')
+      .eq('role', 'admin')
+      .order('full_name'),
   ])
 
   // Mapa id → { email, provider, avatar_url }
@@ -37,5 +43,5 @@ export default async function AdminClientsPage({ params }: { params: { locale: s
     avatar_url: userMeta[c.id]?.avatar_url ?? null,
   }))
 
-  return <AdminClientsClient locale={params.locale} clients={clientsWithEmail} />
+  return <AdminClientsClient locale={params.locale} clients={clientsWithEmail} trainers={trainers ?? []} />
 }

@@ -19,7 +19,7 @@ export default async function AdminRoutinesPage({ params }: { params: { locale: 
         routine_exercises(
           id, name, sets, reps, rest_secs, order_index,
           tempo, weight_note, exercise_notes, exercise_id,
-          exercises(id, name, gif_url, body_part, target_muscle, equipment)
+          exercises(id, name, gif_url, image_url, body_part, target_muscle, equipment)
         )
       `)
       .eq('is_template', true)

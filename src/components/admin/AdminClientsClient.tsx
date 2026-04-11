@@ -1,11 +1,18 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef, useEffect } from 'react'
+import { createClient } from '@/lib/supabase/client'
 
 const stagger = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.07 } } }
 const row = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } } }
+
+interface Trainer {
+  id: string
+  full_name: string | null
+  phone: string | null
+}
 
 interface Client {
   id: string
@@ -14,13 +21,14 @@ interface Client {
   phone: string | null
   goal: string | null
   created_at: string
-  provider: string         // 'google' | 'apple' | 'email'
+  provider: string
   avatar_url: string | null
+  trainer_id: string | null
   routines: any[]
   messages: any[]
 }
 
-interface Props { locale: string; clients: Client[] }
+interface Props { locale: string; clients: Client[]; trainers: Trainer[] }
 
 function ProviderBadge({ provider }: { provider: string }) {
   if (provider === 'google') {
@@ -89,8 +97,117 @@ function displayEmail(email: string, provider: string): string {
   return email
 }
 
-export default function AdminClientsClient({ locale, clients }: Props) {
+// ── Trainer selector inline ────────────────────────────────────────────────
+function TrainerSelector({ client, trainers, onAssigned }: {
+  client: Client
+  trainers: Trainer[]
+  onAssigned: (clientId: string, trainerId: string | null) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const supabase = createClient()
+
+  const currentTrainer = trainers.find(t => t.id === client.trainer_id)
+
+  // Cerrar al click afuera
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const assign = async (trainerId: string | null) => {
+    setSaving(true)
+    const { error } = await supabase
+      .from('profiles')
+      .update({ trainer_id: trainerId })
+      .eq('id', client.id)
+    setSaving(false)
+    if (!error) {
+      onAssigned(client.id, trainerId)
+      setOpen(false)
+    }
+  }
+
+  return (
+    <div className="relative flex-shrink-0" ref={ref} onClick={e => e.preventDefault()}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        disabled={saving}
+        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10px] font-bold transition-all ${
+          currentTrainer
+            ? 'bg-[#c1ed00]/10 border-[#c1ed00]/30 text-[#c1ed00]'
+            : 'bg-white/5 border-white/10 text-white/30 hover:border-white/20 hover:text-white/50'
+        }`}
+      >
+        {saving ? (
+          <span className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" />
+        ) : (
+          <span className="material-symbols-outlined text-[12px]">person_pin</span>
+        )}
+        {currentTrainer?.full_name ?? 'Sin trainer'}
+        <span className="material-symbols-outlined text-[10px] opacity-60">expand_more</span>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.97 }}
+            transition={{ duration: 0.12 }}
+            className="absolute right-0 top-full mt-1 z-50 bg-[#1a1a1a] border border-white/15 rounded-xl overflow-hidden shadow-2xl min-w-[180px]"
+          >
+            <p className="text-[9px] font-black tracking-[0.15em] text-white/30 uppercase px-3 pt-2.5 pb-1">
+              Asignar entrenador
+            </p>
+            {trainers.map(trainer => (
+              <button
+                key={trainer.id}
+                onClick={() => assign(trainer.id)}
+                className={`w-full flex items-center gap-2 px-3 py-2 text-left text-xs hover:bg-white/8 transition-colors ${
+                  trainer.id === client.trainer_id ? 'text-[#c1ed00]' : 'text-white/70'
+                }`}
+              >
+                <div className="w-6 h-6 rounded-full bg-[#c1ed00]/15 flex items-center justify-center text-[#c1ed00] text-[9px] font-black flex-shrink-0">
+                  {(trainer.full_name ?? 'T')[0].toUpperCase()}
+                </div>
+                <span className="truncate">{trainer.full_name}</span>
+                {trainer.id === client.trainer_id && (
+                  <span className="material-symbols-outlined text-[12px] ml-auto">check</span>
+                )}
+              </button>
+            ))}
+            {client.trainer_id && (
+              <>
+                <div className="mx-3 my-1 h-px bg-white/8" />
+                <button
+                  onClick={() => assign(null)}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs text-red-400/70 hover:text-red-400 hover:bg-red-400/5 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[12px]">person_remove</span>
+                  Quitar trainer
+                </button>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
+export default function AdminClientsClient({ locale, clients: initialClients, trainers }: Props) {
+  const [clients, setClients] = useState(initialClients)
   const [search, setSearch] = useState('')
+
+  const handleTrainerAssigned = (clientId: string, trainerId: string | null) => {
+    setClients(prev => prev.map(c => c.id === clientId ? { ...c, trainer_id: trainerId } : c))
+  }
 
   const filtered = clients.filter(c => {
     const q = search.toLowerCase()
@@ -186,6 +303,13 @@ export default function AdminClientsClient({ locale, clients }: Props) {
                       </div>
                     )}
                   </div>
+
+                  {/* Trainer selector */}
+                  <TrainerSelector
+                    client={client}
+                    trainers={trainers}
+                    onAssigned={handleTrainerAssigned}
+                  />
 
                   <span className="material-symbols-outlined text-white/20 group-hover:text-white/50 transition-colors flex-shrink-0">
                     arrow_forward

@@ -24,6 +24,7 @@ export interface ExerciseInRoutine {
     id: string
     name: string
     gif_url: string | null
+    image_url: string | null
     body_part: string | null
     target_muscle: string | null
     equipment: string | null
@@ -375,7 +376,7 @@ export default function RoutinesClient({
         order_index: idx, tempo: ex.tempo || null,
         weight_note: ex.weight_note || null, exercise_notes: ex.exercise_notes || null,
         exercise_id: ex.exercise_id,
-        exercises: ex.exercise_id ? { id: ex.exercise_id, name: ex.name, gif_url: ex.gif_url ?? ex.image_url, body_part: ex.body_part, target_muscle: null, equipment: null } : null,
+        exercises: ex.exercise_id ? { id: ex.exercise_id, name: ex.name, gif_url: ex.gif_url ?? null, image_url: ex.image_url ?? null, body_part: ex.body_part, target_muscle: null, equipment: null } : null,
       })),
     }
     setRoutines(prev => [newRoutine, ...prev])
@@ -586,12 +587,13 @@ export default function RoutinesClient({
                         className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/8 relative"
                         title={ex.name}
                       >
-                        {(ex.exercises?.gif_url) ? (
+                        {(ex.exercises?.gif_url || ex.exercises?.image_url) ? (
                           <img
-                            src={ex.exercises.gif_url}
+                            src={(ex.exercises.gif_url ?? ex.exercises.image_url)!}
                             alt={ex.name}
                             className="w-full h-full object-cover"
                             loading="lazy"
+                            referrerPolicy="no-referrer"
                             onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
                           />
                         ) : (
@@ -724,8 +726,9 @@ export default function RoutinesClient({
                   <div key={ex.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
                     <span className="text-[10px] text-white/20 font-black w-6 flex-shrink-0">{String(idx+1).padStart(2,'0')}</span>
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
-                      {ex.exercises?.gif_url ? (
-                        <img src={ex.exercises.gif_url} alt={ex.name} className="w-full h-full object-cover"
+                      {(ex.exercises?.gif_url || ex.exercises?.image_url) ? (
+                        <img src={(ex.exercises.gif_url ?? ex.exercises.image_url)!} alt={ex.name} className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
                           onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
@@ -862,6 +865,7 @@ export default function RoutinesClient({
                       <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
                         {(ex.gif_url || ex.image_url) ? (
                           <img src={(ex.gif_url ?? ex.image_url)!} alt={ex.name} className="w-full h-full object-cover"
+                            referrerPolicy="no-referrer"
                             onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
@@ -999,7 +1003,7 @@ export default function RoutinesClient({
 
             {/* Muscle chips — horizontal scroll, multi-select */}
             <div className="px-4 pb-3 flex-shrink-0">
-              <p className="text-[8px] uppercase tracking-widest text-white/25 mb-1.5">Grupo muscular (selección múltiple)</p>
+              <p className="text-[10px] uppercase tracking-widest text-white/45 mb-2">Grupo muscular (selección múltiple)</p>
               <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                 {MUSCLE_CHIPS.map(chip => {
                   const active = exBodyParts.includes(chip.key)
@@ -1009,9 +1013,9 @@ export default function RoutinesClient({
                       onClick={() => toggleBodyPart(chip.key)}
                       className="flex-shrink-0 text-[10px] px-3 py-1.5 rounded-full border font-bold transition-all"
                       style={{
-                        borderColor: active ? '#D1FF26' : 'rgba(255,255,255,0.1)',
-                        backgroundColor: active ? '#D1FF2622' : 'transparent',
-                        color: active ? '#D1FF26' : 'rgba(255,255,255,0.35)',
+                        borderColor: active ? '#D1FF26' : 'rgba(255,255,255,0.18)',
+                        backgroundColor: active ? '#D1FF2622' : 'rgba(255,255,255,0.04)',
+                        color: active ? '#D1FF26' : 'rgba(255,255,255,0.6)',
                       }}
                     >
                       {chip.label}
@@ -1030,6 +1034,7 @@ export default function RoutinesClient({
                       src={(previewEx.gif_url ?? previewEx.image_url)!}
                       alt={previewEx.name}
                       className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
                       onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
                     />
                   </div>
@@ -1061,7 +1066,7 @@ export default function RoutinesClient({
               )}
 
               {!exLoading && exResults.length === 0 && (exQuery || exBodyParts.length > 0) && (
-                <div className="text-center py-16 text-white/20 text-xs">Sin resultados. Probá otro término o músculo.</div>
+                <div className="text-center py-16 text-white/45 text-sm">Sin resultados. Probá otro término o músculo.</div>
               )}
 
               {!exLoading && exResults.length === 0 && !exQuery && exBodyParts.length === 0 && (
@@ -1090,6 +1095,7 @@ export default function RoutinesClient({
                               alt={ex.name}
                               className="w-full h-full object-cover"
                               loading="lazy"
+                              referrerPolicy="no-referrer"
                               onError={e => {
                                 const target = e.target as HTMLImageElement
                                 target.style.display = 'none'

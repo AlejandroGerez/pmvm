@@ -15,56 +15,84 @@ export async function GET(request: NextRequest) {
   const acceptLanguage = request.headers.get('accept-language') ?? ''
   const locale = acceptLanguage.startsWith('en') ? 'en' : acceptLanguage.startsWith('pt') ? 'pt' : 'es'
 
-  if (code) {
-    const cookieStore = cookies()
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() { return cookieStore.getAll() },
-          setAll(cookiesToSet) {
+  const cookieStore = cookies()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return cookieStore.getAll() },
+        setAll(cookiesToSet) {
+          try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             )
-          },
+          } catch { /* ignorar en Route Handlers */ }
         },
+      },
+    }
+  )
+
+  // Helper: redirige al destino correcto según rol + estado de onboarding
+  async function redirectByRole(): Promise<NextResponse> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const adminClient = createAdminSupabaseClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SECRET_KEY!
+        )
+        const { data: profile } = await adminClient
+          .from('profiles')
+          .select('role, onboarding_completed')
+          .eq('id', user.id)
+          .single()
+
+        // Admins van directo al panel, sin onboarding
+        if (profile?.role === 'admin') {
+          return NextResponse.redirect(`${origin}/${locale}/admin`)
+        }
+
+        // Clientes sin onboarding completo → pantalla de bienvenida
+        if (!profile?.onboarding_completed) {
+          return NextResponse.redirect(`${origin}/${locale}/onboarding`)
+        }
       }
-    )
+    } catch (e) {
+      console.error('[auth/callback] role check error:', e)
+    }
+    return NextResponse.redirect(`${origin}/${locale}/dashboard`)
+  }
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+  if (code) {
+    try {
+      const { error } = await supabase.auth.exchangeCodeForSession(code)
 
-    if (!error) {
-      // Para flujo OAuth: redirigir según rol del usuario
-      if (type === 'oauth' || nextParam) {
-        try {
-          const { data: { user } } = await supabase.auth.getUser()
-          if (user) {
-            // Usar admin client para evitar problemas de RLS
-            const adminClient = createAdminSupabaseClient(
-              process.env.NEXT_PUBLIC_SUPABASE_URL!,
-              process.env.SUPABASE_SERVICE_ROLE_KEY!
-            )
-            const { data: profile } = await adminClient
-              .from('profiles')
-              .select('role')
-              .eq('id', user.id)
-              .single()
-
-            if (profile?.role === 'admin') {
-              return NextResponse.redirect(`${origin}/${locale}/admin`)
-            }
-          }
-        } catch { /* si falla el check de rol, igual mandamos al dashboard */ }
-
-        return NextResponse.redirect(`${origin}/${locale}/dashboard`)
+      if (!error) {
+        // OAuth o next param → redirigir según rol
+        if (type === 'oauth' || nextParam) {
+          return redirectByRole()
+        }
+        // Email confirmation
+        return NextResponse.redirect(`${origin}/${locale}/auth/confirm`)
       }
 
-      // Para flujo de email confirmation: redirigir a página de confirmación
-      return NextResponse.redirect(`${origin}/${locale}/auth/confirm`)
+      console.error('[auth/callback] exchangeCodeForSession error:', error.message)
+    } catch (e) {
+      console.error('[auth/callback] exchange threw:', e)
     }
   }
 
-  // Si algo falla, va al login
+  // Fallback: si ya hay sesión activa (PKCE falló pero el usuario ya está autenticado),
+  // redirigir igual en lugar de mostrar error
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      console.log('[auth/callback] session exists despite code error — redirecting by role')
+      return redirectByRole()
+    }
+  } catch { /* ignorar */ }
+
+  // Sin sesión y sin code válido → login con error
   return NextResponse.redirect(`${origin}/${locale}/login?error=callback_error`)
 }

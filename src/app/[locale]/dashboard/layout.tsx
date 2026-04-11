@@ -26,6 +26,11 @@ export default async function DashboardLayout({
     redirect(`/${params.locale}/admin`)
   }
 
+  // Safety net: si el cliente nunca completó el onboarding, mandarlo ahí primero
+  if (!profile?.onboarding_completed) {
+    redirect(`/${params.locale}/onboarding`)
+  }
+
   return (
     <div className="min-h-screen bg-[#0e0e0e] text-white font-body">
       <div className="flex h-screen overflow-hidden">
