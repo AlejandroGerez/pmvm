@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 interface Props {
   locale: string
@@ -9,16 +10,18 @@ interface Props {
   userEmail: string
 }
 
-const navItems = [
-  { href: 'dashboard',          label: 'Inicio',     icon: 'home' },
-  { href: 'dashboard/goals',    label: 'Metas',      icon: 'track_changes' },
-  { href: 'dashboard/routines', label: 'Rutinas',    icon: 'fitness_center' },
-  { href: 'dashboard/messages', label: 'Mensajes',   icon: 'chat' },
-  { href: 'dashboard/progress', label: 'Progreso',   icon: 'monitoring' },
-]
-
 export default function ClientSidebar({ locale, profile, userEmail }: Props) {
   const pathname = usePathname()
+  const t = useTranslations('app')
+
+  const navItems = [
+    { href: 'dashboard',          label: t('nav.home'),          icon: 'home' },
+    { href: 'dashboard/goals',    label: t('nav.goals'),         icon: 'track_changes' },
+    { href: 'dashboard/routines', label: t('nav.routines'),      icon: 'fitness_center' },
+    { href: 'dashboard/messages', label: t('nav.messages'),      icon: 'chat' },
+    { href: 'dashboard/progress', label: t('nav.progress'),      icon: 'monitoring' },
+  ]
+
   const initials = (profile?.full_name ?? userEmail)
     .split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2)
 
@@ -32,23 +35,31 @@ export default function ClientSidebar({ locale, profile, userEmail }: Props) {
             METODO R3SET
           </span>
         </Link>
-        <p className="font-label text-[9px] uppercase tracking-[0.2em] text-white/25 mt-1">Mi Área</p>
+        <p className="font-label text-[9px] uppercase tracking-[0.2em] text-white/25 mt-1">{t('sidebar.my_area')}</p>
       </div>
 
       {/* Profile chip */}
-      <div className="px-4 py-4 border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#c1ed00] flex items-center justify-center text-[#3b4a00] font-headline font-black text-xs flex-shrink-0">
+      <Link href={`/${locale}/dashboard/profile`} className="px-4 py-4 border-b border-white/5 flex items-center gap-3 group cursor-pointer">
+        {profile?.avatar_url ? (
+          <img
+            src={profile.avatar_url}
+            alt=""
+            className="w-8 h-8 object-cover flex-shrink-0 group-hover:opacity-80 transition-opacity"
+          />
+        ) : (
+          <div className="w-8 h-8 bg-[#c1ed00] group-hover:bg-white transition-colors flex items-center justify-center text-[#3b4a00] font-headline font-black text-xs flex-shrink-0">
             {initials}
           </div>
-          <div className="min-w-0">
-            <p className="font-label text-xs text-white truncate leading-none">
-              {profile?.full_name ?? 'Mi Perfil'}
-            </p>
-            <p className="font-label text-[9px] text-white/30 truncate mt-0.5">{userEmail}</p>
-          </div>
+        )}
+        <div className="min-w-0">
+          <p className="font-label text-xs text-white truncate leading-none">
+            {profile?.full_name ?? 'Mi Perfil'}
+          </p>
+          <p className="font-label text-[9px] text-[#c1ed00] group-hover:text-white/40 transition-colors truncate mt-0.5">
+            {t('sidebar.my_profile_link')}
+          </p>
         </div>
-      </div>
+      </Link>
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1">
@@ -84,7 +95,7 @@ export default function ClientSidebar({ locale, profile, userEmail }: Props) {
           className="flex items-center gap-3 px-3 py-2.5 font-label text-[11px] uppercase tracking-widest text-white/25 hover:text-white transition-colors"
         >
           <span className="material-symbols-outlined text-[18px]">public</span>
-          Ver Landing
+          {t('sidebar.view_landing')}
         </Link>
         <form action={`/api/auth/signout`} method="POST">
           <button
@@ -92,7 +103,7 @@ export default function ClientSidebar({ locale, profile, userEmail }: Props) {
             className="flex items-center gap-3 px-3 py-2.5 font-label text-[11px] uppercase tracking-widest text-white/25 hover:text-white transition-colors w-full text-left"
           >
             <span className="material-symbols-outlined text-[18px]">logout</span>
-            Cerrar Sesión
+            {t('sidebar.sign_out')}
           </button>
         </form>
       </div>

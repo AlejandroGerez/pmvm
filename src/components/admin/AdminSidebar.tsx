@@ -3,25 +3,28 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { createClient } from '@/lib/supabase/client'
 
 interface AdminSidebarProps {
   locale: string
   adminName: string
+  adminAvatarUrl?: string | null
 }
 
-const navItems = [
-  { href: 'admin',                 label: 'Dashboard',  icon: 'dashboard' },
-  { href: 'admin/goals',           label: 'Metas',      icon: 'track_changes' },
-  { href: 'admin/routines',        label: 'Rutinas',    icon: 'fitness_center' },
-  { href: 'admin/clients',         label: 'Clientes',   icon: 'group' },
-  { href: 'admin/messages',        label: 'Mensajes',   icon: 'chat' },
-]
-
-export default function AdminSidebar({ locale, adminName }: AdminSidebarProps) {
+export default function AdminSidebar({ locale, adminName, adminAvatarUrl }: AdminSidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const t = useTranslations('app')
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  const navItems = [
+    { href: 'admin',                 label: t('nav.dashboard'),      icon: 'dashboard' },
+    { href: 'admin/goals',           label: t('nav.goals'),          icon: 'track_changes' },
+    { href: 'admin/routines',        label: t('nav.routines'),       icon: 'fitness_center' },
+    { href: 'admin/clients',         label: t('nav.clients'),        icon: 'group' },
+    { href: 'admin/messages',        label: t('nav.messages'),       icon: 'chat' },
+  ]
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -29,6 +32,8 @@ export default function AdminSidebar({ locale, adminName }: AdminSidebarProps) {
     router.push(`/${locale}/login`)
     router.refresh()
   }
+
+  const initials = adminName[0]?.toUpperCase() ?? 'A'
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-[#0e0e0e] border-r border-white/5">
@@ -38,18 +43,29 @@ export default function AdminSidebar({ locale, adminName }: AdminSidebarProps) {
             METODO R3SET
           </span>
         </Link>
-        <p className="text-[10px] text-white/25 font-label tracking-widest uppercase mt-1">Admin Portal</p>
+        <p className="text-[10px] text-white/25 font-label tracking-widest uppercase mt-1">{t('sidebar.admin_portal')}</p>
       </div>
 
-      <div className="px-6 pb-8 flex items-center gap-3">
-        <div className="w-10 h-10 bg-[#cefc22] flex items-center justify-center text-[#3b4a00] font-black text-sm flex-shrink-0 font-headline">
-          {adminName[0]?.toUpperCase()}
+      <Link href={`/${locale}/admin/profile`} onClick={() => setMobileOpen(false)}
+        className="px-6 pb-8 flex items-center gap-3 group cursor-pointer">
+        {adminAvatarUrl ? (
+          <img
+            src={adminAvatarUrl}
+            alt=""
+            className="w-10 h-10 object-cover flex-shrink-0 group-hover:opacity-80 transition-opacity"
+          />
+        ) : (
+          <div className="w-10 h-10 bg-[#cefc22] flex items-center justify-center text-[#3b4a00] font-black text-sm flex-shrink-0 font-headline group-hover:bg-white transition-colors">
+            {initials}
+          </div>
+        )}
+        <div className="min-w-0">
+          <p className="text-sm font-headline font-bold text-white uppercase tracking-tight truncate">{adminName}</p>
+          <p className="text-[10px] text-[#c1ed00] font-label uppercase tracking-widest group-hover:text-white/50 transition-colors">
+            {t('sidebar.trainer_profile')}
+          </p>
         </div>
-        <div>
-          <p className="text-sm font-headline font-bold text-white uppercase tracking-tight">{adminName}</p>
-          <p className="text-[10px] text-[#c1ed00] font-label uppercase tracking-widest">Entrenador</p>
-        </div>
-      </div>
+      </Link>
 
       <nav className="flex-1 px-2 space-y-0.5">
         {navItems.map((item) => {
@@ -73,28 +89,16 @@ export default function AdminSidebar({ locale, adminName }: AdminSidebarProps) {
         })}
       </nav>
 
-      {/* New Workout CTA */}
-      <div className="px-4 pb-4">
-        <Link
-          href={`/${locale}/admin/routines`}
-          onClick={() => setMobileOpen(false)}
-          className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#cefc22] text-[#3b4a00] font-headline font-black text-xs tracking-widest uppercase hover:opacity-90 active:scale-[0.98] transition-all"
-        >
-          <span className="material-symbols-outlined text-[18px]">add</span>
-          New Workout
-        </Link>
-      </div>
-
       <div className="px-2 pb-2 space-y-0.5 border-t border-white/5 pt-2">
         <Link href={`/${locale}/dashboard`} onClick={() => setMobileOpen(false)}
           className="flex items-center gap-3 px-4 py-3 text-white/25 hover:text-white/60 hover:bg-white/5 transition-all font-headline font-bold text-xs tracking-tight uppercase">
           <span className="material-symbols-outlined text-[20px]">person</span>
-          <span>Ver como cliente</span>
+          <span>{t('sidebar.view_as_client')}</span>
         </Link>
         <Link href={`/${locale}/v4`} onClick={() => setMobileOpen(false)}
           className="flex items-center gap-3 px-4 py-3 text-white/25 hover:text-white/60 hover:bg-white/5 transition-all font-headline font-bold text-xs tracking-tight uppercase">
           <span className="material-symbols-outlined text-[20px]">public</span>
-          <span>Ver landing</span>
+          <span>{t('sidebar.view_landing')}</span>
         </Link>
       </div>
 
@@ -102,7 +106,7 @@ export default function AdminSidebar({ locale, adminName }: AdminSidebarProps) {
         <button onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 text-white/25 hover:text-red-400 hover:bg-red-400/5 transition-all font-headline font-bold text-xs tracking-tight uppercase">
           <span className="material-symbols-outlined text-[20px]">logout</span>
-          <span>Cerrar sesión</span>
+          <span>{t('sidebar.sign_out')}</span>
         </button>
         <p className="px-4 mt-3 text-[10px] text-white/15 font-label tracking-widest uppercase">v2.0 · R3SET</p>
       </div>

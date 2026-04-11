@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Zap } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 const stagger = {
   hidden: { opacity: 0 },
@@ -39,14 +40,19 @@ interface Props {
 export default function ClientDashboardHome({
   locale, displayName, routinesCount, unreadMessages, progressCount, recentProgress, activeSub,
 }: Props) {
+  const t = useTranslations('app')
+
   const stats = [
-    { icon: 'fitness_center', color: '#c1ed00', label: 'Rutinas Activas',   value: routinesCount,   href: `/${locale}/dashboard/routines` },
-    { icon: 'chat',           color: '#00e3fd', label: 'Mensajes del Coach', value: unreadMessages,  href: `/${locale}/dashboard/messages` },
-    { icon: 'monitoring',     color: '#ff734a', label: 'Registros de Peso',  value: progressCount,   href: `/${locale}/dashboard/progress` },
+    { icon: 'fitness_center', color: '#c1ed00', label: t('home.stat_routines'),  value: routinesCount,  href: `/${locale}/dashboard/routines` },
+    { icon: 'chat',           color: '#00e3fd', label: t('home.stat_messages'),  value: unreadMessages, href: `/${locale}/dashboard/messages` },
+    { icon: 'monitoring',     color: '#ff734a', label: t('home.stat_weight'),    value: progressCount,  href: `/${locale}/dashboard/progress` },
   ]
 
   const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches'
+  const greeting = hour < 12 ? t('greeting.morning') : hour < 19 ? t('greeting.afternoon') : t('greeting.evening')
+
+  // Date locale for formatting
+  const dateLocale = locale === 'en' ? 'en-US' : locale === 'pt' ? 'pt-BR' : 'es-AR'
 
   return (
     <div className="bg-[#0e0e0e] min-h-screen text-white relative overflow-hidden">
@@ -78,7 +84,7 @@ export default function ClientDashboardHome({
 
         {/* Subscription card */}
         {activeSub ? (
-          <SubscriptionCard sub={activeSub} locale={locale} />
+          <SubscriptionCard sub={activeSub} locale={locale} dateLocale={dateLocale} />
         ) : (
           <motion.div
             className="mb-8 p-4 border border-dashed border-white/15 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4"
@@ -87,14 +93,14 @@ export default function ClientDashboardHome({
             transition={{ delay: 0.35, duration: 0.4 }}
           >
             <div>
-              <p className="font-label text-[10px] uppercase tracking-widest text-white/30 mb-1">Sin plan activo</p>
-              <p className="text-white/60 text-sm">Adquirí un plan para acceder a tus rutinas personalizadas</p>
+              <p className="font-label text-[10px] uppercase tracking-widest text-white/30 mb-1">{t('home.no_plan_label')}</p>
+              <p className="text-white/60 text-sm">{t('home.no_plan_desc')}</p>
             </div>
             <Link
               href={`/${locale}#pricing`}
               className="flex-shrink-0 px-5 py-2.5 bg-[#c1ed00] text-[#0e0e0e] font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#d4ff00] transition-colors"
             >
-              Ver planes →
+              {t('home.see_plans')}
             </Link>
           </motion.div>
         )}
@@ -130,7 +136,7 @@ export default function ClientDashboardHome({
                 </div>
                 <div className="mt-3 flex items-center gap-1">
                   <span className="material-symbols-outlined text-sm" style={{ color }}>arrow_forward</span>
-                  <span className="font-label text-[10px] uppercase tracking-widest" style={{ color }}>Ver más</span>
+                  <span className="font-label text-[10px] uppercase tracking-widest" style={{ color }}>{t('home.see_more')}</span>
                 </div>
               </Link>
             </motion.div>
@@ -146,11 +152,11 @@ export default function ClientDashboardHome({
         >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-white/30 mb-1">Historial</p>
-              <h3 className="font-headline text-lg font-bold uppercase tracking-tight">Mis Últimos Registros</h3>
+              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-white/30 mb-1">{t('home.history_label')}</p>
+              <h3 className="font-headline text-lg font-bold uppercase tracking-tight">{t('home.history_title')}</h3>
             </div>
             <Link href={`/${locale}/dashboard/progress`} className="font-label text-[10px] uppercase tracking-widest text-[#c1ed00] hover:underline">
-              Ver todo →
+              {t('home.see_all')}
             </Link>
           </div>
 
@@ -162,12 +168,12 @@ export default function ClientDashboardHome({
               transition={{ delay: 0.6 }}
             >
               <span className="material-symbols-outlined text-4xl text-white/10">monitoring</span>
-              <p className="font-label text-[10px] uppercase tracking-widest text-white/25">Todavía no hay registros</p>
+              <p className="font-label text-[10px] uppercase tracking-widest text-white/25">{t('home.no_records')}</p>
               <Link
                 href={`/${locale}/dashboard/progress`}
                 className="mt-2 px-5 py-2.5 bg-[#cefc22] text-[#3b4a00] font-headline font-bold text-xs uppercase tracking-widest hover:opacity-90 transition-opacity"
               >
-                Registrar mi primer pesaje
+                {t('home.first_record')}
               </Link>
             </motion.div>
           ) : (
@@ -177,7 +183,7 @@ export default function ClientDashboardHome({
               initial="hidden"
               animate="visible"
             >
-              {recentProgress.map((p: any, i: number) => (
+              {recentProgress.map((p: any) => (
                 <motion.div
                   key={p.id}
                   className="flex items-center gap-4 px-4 py-3 bg-[#0e0e0e]/60 hover:bg-[#0e0e0e] transition-colors group"
@@ -188,11 +194,11 @@ export default function ClientDashboardHome({
                   <span className="material-symbols-outlined text-[#c1ed00] text-sm">trending_up</span>
                   <div className="flex-1">
                     <p className="font-label text-xs text-white">
-                      {p.weight_kg ? `${p.weight_kg} kg` : 'Registro de progreso'}
+                      {p.weight_kg ? `${p.weight_kg} kg` : t('admin.new_record')}
                     </p>
                   </div>
                   <p className="font-label text-[10px] text-white/25">
-                    {new Date(p.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })}
+                    {new Date(p.created_at).toLocaleDateString(dateLocale, { day: '2-digit', month: 'short' })}
                   </p>
                 </motion.div>
               ))}
@@ -212,14 +218,14 @@ export default function ClientDashboardHome({
             className="flex items-center justify-center gap-2 py-4 border border-[#c1ed00]/30 text-[#c1ed00] font-headline font-bold text-sm uppercase tracking-widest hover:bg-[#c1ed00]/5 transition-colors"
           >
             <span className="material-symbols-outlined text-sm">fitness_center</span>
-            Ver mis rutinas
+            {t('home.cta_routines')}
           </Link>
           <Link
             href={`/${locale}/dashboard/messages`}
             className="flex items-center justify-center gap-2 py-4 border border-[#00e3fd]/30 text-[#00e3fd] font-headline font-bold text-sm uppercase tracking-widest hover:bg-[#00e3fd]/5 transition-colors"
           >
             <span className="material-symbols-outlined text-sm">chat</span>
-            Mensajes del coach
+            {t('home.cta_messages')}
           </Link>
         </motion.div>
 
@@ -229,10 +235,10 @@ export default function ClientDashboardHome({
 }
 
 // ── Subscription card ──────────────────────────────────────────────────────
-function SubscriptionCard({ sub, locale }: { sub: ActiveSub; locale: string }) {
+function SubscriptionCard({ sub, locale, dateLocale }: { sub: ActiveSub; locale: string; dateLocale: string }) {
+  const t = useTranslations('app')
   const now = new Date()
   const expiresAt = sub.expires_at ? new Date(sub.expires_at) : null
-  const startedAt = sub.started_at ? new Date(sub.started_at) : null
   const totalDays = sub.plans?.duration_days ?? 30
 
   const daysRemaining = expiresAt
@@ -241,11 +247,10 @@ function SubscriptionCard({ sub, locale }: { sub: ActiveSub; locale: string }) {
 
   const progress = totalDays > 0 ? Math.round(((totalDays - daysRemaining) / totalDays) * 100) : 0
 
-  const expiresFormatted = expiresAt?.toLocaleDateString('es-AR', {
+  const expiresFormatted = expiresAt?.toLocaleDateString(dateLocale, {
     day: 'numeric', month: 'long', year: 'numeric',
   }) ?? '—'
 
-  // Color urgency
   const urgencyColor = daysRemaining <= 7 ? '#ff734a' : daysRemaining <= 14 ? '#ffcc00' : '#c1ed00'
 
   return (
@@ -255,7 +260,6 @@ function SubscriptionCard({ sub, locale }: { sub: ActiveSub; locale: string }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.35, duration: 0.4 }}
     >
-      {/* Ambient glow */}
       <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#c1ed00]/8 blur-3xl rounded-full pointer-events-none" />
 
       <div className="relative">
@@ -263,24 +267,23 @@ function SubscriptionCard({ sub, locale }: { sub: ActiveSub; locale: string }) {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Zap className="w-3.5 h-3.5 text-[#c1ed00]" />
-              <p className="text-[10px] font-black uppercase tracking-widest text-[#c1ed00]">Plan activo</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-[#c1ed00]">{t('home.plan_active')}</p>
             </div>
             <p className="font-black text-xl text-white">{sub.plans?.name ?? sub.plan_id}</p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] text-white/30 uppercase tracking-wider mb-0.5">Días restantes</p>
+            <p className="text-[10px] text-white/30 uppercase tracking-wider mb-0.5">{t('home.days_remaining')}</p>
             <p className="font-black text-3xl leading-none" style={{ color: urgencyColor }}>
               {daysRemaining}
             </p>
           </div>
         </div>
 
-        {/* Progress bar */}
         <div className="mb-4">
           <div className="flex justify-between text-[10px] text-white/30 mb-1.5">
-            <span>Inicio</span>
-            <span>{progress}% completado</span>
-            <span>Vence el {expiresFormatted}</span>
+            <span>{t('home.plan_start')}</span>
+            <span>{progress}{t('home.plan_completed')}</span>
+            <span>{t('home.plan_expires')} {expiresFormatted}</span>
           </div>
           <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
             <motion.div
@@ -293,13 +296,12 @@ function SubscriptionCard({ sub, locale }: { sub: ActiveSub; locale: string }) {
           </div>
         </div>
 
-        {/* Renewal CTA (show when <= 14 days remaining) */}
         {daysRemaining <= 14 && (
           <Link
             href={`/${locale}#pricing`}
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#c1ed00] text-[#0e0e0e] font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#d4ff00] transition-colors"
           >
-            Renovar plan →
+            {t('home.renew_plan')}
           </Link>
         )}
       </div>

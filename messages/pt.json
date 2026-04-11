@@ -206,5 +206,102 @@
 		"footer": {
 			"rights": "Todos os direitos reservados"
 		}
+	},
+	"app": {
+		"nav": {
+			"home": "Início",
+			"goals": "Metas",
+			"routines": "Treinos",
+			"messages": "Mensagens",
+			"progress": "Progresso",
+			"clients": "Clientes",
+			"subscriptions": "Assinaturas",
+			"dashboard": "Dashboard"
+		},
+		"sidebar": {
+			"my_area": "Minha Área",
+			"admin_portal": "Portal Admin",
+			"trainer_profile": "Treinador · Meu perfil →",
+			"my_profile_link": "Meu perfil →",
+			"view_landing": "Ver Site",
+			"sign_out": "Sair",
+			"view_as_client": "Ver como cliente"
+		},
+		"greeting": {
+			"morning": "Bom dia",
+			"afternoon": "Boa tarde",
+			"evening": "Boa noite"
+		},
+		"home": {
+			"stat_routines": "Treinos Ativos",
+			"stat_messages": "Mensagens do Coach",
+			"stat_weight": "Registros de Peso",
+			"see_more": "Ver mais",
+			"history_label": "Histórico",
+			"history_title": "Meus Últimos Registros",
+			"see_all": "Ver tudo →",
+			"no_records": "Ainda não há registros",
+			"first_record": "Registrar meu primeiro peso",
+			"no_plan_label": "Sem plano ativo",
+			"no_plan_desc": "Adquira um plano para acessar seus treinos personalizados",
+			"see_plans": "Ver planos →",
+			"cta_routines": "Ver meus treinos",
+			"cta_messages": "Mensagens do coach",
+			"plan_active": "Plano ativo",
+			"days_remaining": "Dias restantes",
+			"plan_start": "Início",
+			"plan_completed": "% concluído",
+			"plan_expires": "Vence em",
+			"renew_plan": "Renovar plano →"
+		},
+		"admin": {
+			"overview": "Visão geral",
+			"panel_line1": "PAINEL",
+			"panel_line2": "ADMIN",
+			"stat_clients": "Clientes Ativos",
+			"stat_messages": "Mensagens não lidas",
+			"stat_progress": "Registros de Progresso",
+			"link_view_all": "Ver todos →",
+			"link_attention": "Requer Atenção →",
+			"link_recent": "Últimos registros →",
+			"feed_label": "Feed",
+			"feed_title": "Atividade Recente — Progresso",
+			"no_progress": "Nenhum registro de progresso ainda",
+			"new_clients_label": "Recentes",
+			"new_clients_title": "Novos Clientes",
+			"no_clients": "Nenhum cliente ainda",
+			"btn_clients": "Clientes",
+			"btn_subscriptions": "Assinaturas",
+			"new_record": "Novo registro",
+			"no_name": "Sem nome"
+		},
+		"profile": {
+			"section_config": "Configurações",
+			"section_my_area": "Minha Área",
+			"title": "MEU PERFIL",
+			"subtitle_admin": "Dados da sua conta e preferências.",
+			"subtitle_client": "Seus dados pessoais e preferências.",
+			"avatar_label": "Foto de perfil",
+			"avatar_click": "Clique na imagem para alterá-la",
+			"avatar_uploading": "Enviando...",
+			"avatar_hint": "JPG, PNG ou WEBP · máx. 2 MB",
+			"avatar_error": "Erro ao enviar imagem. Verifique o tamanho (máx. 2MB).",
+			"avatar_save_error": "Imagem enviada mas o perfil não pôde ser salvo.",
+			"name_label": "Nome completo",
+			"name_placeholder": "Seu nome",
+			"phone_label": "WhatsApp / Telefone",
+			"phone_placeholder": "+55 11 91234-5678",
+			"phone_hint_admin": "Seus clientes vão entrar em contato por aqui pelo app.",
+			"phone_hint_client": "Seu treinador pode entrar em contato por este número.",
+			"gender_label": "Gênero",
+			"male": "Masculino",
+			"female": "Feminino",
+			"other": "Outro",
+			"language_label": "Idioma",
+			"save": "Salvar alterações",
+			"saving": "Salvando...",
+			"saved": "Alterações salvas com sucesso.",
+			"save_error": "Erro ao salvar. Tente novamente."
+		}
 	}
 }

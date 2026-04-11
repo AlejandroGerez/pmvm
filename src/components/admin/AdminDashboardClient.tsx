@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 /* ── Animation variants ── */
 const fadeUp = {
@@ -33,15 +34,18 @@ interface Props {
 export default function AdminDashboardClient({
   locale, totalClients, unreadMessages, recentClients, recentProgress,
 }: Props) {
+  const t = useTranslations('app')
+  const dateLocale = locale === 'en' ? 'en-US' : locale === 'pt' ? 'pt-BR' : 'es-AR'
+
   const stats = [
     {
       icon: 'group',
       iconColor: '#c1ed00',
-      label: 'Clientes Activos',
+      label: t('admin.stat_clients'),
       value: String(totalClients),
       ghost: totalClients,
       link: `/${locale}/admin/clients`,
-      linkLabel: 'Ver todos →',
+      linkLabel: t('admin.link_view_all'),
       linkIcon: 'trending_up',
       linkColor: '#c1ed00',
       urgency: null,
@@ -49,11 +53,11 @@ export default function AdminDashboardClient({
     {
       icon: 'chat',
       iconColor: '#00e3fd',
-      label: 'Mensajes sin leer',
+      label: t('admin.stat_messages'),
       value: String(unreadMessages).padStart(2, '0'),
       ghost: unreadMessages,
       link: `/${locale}/admin/messages`,
-      linkLabel: 'Requiere Atención →',
+      linkLabel: t('admin.link_attention'),
       linkIcon: 'priority_high',
       linkColor: '#00e3fd',
       urgency: unreadMessages > 0 ? 'cyan' : null,
@@ -61,11 +65,11 @@ export default function AdminDashboardClient({
     {
       icon: 'monitoring',
       iconColor: '#ff734a',
-      label: 'Registros de Progreso',
+      label: t('admin.stat_progress'),
       value: String(recentProgress?.length ?? 0),
       ghost: recentProgress?.length ?? 0,
       link: `/${locale}/admin/clients`,
-      linkLabel: 'Últimos registros →',
+      linkLabel: t('admin.link_recent'),
       linkIcon: 'check_circle',
       linkColor: '#ff734a',
       urgency: null,
@@ -92,16 +96,15 @@ export default function AdminDashboardClient({
             variants={fadeUp}
             custom={0}
           >
-            Operational Overview
+            {t('admin.overview')}
           </motion.p>
           <motion.h2
             className="text-5xl lg:text-7xl font-headline font-black tracking-tighter text-white leading-none -ml-0.5"
             variants={fadeUp}
             custom={1}
           >
-            SYSTEM<br /><span className="text-[#c1ed00]">DASHBOARD</span>
+            {t('admin.panel_line1')}<br /><span className="text-[#c1ed00]">{t('admin.panel_line2')}</span>
           </motion.h2>
-          {/* Scan line decoration */}
           <motion.div
             className="mt-6 h-px bg-gradient-to-r from-[#c1ed00]/40 via-white/10 to-transparent"
             initial={{ scaleX: 0, transformOrigin: 'left' }}
@@ -124,7 +127,6 @@ export default function AdminDashboardClient({
               variants={card}
               whileHover={{ y: -4, transition: { duration: 0.25 } }}
             >
-              {/* Hover border glow */}
               <motion.div
                 className="absolute inset-0 border border-transparent group-hover:border-white/10 transition-colors duration-300"
                 style={{ borderColor: urgency ? `${iconColor}30` : undefined }}
@@ -138,21 +140,11 @@ export default function AdminDashboardClient({
               <p className="font-label text-[10px] text-white/30 uppercase tracking-widest mb-1">{label}</p>
               <p className="text-5xl lg:text-6xl font-headline font-black text-white">{value}</p>
               <div className="mt-4 flex items-center gap-2">
-                <span
-                  className="material-symbols-outlined text-sm"
-                  style={{ color: linkColor }}
-                >
-                  {linkIcon}
-                </span>
-                <Link
-                  href={link}
-                  className="font-label text-[10px] uppercase tracking-widest hover:underline"
-                  style={{ color: linkColor }}
-                >
+                <span className="material-symbols-outlined text-sm" style={{ color: linkColor }}>{linkIcon}</span>
+                <Link href={link} className="font-label text-[10px] uppercase tracking-widest hover:underline" style={{ color: linkColor }}>
                   {linkLabel}
                 </Link>
               </div>
-              {/* Ghost number */}
               <div className="absolute -bottom-4 -right-4 text-white/[0.04] font-black text-8xl font-headline pointer-events-none select-none">
                 {ghost}
               </div>
@@ -172,9 +164,9 @@ export default function AdminDashboardClient({
           >
             <div className="flex items-center justify-between mb-6">
               <div>
-                <p className="font-label text-[10px] uppercase tracking-[0.2em] text-white/30 mb-1">Feed</p>
+                <p className="font-label text-[10px] uppercase tracking-[0.2em] text-white/30 mb-1">{t('admin.feed_label')}</p>
                 <h3 className="font-headline text-lg font-bold uppercase tracking-tight">
-                  Actividad Reciente — Progreso
+                  {t('admin.feed_title')}
                 </h3>
               </div>
               <span className="px-2 py-1 bg-[#c1ed00]/10 text-[#c1ed00] font-label text-[9px] uppercase tracking-widest">Live</span>
@@ -187,7 +179,7 @@ export default function AdminDashboardClient({
                 transition={{ delay: 0.6 }}
               >
                 <span className="material-symbols-outlined text-4xl text-white/10">monitoring</span>
-                <p className="text-white/30 text-sm font-label uppercase tracking-widest">No hay registros de progreso aún</p>
+                <p className="text-white/30 text-sm font-label uppercase tracking-widest">{t('admin.no_progress')}</p>
               </motion.div>
             ) : (
               <motion.div
@@ -209,11 +201,13 @@ export default function AdminDashboardClient({
                       <span className="material-symbols-outlined text-[#c1ed00] text-sm">trending_up</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-label text-xs text-white truncate">{(p.profiles as any)?.full_name ?? 'Cliente'}</p>
-                      <p className="font-label text-[10px] text-white/30 uppercase tracking-widest">{p.weight_kg ? `${p.weight_kg} kg` : 'Registro nuevo'}</p>
+                      <p className="font-label text-xs text-white truncate">{(p.profiles as any)?.full_name ?? t('admin.no_name')}</p>
+                      <p className="font-label text-[10px] text-white/30 uppercase tracking-widest">
+                        {p.weight_kg ? `${p.weight_kg} kg` : t('admin.new_record')}
+                      </p>
                     </div>
                     <p className="font-label text-[10px] text-white/20 flex-shrink-0">
-                      {new Date(p.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })}
+                      {new Date(p.created_at).toLocaleDateString(dateLocale, { day: '2-digit', month: 'short' })}
                     </p>
                   </motion.div>
                 ))}
@@ -229,8 +223,8 @@ export default function AdminDashboardClient({
             transition={{ delay: 0.55, duration: 0.5 }}
           >
             <div className="mb-6">
-              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-white/30 mb-1">Recientes</p>
-              <h3 className="font-headline text-lg font-bold uppercase tracking-tight">Nuevos Clientes</h3>
+              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-white/30 mb-1">{t('admin.new_clients_label')}</p>
+              <h3 className="font-headline text-lg font-bold uppercase tracking-tight">{t('admin.new_clients_title')}</h3>
             </div>
             {recentClients.length === 0 ? (
               <motion.p
@@ -239,7 +233,7 @@ export default function AdminDashboardClient({
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
               >
-                No hay clientes aún
+                {t('admin.no_clients')}
               </motion.p>
             ) : (
               <motion.div
@@ -263,9 +257,9 @@ export default function AdminDashboardClient({
                         {initials}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-label text-xs text-white truncate">{c.full_name ?? 'Sin nombre'}</p>
+                        <p className="font-label text-xs text-white truncate">{c.full_name ?? t('admin.no_name')}</p>
                         <p className="font-label text-[10px] text-white/30">
-                          {new Date(c.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })}
+                          {new Date(c.created_at).toLocaleDateString(dateLocale, { day: '2-digit', month: 'short' })}
                         </p>
                       </div>
                     </motion.div>
@@ -281,17 +275,17 @@ export default function AdminDashboardClient({
             >
               <Link
                 href={`/${locale}/admin/clients`}
-                className="w-full flex items-center justify-center gap-2 bg-[#cefc22] text-[#3b4a00] py-3 font-headline font-bold text-xs uppercase tracking-widest hover:opacity-90 active:scale-[0.98] transition-all duration-200"
+                className="w-full flex items-center justify-center gap-2 bg-[#cefc22] text-[#3b4a00] py-3 font-headline font-bold text-xs uppercase tracking-wide hover:opacity-90 active:scale-[0.98] transition-all duration-200"
               >
                 <span className="material-symbols-outlined text-sm">group_add</span>
-                Ver todos los clientes
+                {t('admin.btn_clients')}
               </Link>
               <Link
                 href={`/${locale}/admin/subscriptions`}
-                className="w-full flex items-center justify-center gap-2 border border-[#c1ed00]/30 text-[#c1ed00] py-3 font-headline font-bold text-xs uppercase tracking-widest hover:bg-[#c1ed00]/5 transition-all duration-200"
+                className="w-full flex items-center justify-center gap-2 border border-[#c1ed00]/30 text-[#c1ed00] py-3 font-headline font-bold text-xs uppercase tracking-wide hover:bg-[#c1ed00]/5 transition-all duration-200"
               >
                 <span className="material-symbols-outlined text-sm">payments</span>
-                Ver suscripciones y pagos
+                {t('admin.btn_subscriptions')}
               </Link>
             </motion.div>
           </motion.div>

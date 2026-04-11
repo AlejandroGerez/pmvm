@@ -207,5 +207,102 @@
 		"footer": {
 			"rights": "All rights reserved"
 		}
+	},
+	"app": {
+		"nav": {
+			"home": "Home",
+			"goals": "Goals",
+			"routines": "Routines",
+			"messages": "Messages",
+			"progress": "Progress",
+			"clients": "Clients",
+			"subscriptions": "Subscriptions",
+			"dashboard": "Dashboard"
+		},
+		"sidebar": {
+			"my_area": "My Area",
+			"admin_portal": "Admin Portal",
+			"trainer_profile": "Trainer · My profile →",
+			"my_profile_link": "My profile →",
+			"view_landing": "View Site",
+			"sign_out": "Sign Out",
+			"view_as_client": "View as client"
+		},
+		"greeting": {
+			"morning": "Good morning",
+			"afternoon": "Good afternoon",
+			"evening": "Good evening"
+		},
+		"home": {
+			"stat_routines": "Active Routines",
+			"stat_messages": "Coach Messages",
+			"stat_weight": "Weight Records",
+			"see_more": "See more",
+			"history_label": "History",
+			"history_title": "My Latest Records",
+			"see_all": "See all →",
+			"no_records": "No records yet",
+			"first_record": "Record my first weigh-in",
+			"no_plan_label": "No active plan",
+			"no_plan_desc": "Get a plan to access your personalized routines",
+			"see_plans": "See plans →",
+			"cta_routines": "See my routines",
+			"cta_messages": "Coach messages",
+			"plan_active": "Active plan",
+			"days_remaining": "Days remaining",
+			"plan_start": "Start",
+			"plan_completed": "% completed",
+			"plan_expires": "Expires",
+			"renew_plan": "Renew plan →"
+		},
+		"admin": {
+			"overview": "Overview",
+			"panel_line1": "ADMIN",
+			"panel_line2": "PANEL",
+			"stat_clients": "Active Clients",
+			"stat_messages": "Unread messages",
+			"stat_progress": "Progress Records",
+			"link_view_all": "View all →",
+			"link_attention": "Needs Attention →",
+			"link_recent": "Latest records →",
+			"feed_label": "Feed",
+			"feed_title": "Recent Activity — Progress",
+			"no_progress": "No progress records yet",
+			"new_clients_label": "Recent",
+			"new_clients_title": "New Clients",
+			"no_clients": "No clients yet",
+			"btn_clients": "Clients",
+			"btn_subscriptions": "Subscriptions",
+			"new_record": "New record",
+			"no_name": "No name"
+		},
+		"profile": {
+			"section_config": "Settings",
+			"section_my_area": "My Area",
+			"title": "MY PROFILE",
+			"subtitle_admin": "Your account data and preferences.",
+			"subtitle_client": "Your personal data and preferences.",
+			"avatar_label": "Profile photo",
+			"avatar_click": "Click the image to change it",
+			"avatar_uploading": "Uploading...",
+			"avatar_hint": "JPG, PNG or WEBP · max. 2 MB",
+			"avatar_error": "Error uploading image. Check the size (max 2MB).",
+			"avatar_save_error": "Image uploaded but profile could not be saved.",
+			"name_label": "Full name",
+			"name_placeholder": "Your name",
+			"phone_label": "WhatsApp / Phone",
+			"phone_placeholder": "+1 555 123 4567",
+			"phone_hint_admin": "Your clients will contact you here from the app.",
+			"phone_hint_client": "Your trainer can contact you at this number.",
+			"gender_label": "Gender",
+			"male": "Male",
+			"female": "Female",
+			"other": "Other",
+			"language_label": "Language",
+			"save": "Save changes",
+			"saving": "Saving...",
+			"saved": "Changes saved successfully.",
+			"save_error": "Error saving. Please try again."
+		}
 	}
 }
