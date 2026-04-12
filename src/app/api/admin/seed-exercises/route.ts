@@ -42,7 +42,7 @@ function getAdminClient() {
 }
 
 // Download a GIF URL and upload to Supabase Storage
-async function storeGif(supabase: ReturnType<typeof createClient>, exerciseId: string, gifUrl: string): Promise<string | null> {
+async function storeGif(supabase: ReturnType<typeof getAdminClient>, exerciseId: string, gifUrl: string): Promise<string | null> {
   try {
     const res = await fetch(gifUrl, { signal: AbortSignal.timeout(15000) })
     if (!res.ok) return gifUrl // fallback: keep original URL

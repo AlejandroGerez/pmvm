@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function V2Bio() {
   return (
     <section className="py-32 bg-brand-dark scroll-mt-32" id="bio">
@@ -39,10 +41,13 @@ export default function V2Bio() {
           <div className="order-1 md:order-2">
             <div className="relative group">
               <div className="absolute inset-0 bg-brand-accent/5 -rotate-3 rounded-sm transition-transform duration-700 group-hover:rotate-0" />
-              <img
+              <Image
                 alt="Alejandro Gerez Profesional"
                 className="relative z-10 w-full rounded-sm shadow-2xl grayscale group-hover:grayscale-0 group-hover:scale-[1.03] transition-transform duration-700"
                 src="/images/aboutme/imagen2.jpg"
+                width={900}
+                height={1200}
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           </div>

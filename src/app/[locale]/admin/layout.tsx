@@ -17,7 +17,7 @@ export default async function AdminLayout({
   // Use admin client to bypass RLS when reading the profile role
   const { data: profile } = await createAdminClient()
     .from('profiles')
-    .select('role, full_name, avatar_url')
+    .select('role, full_name, avatar_url, locale')
     .eq('id', user.id)
     .single()
 

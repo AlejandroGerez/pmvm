@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import transformations from "@/data/transformations.json";
 import { useLocale } from "next-intl";
 import {
@@ -25,20 +26,24 @@ function StoryCard({
     <div className="flex flex-col">
       <div className="grid grid-cols-2 gap-4 mb-6 group overflow-hidden">
         <div className="relative overflow-hidden aspect-[4/5] bg-brand-gray">
-          <img
+          <Image
             alt="Antes"
-            className="w-full h-full object-cover grayscale opacity-70 group-hover:opacity-100 transition-all duration-700"
+            className="object-cover grayscale opacity-70 group-hover:opacity-100 transition-all duration-700"
             src={story.beforeImg}
+            fill
+            sizes="(max-width: 768px) 50vw, 33vw"
           />
           <div className="absolute bottom-3 left-3 bg-brand-black/80 px-3 py-1 text-[10px] font-bold uppercase tracking-widest border border-white/10">
             Antes
           </div>
         </div>
         <div className="relative overflow-hidden aspect-[4/5] bg-brand-gray">
-          <img
+          <Image
             alt="Después"
-            className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
+            className="object-cover group-hover:scale-105 transition-all duration-700"
             src={story.afterImg}
+            fill
+            sizes="(max-width: 768px) 50vw, 33vw"
           />
           <div className="absolute bottom-3 right-3 bg-brand-accent px-3 py-1 text-brand-black text-[10px] font-bold uppercase tracking-widest">
             Después

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -41,11 +42,16 @@ export default function ClientSidebar({ locale, profile, userEmail }: Props) {
       {/* Profile chip */}
       <Link href={`/${locale}/dashboard/profile`} className="px-4 py-4 border-b border-white/5 flex items-center gap-3 group cursor-pointer">
         {profile?.avatar_url ? (
-          <img
-            src={profile.avatar_url}
-            alt=""
-            className="w-8 h-8 object-cover flex-shrink-0 group-hover:opacity-80 transition-opacity"
-          />
+          <div className="relative w-8 h-8 flex-shrink-0 overflow-hidden group-hover:opacity-80 transition-opacity">
+            <Image
+              src={profile.avatar_url}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="32px"
+              unoptimized
+            />
+          </div>
         ) : (
           <div className="w-8 h-8 bg-[#c1ed00] group-hover:bg-white transition-colors flex items-center justify-center text-[#3b4a00] font-headline font-black text-xs flex-shrink-0">
             {initials}

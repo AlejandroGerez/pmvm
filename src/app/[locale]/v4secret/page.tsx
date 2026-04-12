@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
@@ -406,11 +407,16 @@ export default function V4Page() {
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex flex-col justify-end px-6 pb-16 pt-24 md:pt-20 overflow-hidden">
         <motion.div className="absolute inset-0 z-0" style={{ y: heroY }}>
-          <img
-            src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=1600&q=80&auto=format&fit=crop"
-            alt="Entrenamiento de alto rendimiento"
-            className="w-full h-full object-cover opacity-50 scale-110"
-          />
+          <div className="absolute inset-0">
+            <Image
+              src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=1600&q=80&auto=format&fit=crop"
+              alt="Entrenamiento de alto rendimiento"
+              fill
+              className="object-cover opacity-50 scale-110"
+              priority
+              sizes="100vw"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/50 to-transparent" />
           <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-[#0e0e0e] via-[#0e0e0e]/60 to-transparent" />
         </motion.div>
@@ -509,7 +515,13 @@ export default function V4Page() {
               <div className="absolute top-6 right-6 text-[#c1ed00]/10 font-headline font-black text-8xl italic pointer-events-none select-none">01</div>
               {/* Background image */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700">
-                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=60&auto=format&fit=crop" alt="" className="w-full h-full object-cover" />
+                <Image
+                  src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=60&auto=format&fit=crop"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                />
               </div>
               <div className="relative z-10">
                 <span className="material-symbols-outlined text-[#ff734a] text-4xl mb-4 block">psychology</span>
@@ -533,7 +545,13 @@ export default function V4Page() {
               transition={{ type: 'spring', stiffness: 300 }}
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-700">
-                <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=60&auto=format&fit=crop" alt="" className="w-full h-full object-cover" />
+                <Image
+                  src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=60&auto=format&fit=crop"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                />
               </div>
               <div className="relative z-10">
                 <span className="material-symbols-outlined text-[#c1ed00] text-4xl">fitness_center</span>
@@ -557,7 +575,13 @@ export default function V4Page() {
               transition={{ type: 'spring', stiffness: 300 }}
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700">
-                <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=60&auto=format&fit=crop" alt="" className="w-full h-full object-cover" />
+                <Image
+                  src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=60&auto=format&fit=crop"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                />
               </div>
               <div className="relative z-10 flex-shrink-0">
                 <span className="material-symbols-outlined text-[#00e3fd] text-4xl">restaurant</span>

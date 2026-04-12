@@ -205,7 +205,7 @@ async function handlePreapproval(preapprovalId: string) {
 }
 
 async function processPreapprovalStatus(
-  admin: ReturnType<typeof createAdminSupabaseClient>,
+  admin: ReturnType<typeof getAdminClient>,
   sub: any,
   preapproval: any,
 ) {
@@ -341,7 +341,7 @@ async function handleOneTimePayment(paymentId: string) {
 
 // ── Shared notification logic ────────────────────────────────────────────────
 async function sendActivationNotifications(
-  admin: ReturnType<typeof createAdminSupabaseClient>,
+  admin: ReturnType<typeof getAdminClient>,
   sub: any,
   isRenewal = false,
 ) {

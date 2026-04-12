@@ -1,8 +1,51 @@
 'use client'
 
 import { useState, useTransition, useCallback, useRef } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+
+function ExerciseMedia({
+  src,
+  alt,
+  className = 'object-cover',
+  sizes = '48px',
+  lazy,
+  largeIcon,
+}: {
+  src: string
+  alt: string
+  className?: string
+  sizes?: string
+  lazy?: boolean
+  largeIcon?: boolean
+}) {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+        <span
+          className={`material-symbols-outlined text-white/10 ${largeIcon ? 'text-3xl' : 'text-[16px]'}`}
+        >
+          fitness_center
+        </span>
+      </div>
+    )
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className={className}
+      sizes={sizes}
+      unoptimized
+      loading={lazy ? 'lazy' : undefined}
+      referrerPolicy="no-referrer"
+      onError={() => setFailed(true)}
+    />
+  )
+}
 
 /* ── Types ── */
 
@@ -588,13 +631,10 @@ export default function RoutinesClient({
                         title={ex.name}
                       >
                         {(ex.exercises?.gif_url || ex.exercises?.image_url) ? (
-                          <img
+                          <ExerciseMedia
                             src={(ex.exercises.gif_url ?? ex.exercises.image_url)!}
                             alt={ex.name}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            referrerPolicy="no-referrer"
-                            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+                            lazy
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
@@ -725,11 +765,12 @@ export default function RoutinesClient({
                   .map((ex, idx) => (
                   <div key={ex.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
                     <span className="text-[10px] text-white/20 font-black w-6 flex-shrink-0">{String(idx+1).padStart(2,'0')}</span>
-                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
+                    <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
                       {(ex.exercises?.gif_url || ex.exercises?.image_url) ? (
-                        <img src={(ex.exercises.gif_url ?? ex.exercises.image_url)!} alt={ex.name} className="w-full h-full object-cover"
-                          referrerPolicy="no-referrer"
-                          onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                        <ExerciseMedia
+                          src={(ex.exercises.gif_url ?? ex.exercises.image_url)!}
+                          alt={ex.name}
+                        />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <span className="material-symbols-outlined text-[16px] text-white/20">fitness_center</span>
@@ -862,11 +903,12 @@ export default function RoutinesClient({
                   <div key={ex._key} className="bg-white/3 border border-white/8 rounded-xl p-3">
                     <div className="flex items-start gap-3">
                       {/* Imagen del ejercicio */}
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
+                      <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
                         {(ex.gif_url || ex.image_url) ? (
-                          <img src={(ex.gif_url ?? ex.image_url)!} alt={ex.name} className="w-full h-full object-cover"
-                            referrerPolicy="no-referrer"
-                            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                          <ExerciseMedia
+                            src={(ex.gif_url ?? ex.image_url)!}
+                            alt={ex.name}
+                          />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <span className="material-symbols-outlined text-[16px] text-white/20">fitness_center</span>
@@ -1029,13 +1071,11 @@ export default function RoutinesClient({
             {previewEx && (
               <div className="mx-4 mb-3 flex-shrink-0 bg-white/3 border border-white/10 rounded-2xl overflow-hidden flex gap-0">
                 {(previewEx.gif_url || previewEx.image_url) && (
-                  <div className="w-28 h-28 flex-shrink-0 bg-black">
-                    <img
+                  <div className="relative w-28 h-28 flex-shrink-0 bg-black">
+                    <ExerciseMedia
                       src={(previewEx.gif_url ?? previewEx.image_url)!}
                       alt={previewEx.name}
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                      onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+                      sizes="112px"
                     />
                   </div>
                 )}
@@ -1090,22 +1130,18 @@ export default function RoutinesClient({
                         {/* GIF / imagen */}
                         <div className="aspect-square bg-[#0a0a0a] relative overflow-hidden">
                           {(ex.gif_url || ex.image_url) ? (
-                            <img
+                            <ExerciseMedia
                               src={(ex.gif_url ?? ex.image_url)!}
                               alt={ex.name}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                              referrerPolicy="no-referrer"
-                              onError={e => {
-                                const target = e.target as HTMLImageElement
-                                target.style.display = 'none'
-                                target.nextElementSibling?.removeAttribute('hidden')
-                              }}
+                              sizes="(max-width:640px)50vw,33vw"
+                              lazy
+                              largeIcon
                             />
-                          ) : null}
-                          <div hidden={!!(ex.gif_url || ex.image_url)} className="absolute inset-0 flex flex-col items-center justify-center gap-1">
-                            <span className="material-symbols-outlined text-3xl text-white/10">fitness_center</span>
-                          </div>
+                          ) : (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                              <span className="material-symbols-outlined text-3xl text-white/10">fitness_center</span>
+                            </div>
+                          )}
                           {isSelected && (
                             <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-[#D1FF26] rounded-full flex items-center justify-center">
                               <span className="material-symbols-outlined text-[12px] text-[#3b4a00]">check</span>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -164,7 +164,7 @@ const i18n = {
 export default function CheckoutPage({ params }: { params: { locale: string } }) {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   const locale = (params.locale as Locale) || 'es'
   const t = i18n[locale] ?? i18n.es
@@ -207,7 +207,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       }
       setAuthLoading(false)
     })
-  }, [])
+  }, [supabase])
 
   const plan = PLANS[selectedPlan]
 

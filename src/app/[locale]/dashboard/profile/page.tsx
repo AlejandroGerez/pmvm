@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function ClientProfilePage({ params }: { params: { locale: string } }) {
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const fileInputRef = useRef<HTMLInputElement>(null)
   const t = useTranslations('app.profile')
 
@@ -45,7 +45,7 @@ export default function ClientProfilePage({ params }: { params: { locale: string
       setLoading(false)
     }
     load()
-  }, [])
+  }, [params.locale, router, supabase])
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

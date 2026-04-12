@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 interface Exercise { id: string; name: string; sets: number; reps: string; rest_secs: number; notes: string; order_index: number }
@@ -21,7 +21,7 @@ export default function AdminClientTabs({ clientId, locale, routines: initialRou
   const [routines, setRoutines] = useState(initialRoutines)
   const [progress, setProgress] = useState(initialProgress)
   const [messages, setMessages] = useState(initialMessages)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   // ── ROUTINES state ──
   const [showRoutineForm, setShowRoutineForm] = useState(false)
@@ -64,7 +64,7 @@ export default function AdminClientTabs({ clientId, locale, routines: initialRou
       )
       .subscribe()
     return () => { supabase.removeChannel(channel) }
-  }, [clientId])
+  }, [clientId, supabase])
 
   // Add routine
   const handleAddRoutine = async (e: React.FormEvent) => {

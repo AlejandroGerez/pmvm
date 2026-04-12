@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
@@ -49,7 +49,7 @@ export default function MessagesPage({ params }: { params: { locale: string } })
   const [user, setUser] = useState<User | null>(null)
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     const init = async () => {
@@ -74,7 +74,7 @@ export default function MessagesPage({ params }: { params: { locale: string } })
       }
     }
     init()
-  }, [])
+  }, [supabase])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -100,7 +100,7 @@ export default function MessagesPage({ params }: { params: { locale: string } })
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }
-  }, [user])
+  }, [user, supabase])
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()

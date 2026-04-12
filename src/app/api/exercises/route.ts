@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
       if (error) console.error('[exercises POST] bodyParts error:', error.message)
 
       if (data && data.length > 0) {
-        const parts = [...new Set(data.map((r: any) => r.body_part).filter(Boolean))].sort()
+        const parts = Array.from(new Set(data.map((r: any) => r.body_part).filter(Boolean))).sort()
         return NextResponse.json({ items: parts })
       }
     } catch (e) {

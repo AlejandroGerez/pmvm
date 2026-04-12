@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 interface VideoProps {
   src: string;
@@ -57,13 +58,19 @@ const Video: React.FC<VideoProps> = ({
   }, [src, autoPlay]);
 
   if (showFallback) {
+    const remote = fallbackImage.startsWith("http");
     return (
-      <img
-        src={fallbackImage}
-        alt="Fallback"
-        className={rest.className}
-        style={rest.style}
-      />
+      <div className={`relative h-full w-full min-h-0 ${rest.className ?? ""}`} style={rest.style}>
+        <Image
+          src={fallbackImage}
+          alt="Fallback"
+          fill
+          className="object-cover"
+          sizes="100vw"
+          unoptimized={remote}
+          priority
+        />
+      </div>
     );
   }
 

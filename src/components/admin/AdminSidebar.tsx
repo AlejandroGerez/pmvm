@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -49,11 +50,16 @@ export default function AdminSidebar({ locale, adminName, adminAvatarUrl }: Admi
       <Link href={`/${locale}/admin/profile`} onClick={() => setMobileOpen(false)}
         className="px-6 pb-8 flex items-center gap-3 group cursor-pointer">
         {adminAvatarUrl ? (
-          <img
-            src={adminAvatarUrl}
-            alt=""
-            className="w-10 h-10 object-cover flex-shrink-0 group-hover:opacity-80 transition-opacity"
-          />
+          <div className="relative w-10 h-10 flex-shrink-0 overflow-hidden group-hover:opacity-80 transition-opacity">
+            <Image
+              src={adminAvatarUrl}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="40px"
+              unoptimized
+            />
+          </div>
         ) : (
           <div className="w-10 h-10 bg-[#cefc22] flex items-center justify-center text-[#3b4a00] font-black text-sm flex-shrink-0 font-headline group-hover:bg-white transition-colors">
             {initials}

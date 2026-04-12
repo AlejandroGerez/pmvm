@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function V2About() {
   return (
     <section className="py-32 bg-brand-black scroll-mt-32" id="about">
@@ -6,10 +8,13 @@ export default function V2About() {
           <div className="relative">
             <div className="absolute -top-6 -left-6 w-32 h-32 border-t border-l border-brand-accent/40 z-10" />
             <div className="relative overflow-hidden group">
-              <img
+              <Image
                 alt="Alejandro Gerez Entrenamiento"
                 className="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 transform group-hover:scale-105"
                 src="/images/aboutme/imagen1.jpg"
+                width={900}
+                height={1200}
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
             <div className="absolute -bottom-6 -right-6 w-32 h-32 border-b border-r border-brand-accent/40 z-10" />
