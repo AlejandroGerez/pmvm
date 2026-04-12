@@ -5,7 +5,7 @@ import { useLocale } from "next-intl";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import plans from "@/data/plans.json";
-import { PHONE_NUMBER } from "@/lib/data";
+import Link from "next/link";
 
 type Locale = "es" | "en" | "pt";
 
@@ -13,7 +13,7 @@ export default function V3Pricing() {
   const t = useTranslations("v3.pricing");
   const locale = useLocale() as Locale;
 
-  const waLink = `https://wa.me/${PHONE_NUMBER}`;
+  const checkoutLink = `/${locale}/checkout?plan=monthly`;
 
   return (
     <section id="v3-pricing" className="py-24 md:py-32 px-6 bg-brand-black">
@@ -137,10 +137,8 @@ export default function V3Pricing() {
                 </div>
 
                 {/* CTA */}
-                <a
-                  href={waLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  href={checkoutLink}
                   className={`block text-center py-4 text-[13px] font-bold tracking-[0.1em] uppercase transition-all duration-200 ${
                     isPremium
                       ? "bg-brand-accent text-brand-black hover:bg-white hover:-translate-y-px"
@@ -148,7 +146,7 @@ export default function V3Pricing() {
                   }`}
                 >
                   {t("cta")}
-                </a>
+                </Link>
               </motion.div>
             );
           })}

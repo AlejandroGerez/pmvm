@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createAdminSupabaseClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
 
@@ -114,89 +115,252 @@ const t = {
 
 type Locale = keyof typeof t
 
+/** Helper: get admin Supabase client */
+function getAdminClient() {
+  return createAdminSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!
+  )
+}
+
+/** Helper: fetch from MP API */
+async function mpFetch(path: string) {
+  const res = await fetch(`https://api.mercadopago.com${path}`, {
+    headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}` },
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`MP API ${path} → ${res.status}: ${text}`)
+  }
+  return res.json()
+}
+
 // ── Main handler ──────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     console.log('MP Webhook recibido:', JSON.stringify(body))
 
-    if (body.type !== 'payment' || !body.data?.id) {
-      return NextResponse.json({ ok: true })
+    const eventType = body.type
+    const dataId = body.data?.id
+
+    if (!dataId) return NextResponse.json({ ok: true })
+
+    // Route by event type
+    switch (eventType) {
+      case 'payment':
+        return await handleOneTimePayment(dataId)
+      case 'subscription_preapproval':
+        return await handlePreapproval(dataId)
+      case 'subscription_authorized_payment':
+        return await handleAuthorizedPayment(dataId)
+      default:
+        console.log(`Webhook type ignorado: ${eventType}`)
+        return NextResponse.json({ ok: true })
     }
+  } catch (error) {
+    console.error('Webhook error:', error)
+    return NextResponse.json({ error: 'Error interno' }, { status: 500 })
+  }
+}
 
-    const paymentId = body.data.id
-    const mpAccessToken = process.env.MP_ACCESS_TOKEN
+// ── Handle subscription_preapproval ──────────────────────────────────────────
+// Fired when preapproval status changes: authorized, paused, cancelled, pending
+async function handlePreapproval(preapprovalId: string) {
+  const preapproval = await mpFetch(`/preapproval/${preapprovalId}`)
+  console.log('Preapproval status:', preapproval.status, 'id:', preapprovalId)
 
-    const paymentRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
-      headers: { Authorization: `Bearer ${mpAccessToken}` },
-    })
+  const admin = getAdminClient()
 
-    if (!paymentRes.ok) {
-      console.error('Error al obtener pago de MP')
-      return NextResponse.json({ error: 'Error MP' }, { status: 500 })
+  // Find our subscription by mp_preapproval_id
+  const { data: sub, error: subError } = await admin
+    .from('subscriptions')
+    .select('*')
+    .eq('mp_preapproval_id', preapprovalId)
+    .single()
+
+  if (subError || !sub) {
+    // Also try external_reference (our subscription.id)
+    if (preapproval.external_reference) {
+      const { data: sub2 } = await admin
+        .from('subscriptions')
+        .select('*')
+        .eq('id', preapproval.external_reference)
+        .single()
+      if (!sub2) {
+        console.error('Suscripción no encontrada para preapproval:', preapprovalId)
+        return NextResponse.json({ ok: true })
+      }
+      // Store the preapproval ID if we didn't have it
+      if (!sub2.mp_preapproval_id) {
+        await admin.from('subscriptions').update({ mp_preapproval_id: preapprovalId }).eq('id', sub2.id)
+      }
+      return await processPreapprovalStatus(admin, sub2, preapproval)
     }
+    console.error('Suscripción no encontrada para preapproval:', preapprovalId)
+    return NextResponse.json({ ok: true })
+  }
 
-    const payment = await paymentRes.json()
-    console.log('MP Payment status:', payment.status, 'external_ref:', payment.external_reference)
+  return await processPreapprovalStatus(admin, sub, preapproval)
+}
 
-    if (payment.status !== 'approved') {
-      return NextResponse.json({ ok: true, skipped: `status=${payment.status}` })
-    }
+async function processPreapprovalStatus(
+  admin: ReturnType<typeof createAdminSupabaseClient>,
+  sub: any,
+  preapproval: any,
+) {
+  const mpStatus = preapproval.status // authorized | paused | cancelled | pending
 
-    const subscriptionId = payment.external_reference
-    if (!subscriptionId) {
-      console.error('Sin external_reference en el pago')
-      return NextResponse.json({ ok: true })
-    }
+  // Map MP preapproval status to our subscription status
+  const statusMap: Record<string, string> = {
+    authorized: 'active',
+    paused: 'paused',
+    cancelled: 'cancelled',
+    pending: 'pending',
+  }
+  const newStatus = statusMap[mpStatus] ?? sub.status
 
-    const supabase = createClient()
+  const updateData: Record<string, any> = {
+    status: newStatus,
+    mp_status: mpStatus,
+  }
 
-    // Obtener la suscripción actual
-    const { data: sub, error: subError } = await supabase
-      .from('subscriptions')
-      .select('*, plans(duration_days)')
-      .eq('id', subscriptionId)
-      .single()
-
-    if (subError || !sub) {
-      console.error('Suscripción no encontrada:', subscriptionId)
-      return NextResponse.json({ error: 'Suscripción no encontrada' }, { status: 404 })
-    }
-
-    // Calcular fechas
+  // If just authorized (first time), set start date
+  if (mpStatus === 'authorized' && sub.status === 'pending') {
     const startedAt = new Date()
     const days = PLAN_DAYS[sub.plan_id] ?? 30
     const expiresAt = new Date(startedAt.getTime() + days * 24 * 60 * 60 * 1000)
+    updateData.started_at = startedAt.toISOString()
+    updateData.expires_at = expiresAt.toISOString()
+  }
 
-    // Activar suscripción
-    await supabase
-      .from('subscriptions')
-      .update({
-        status: 'active',
-        mp_payment_id: String(paymentId),
-        mp_status: payment.status,
-        started_at: startedAt.toISOString(),
-        expires_at: expiresAt.toISOString(),
-      })
-      .eq('id', subscriptionId)
+  await admin.from('subscriptions').update(updateData).eq('id', sub.id)
+  console.log(`Preapproval → subscription ${sub.id} status: ${sub.status} → ${newStatus}`)
 
-    // Detectar si es cliente nuevo o recurrente
-    // (tiene otras suscripciones previas activas/expiradas, excluyendo la actual)
-    const { count: prevCount } = await supabase
+  // Send notifications only on first activation (pending → active)
+  if (mpStatus === 'authorized' && sub.status === 'pending') {
+    await sendActivationNotifications(admin, sub)
+  }
+
+  return NextResponse.json({ ok: true, subscriptionId: sub.id, status: newStatus })
+}
+
+// ── Handle subscription_authorized_payment ───────────────────────────────────
+// Fired when a recurring payment is collected successfully
+async function handleAuthorizedPayment(paymentId: string) {
+  const authPayment = await mpFetch(`/authorized_payments/${paymentId}`)
+  console.log('Authorized payment status:', authPayment.status, 'preapproval:', authPayment.preapproval_id)
+
+  if (authPayment.status !== 'approved') {
+    console.log(`Authorized payment ${paymentId} skipped: status=${authPayment.status}`)
+    return NextResponse.json({ ok: true, skipped: `status=${authPayment.status}` })
+  }
+
+  const admin = getAdminClient()
+
+  // Find subscription by preapproval ID
+  const preapprovalId = authPayment.preapproval_id
+  const { data: sub } = await admin
+    .from('subscriptions')
+    .select('*')
+    .eq('mp_preapproval_id', preapprovalId)
+    .single()
+
+  if (!sub) {
+    console.error('Suscripción no encontrada para authorized_payment, preapproval:', preapprovalId)
+    return NextResponse.json({ ok: true })
+  }
+
+  // Extend the subscription period from now
+  const startedAt = new Date()
+  const days = PLAN_DAYS[sub.plan_id] ?? 30
+  const expiresAt = new Date(startedAt.getTime() + days * 24 * 60 * 60 * 1000)
+
+  await admin.from('subscriptions').update({
+    status: 'active',
+    mp_status: 'approved',
+    mp_payment_id: String(paymentId),
+    started_at: startedAt.toISOString(),
+    expires_at: expiresAt.toISOString(),
+  }).eq('id', sub.id)
+
+  console.log(`Recurring payment collected → subscription ${sub.id} renewed until ${expiresAt.toISOString()}`)
+
+  // Send renewal notifications
+  await sendActivationNotifications(admin, sub, true)
+
+  return NextResponse.json({ ok: true, renewed: sub.id })
+}
+
+// ── Handle one-time payment (legacy) ─────────────────────────────────────────
+async function handleOneTimePayment(paymentId: string) {
+  const payment = await mpFetch(`/v1/payments/${paymentId}`)
+  console.log('MP Payment status:', payment.status, 'external_ref:', payment.external_reference)
+
+  if (payment.status !== 'approved') {
+    return NextResponse.json({ ok: true, skipped: `status=${payment.status}` })
+  }
+
+  const subscriptionId = payment.external_reference
+  if (!subscriptionId) {
+    console.error('Sin external_reference en el pago')
+    return NextResponse.json({ ok: true })
+  }
+
+  const supabase = createClient()
+
+  const { data: sub, error: subError } = await supabase
+    .from('subscriptions')
+    .select('*, plans(duration_days)')
+    .eq('id', subscriptionId)
+    .single()
+
+  if (subError || !sub) {
+    console.error('Suscripción no encontrada:', subscriptionId)
+    return NextResponse.json({ error: 'Suscripción no encontrada' }, { status: 404 })
+  }
+
+  const startedAt = new Date()
+  const days = PLAN_DAYS[sub.plan_id] ?? 30
+  const expiresAt = new Date(startedAt.getTime() + days * 24 * 60 * 60 * 1000)
+
+  await supabase.from('subscriptions').update({
+    status: 'active',
+    mp_payment_id: String(paymentId),
+    mp_status: payment.status,
+    started_at: startedAt.toISOString(),
+    expires_at: expiresAt.toISOString(),
+  }).eq('id', subscriptionId)
+
+  const admin = getAdminClient()
+  await sendActivationNotifications(admin, sub)
+
+  console.log(`Pago único activado: ${subscriptionId}`)
+  return NextResponse.json({ ok: true, activated: subscriptionId })
+}
+
+// ── Shared notification logic ────────────────────────────────────────────────
+async function sendActivationNotifications(
+  admin: ReturnType<typeof createAdminSupabaseClient>,
+  sub: any,
+  isRenewal = false,
+) {
+  try {
+    // Detect if user is returning (had previous subscriptions)
+    const { count: prevCount } = await admin
       .from('subscriptions')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', sub.user_id)
-      .neq('id', subscriptionId)
+      .neq('id', sub.id)
       .in('status', ['active', 'expired'])
 
-    const isReturning = (prevCount ?? 0) > 0
+    const isReturning = isRenewal || (prevCount ?? 0) > 0
 
-    // Obtener datos del usuario
-    const { data: { user } } = await supabase.auth.admin.getUserById(sub.user_id)
-    const userEmail = user?.email ?? payment.payer?.email ?? ''
+    const { data: { user } } = await admin.auth.admin.getUserById(sub.user_id)
+    const userEmail = user?.email ?? ''
     const userMeta = user?.user_metadata ?? {}
 
-    const { data: profile } = await supabase
+    const { data: profile } = await admin
       .from('profiles')
       .select('full_name, phone')
       .eq('id', sub.user_id)
@@ -205,25 +369,20 @@ export async function POST(req: NextRequest) {
     const displayName = profile?.full_name ?? userMeta.full_name ?? userEmail.split('@')[0]
     const phone = profile?.phone ?? ''
 
-    // Locale guardado al crear la preferencia, o 'es' por defecto
     const locale: Locale = (sub.locale ?? 'es') as Locale
     const strings = t[locale] ?? t.es
     const planName = strings.planNames[sub.plan_id as keyof typeof strings.planNames] ?? sub.plan_id
 
+    const days = PLAN_DAYS[sub.plan_id] ?? 30
+    const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000)
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
-    // Disparar notificaciones
-    Promise.all([
+    await Promise.all([
       sendEmail({ userEmail, displayName, planName, days, expiresAt, isReturning, locale, strings, siteUrl }),
       phone ? sendWhatsApp({ phone, displayName, planName, isReturning, strings }) : Promise.resolve(),
-    ]).catch(err => console.error('Error en notificaciones:', err))
-
-    console.log(`Suscripción activada: ${subscriptionId} | ${isReturning ? 'RECURRENTE' : 'NUEVO'} | locale: ${locale}`)
-    return NextResponse.json({ ok: true, activated: subscriptionId, isReturning })
-
-  } catch (error) {
-    console.error('Webhook error:', error)
-    return NextResponse.json({ error: 'Error interno' }, { status: 500 })
+    ])
+  } catch (err) {
+    console.error('Error en notificaciones:', err)
   }
 }
 

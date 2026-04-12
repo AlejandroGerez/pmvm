@@ -34,28 +34,8 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
     else btnLabel = 'CAMBIAR PLAN'
   }
 
-  const handleBuy = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const res = await fetch('/api/mp/create-preference', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId: plan.id, locale }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        if (res.status === 401) { router.push(`/${locale}/login?redirect=/#pricing`); return }
-        setError(data.error || 'Error al procesar el pago')
-        return
-      }
-      const url = process.env.NODE_ENV === 'production' ? data.initPoint : data.sandboxInitPoint
-      window.location.href = url || data.initPoint
-    } catch {
-      setError('Error de conexión. Intentá de nuevo.')
-    } finally {
-      setLoading(false)
-    }
+  const handleBuy = () => {
+    router.push(`/${locale}/checkout?plan=${plan.id}`)
   }
 
   // Semiannual subscriber sees a "complete" state, no need to push more

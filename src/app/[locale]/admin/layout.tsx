@@ -23,6 +23,13 @@ export default async function AdminLayout({
 
   if (profile?.role !== 'admin') redirect(`/${params.locale}/dashboard`)
 
+  // Corregir locale de URL si no coincide con la preferencia del perfil
+  const validLocales = ['es', 'en', 'pt']
+  const profileLocale = profile?.locale && validLocales.includes(profile.locale) ? profile.locale : null
+  if (profileLocale && profileLocale !== params.locale) {
+    redirect(`/${profileLocale}/admin`)
+  }
+
   return (
     <div className="min-h-screen bg-[#0e0e0e] text-white font-body">
       <div className="flex h-screen overflow-hidden">

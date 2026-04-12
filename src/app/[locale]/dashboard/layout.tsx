@@ -31,6 +31,13 @@ export default async function DashboardLayout({
     redirect(`/${params.locale}/onboarding`)
   }
 
+  // Si el locale de la URL no coincide con la preferencia guardada, corregir
+  const validLocales = ['es', 'en', 'pt']
+  const profileLocale = profile?.locale && validLocales.includes(profile.locale) ? profile.locale : null
+  if (profileLocale && profileLocale !== params.locale) {
+    redirect(`/${profileLocale}/dashboard`)
+  }
+
   return (
     <div className="min-h-screen bg-[#0e0e0e] text-white font-body">
       <div className="flex h-screen overflow-hidden">

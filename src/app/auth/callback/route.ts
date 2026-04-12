@@ -44,19 +44,26 @@ export async function GET(request: NextRequest) {
         )
         const { data: profile } = await adminClient
           .from('profiles')
-          .select('role, onboarding_completed')
+          .select('role, onboarding_completed, locale')
           .eq('id', user.id)
           .single()
 
+        // Usar el locale guardado en el perfil; fallback al detectado por browser
+        const profileLocale = profile?.locale && ['es', 'en', 'pt'].includes(profile.locale)
+          ? profile.locale
+          : locale
+
         // Admins van directo al panel, sin onboarding
         if (profile?.role === 'admin') {
-          return NextResponse.redirect(`${origin}/${locale}/admin`)
+          return NextResponse.redirect(`${origin}/${profileLocale}/admin`)
         }
 
         // Clientes sin onboarding completo → pantalla de bienvenida
         if (!profile?.onboarding_completed) {
-          return NextResponse.redirect(`${origin}/${locale}/onboarding`)
+          return NextResponse.redirect(`${origin}/${profileLocale}/onboarding`)
         }
+
+        return NextResponse.redirect(`${origin}/${profileLocale}/dashboard`)
       }
     } catch (e) {
       console.error('[auth/callback] role check error:', e)

@@ -1,4 +1,6 @@
 import pricingData from "@/data/plans.json";
+import Link from "next/link";
+import { useLocale } from "next-intl";
 
 type PlanJsonItem = { es: string };
 type PlanJson = {
@@ -26,11 +28,12 @@ const plans: V2Plan[] = (pricingData as PlanJson[]).map((plan, index) => ({
   cta: "Quiero empezar",
   ctaClass:
     index === 1
-      ? "w-full py-5 bg-brand-accent text-brand-black font-bold uppercase tracking-[0.2em] text-xs hover:bg-white transition-all shadow-lg"
-      : "w-full py-5 border border-white/10 font-bold uppercase tracking-[0.2em] text-xs hover:bg-white hover:text-brand-black transition-all",
+      ? "w-full py-5 bg-brand-accent text-brand-black font-bold uppercase tracking-[0.2em] text-xs hover:bg-white transition-all shadow-lg block text-center"
+      : "w-full py-5 border border-white/10 font-bold uppercase tracking-[0.2em] text-xs hover:bg-white hover:text-brand-black transition-all block text-center",
 }));
 
 export default function V2Pricing() {
+  const locale = useLocale();
   return (
     <section className="py-32 bg-brand-black scroll-mt-32" id="pricing">
       <div className="max-w-7xl mx-auto px-6">
@@ -93,7 +96,7 @@ export default function V2Pricing() {
                   ))}
                 </ul>
               </div>
-              <button className={plan.ctaClass}>{plan.cta}</button>
+              <Link href={`/${locale}/checkout?plan=monthly`} className={plan.ctaClass}>{plan.cta}</Link>
             </div>
           ))}
         </div>
