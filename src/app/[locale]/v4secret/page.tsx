@@ -3,11 +3,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import V4SplashManager from '@/components/v4/V4SplashScreen'
 import { Menu, X, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react'
+import { PHONE_NUMBER } from '@/lib/data'
+import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
 interface ActiveSub { plan_id: string }
@@ -18,7 +19,9 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
   const [error, setError] = useState('')
   const router = useRouter()
 
-  // Determine state relative to active subscription
+  const isMentoria = plan.id === 'mentoria'
+
+  // Determine state relative to active subscription (only for non-mentoria plans)
   const isCurrent = activeSub?.plan_id === plan.id
   const planTier = { monthly: 1, quarterly: 2, semiannual: 3 }
   const currentTier = activeSub ? (planTier[activeSub.plan_id as keyof typeof planTier] ?? 0) : 0
@@ -28,7 +31,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
   const hasActiveSub = !!activeSub
 
   let btnLabel = 'COMPRAR AHORA'
-  if (hasActiveSub) {
+  if (!isMentoria && hasActiveSub) {
     if (isCurrent) btnLabel = 'RENOVAR PLAN'
     else if (isUpgrade && isTopPlan) btnLabel = 'PLAN COMPLETO'
     else if (isUpgrade) btnLabel = 'MEJORAR PLAN'
@@ -36,7 +39,11 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
   }
 
   const handleBuy = () => {
-    router.push(`/${locale}/checkout?plan=${plan.id}`)
+    if (isMentoria) {
+      window.open(`https://wa.me/${PHONE_NUMBER}?text=Hola!%20Quiero%20aplicar%20a%20la%20Mentor%C3%ADa%201-1`, '_blank')
+    } else {
+      router.push(`/${locale}/checkout?plan=${plan.id}`)
+    }
   }
 
   // Semiannual subscriber sees a "complete" state, no need to push more
@@ -46,9 +53,11 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
     <div className={`relative flex flex-col rounded-none p-6 lg:p-8 border transition-all duration-300 hover:-translate-y-1 ${
       plan.badge === 'MÁS POPULAR'
         ? 'border-[#c1ed00]/40 bg-[#c1ed00]/[0.04] shadow-[0_0_50px_rgba(193,237,0,0.08)] scale-[1.02]'
-        : 'border-white/10 bg-surface-container hover:border-white/20'
+        : isMentoria
+          ? 'border-[#ff734a]/30 bg-[#ff734a]/[0.03] hover:border-[#ff734a]/50'
+          : 'border-white/10 bg-surface-container hover:border-white/20'
     }`}>
-      {/* Badge: active plan indicator overrides default badge */}
+      {/* Badge */}
       {isCurrent ? (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest font-label uppercase bg-white text-[#0e0e0e]">
           TU PLAN ACTUAL
@@ -60,12 +69,24 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
         </div>
       ) : null}
 
-      <p className="font-label text-xs font-bold tracking-widest uppercase mb-2" style={{ color: plan.color }}>{plan.days} días</p>
+      {/* Duration label */}
+      <p className="font-label text-xs font-bold tracking-widest uppercase mb-2" style={{ color: plan.color }}>
+        {isMentoria ? 'MENTORÍA PERSONAL' : `${plan.days} días`}
+      </p>
       <h3 className="font-headline text-2xl font-black mb-3">{plan.name}</h3>
-      <div className="flex items-baseline gap-1 mb-3">
+
+      {/* Price */}
+      <div className="flex items-baseline gap-1 mb-1">
         <span className="text-sm text-white/40 font-label">ARS</span>
         <span className="font-headline text-4xl font-black">${plan.price.toLocaleString('es-AR')}</span>
+        {isMentoria && <span className="text-sm text-white/40 font-label">/mes</span>}
       </div>
+      {isMentoria && (
+        <p className="text-[11px] text-white/30 font-label uppercase tracking-widest mb-3">
+          Suscripción mensual · Cancelable cuando quieras
+        </p>
+      )}
+
       <p className="text-on-surface-variant text-sm leading-relaxed mb-6 font-body">{plan.desc}</p>
       <ul className="space-y-2.5 mb-8 flex-1">
         {plan.features.map((f: string, i: number) => (
@@ -75,6 +96,11 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
           </li>
         ))}
       </ul>
+      {isMentoria && (
+        <p className="text-[11px] text-white/40 font-label text-center mb-3">
+          Requiere entrevista previa · Cupos limitados
+        </p>
+      )}
       {error && <p className="text-red-400 text-xs mb-3 text-center bg-red-400/10 rounded py-2 px-3 font-label">{error}</p>}
 
       {isComplete ? (
@@ -85,7 +111,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
         <button onClick={handleBuy} disabled={loading}
           className="w-full py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           style={{ backgroundColor: loading ? '#333' : plan.color, color: '#0e0e0e' }}>
-          {loading ? 'PROCESANDO...' : btnLabel}
+          {loading ? 'PROCESANDO...' : isMentoria ? 'APLICAR VÍA WHATSAPP' : btnLabel}
         </button>
       )}
     </div>
@@ -162,10 +188,55 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
   return <span ref={ref}>0{suffix}</span>
 }
 
+const PLAN_NAMES: Record<string, string> = {
+  monthly:    'Plan Mensual',
+  quarterly:  'Plan Trimestral',
+  semiannual: 'Plan Semestral',
+  mentoria:   'Mentoría 1-1',
+}
+
+/* ── FAQ Item ──────────────────────────────────────────────── */
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="py-5">
+      <button
+        className="w-full flex items-start justify-between gap-4 text-left group"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+      >
+        <span className="font-headline font-bold text-base lg:text-lg uppercase tracking-tight group-hover:text-[#c1ed00] transition-colors duration-200">
+          {question}
+        </span>
+        <span className={`material-symbols-outlined text-[20px] flex-shrink-0 text-white/30 transition-transform duration-300 mt-0.5 ${open ? 'rotate-45' : ''}`}>
+          add
+        </span>
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="answer"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <p className="font-body text-on-surface-variant text-sm leading-relaxed pt-4 max-w-2xl">
+              {answer}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 export default function V4Page() {
   const params = useParams()
   const locale = (params?.locale as string) ?? 'es'
   const router = useRouter()
+  const supabase = useMemo(() => createClient(), [])
 
   // Auth
   const [user, setUser] = useState<User | null>(null)
@@ -183,10 +254,6 @@ export default function V4Page() {
   const [navSolid, setNavSolid] = useState(false)
 
   useEffect(() => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user)
       setAuthLoading(false)
@@ -207,7 +274,7 @@ export default function V4Page() {
       setUser(session?.user ?? null)
     })
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase])
 
   useEffect(() => {
     const unsub = scrollY.on('change', (v) => {
@@ -218,10 +285,6 @@ export default function V4Page() {
   }, [scrollY])
 
   const handleLogout = async () => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
     await supabase.auth.signOut()
     setUser(null)
     setUserMenuOpen(false)
@@ -292,7 +355,7 @@ export default function V4Page() {
                           {activeSub && (
                             <div className="px-4 py-2 border-b border-white/8">
                               <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold">Plan activo</p>
-                              <p className="text-xs text-[#c1ed00] font-bold capitalize">{activeSub.plan_id}</p>
+                              <p className="text-xs text-[#c1ed00] font-bold">{PLAN_NAMES[activeSub.plan_id] ?? activeSub.plan_id}</p>
                             </div>
                           )}
                           <Link href={`/${locale}/dashboard`} onClick={() => setUserMenuOpen(false)}
@@ -371,7 +434,7 @@ export default function V4Page() {
                           <div>
                             <p className="text-white text-sm font-bold truncate max-w-[180px]">{displayName}</p>
                             {activeSub && (
-                              <p className="text-[10px] text-[#c1ed00]/70 uppercase tracking-widest">Plan {activeSub.plan_id} activo</p>
+                              <p className="text-[10px] text-[#c1ed00]/70 uppercase tracking-widest">{PLAN_NAMES[activeSub.plan_id] ?? activeSub.plan_id} activo</p>
                             )}
                           </div>
                         </div>
@@ -785,7 +848,7 @@ export default function V4Page() {
           </div>
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8 mb-16 items-start">
             {[
               {
                 id: 'monthly', name: 'Plan Mensual', price: 100, days: 30, badge: null, color: '#00e3fd',
@@ -801,6 +864,11 @@ export default function V4Page() {
                 id: 'semiannual', name: 'Plan Semestral', price: 200, days: 180, badge: 'MEJOR VALOR', color: '#ff734a',
                 desc: '6 meses de transformación completa. El camino definitivo.',
                 features: ['Todo lo del plan trimestral', 'Plan nutricional básico incluido', 'Check-in quincenal por videollamada', 'Comunidad privada de alumnos'],
+              },
+              {
+                id: 'mentoria', name: 'Mentoría 1-1', price: 300, days: 0, badge: 'CUPOS LIMITADOS', color: '#ff734a',
+                desc: 'Acompañamiento directo con el coach. Rutina y nutrición 100% personalizadas a tu biotipo.',
+                features: ['Rutina 100% personalizada a tu biotipo', 'Chat directo con el coach', 'Videollamadas quincenales de ajuste', 'Estrategia de largo plazo', 'Cancelable cuando quieras'],
               },
             ].map((plan) => (
               <PricingCard key={plan.id} plan={plan} locale={locale} activeSub={activeSub} />
@@ -822,6 +890,171 @@ export default function V4Page() {
               Soporte por WhatsApp incluido
             </span>
           </div>
+        </div>
+      </section>
+
+      {/* ── Testimonios ───────────────────────────────────────────── */}
+      <section className="py-24 px-6 bg-[#000000] relative overflow-hidden">
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            className="mb-14 space-y-2"
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
+            variants={fadeUp} custom={0}
+          >
+            <p className="font-label text-[10px] uppercase tracking-[0.3em] text-white/30">Lo que dicen nuestros alumnos</p>
+            <h2 className="font-headline text-3xl lg:text-5xl font-bold tracking-tighter uppercase italic">RESULTADOS <span className="text-[#c1ed00]">REALES.</span></h2>
+            <div className="w-12 h-1 bg-[#c1ed00]" />
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }}
+          >
+            {[
+              {
+                name: 'Martina L.',
+                result: '-14 kg en 4 meses',
+                text: 'Probé mil dietas y gimnasios y siempre volvía al punto de partida. Con el método de Ale entendí por qué mi cabeza me saboteaba. Hoy no me peleo con la comida y entreno sin que sea un sacrificio.',
+                plan: 'Plan Semestral',
+                color: '#c1ed00',
+                initial: 'M',
+              },
+              {
+                name: 'Diego R.',
+                result: '+8 kg de músculo en 6 meses',
+                text: 'Venía flaco de toda la vida sin poder ganar masa. El seguimiento semanal y las rutinas personalizadas cambiaron todo. Ale no te da un plan genérico — te construye uno que funciona para tu cuerpo.',
+                plan: 'Mentoría 1-1',
+                color: '#00e3fd',
+                initial: 'D',
+              },
+              {
+                name: 'Valeria G.',
+                result: 'Abandonó el sedentarismo',
+                text: 'Empecé el plan mensual sin saber si iba a poder sostenerlo. Tres meses después sigo, renové al trimestral y por primera vez en años me siento bien en mi propio cuerpo. El dashboard me ayudó a ver el progreso día a día.',
+                plan: 'Plan Trimestral',
+                color: '#ff734a',
+                initial: 'V',
+              },
+            ].map(({ name, result, text, plan, color, initial }) => (
+              <motion.div
+                key={name}
+                className="bg-surface-container p-7 relative flex flex-col gap-4 border border-white/5 hover:border-white/10 transition-colors duration-300"
+                variants={staggerItem}
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
+              >
+                {/* Quote mark */}
+                <span className="font-headline text-6xl leading-none font-black select-none" style={{ color: `${color}30` }}>&ldquo;</span>
+                <p className="font-body text-sm text-on-surface-variant leading-relaxed -mt-6">{text}</p>
+                <div className="mt-auto pt-4 border-t border-white/8 flex items-center gap-3">
+                  <div className="w-9 h-9 flex-shrink-0 flex items-center justify-center font-headline font-black text-sm" style={{ backgroundColor: color, color: '#0e0e0e' }}>
+                    {initial}
+                  </div>
+                  <div>
+                    <p className="font-label text-xs font-bold text-white">{name}</p>
+                    <p className="font-label text-[10px] uppercase tracking-widest" style={{ color }}>{result}</p>
+                    <p className="font-label text-[9px] text-white/25 uppercase tracking-widest">{plan}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── FAQ ───────────────────────────────────────────────────── */}
+      <section className="py-24 px-6 bg-surface-container-low">
+        <div className="container mx-auto max-w-3xl">
+          <motion.div
+            className="mb-14 space-y-2"
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
+            variants={fadeUp} custom={0}
+          >
+            <p className="font-label text-[10px] uppercase tracking-[0.3em] text-white/30">Preguntas frecuentes</p>
+            <h2 className="font-headline text-3xl lg:text-4xl font-bold tracking-tighter uppercase italic">FAQ</h2>
+            <div className="w-12 h-1 bg-[#00e3fd]" />
+          </motion.div>
+
+          <div className="space-y-0 divide-y divide-white/8">
+            {[
+              {
+                q: '¿Qué incluye el acceso al dashboard?',
+                a: 'Tenés acceso completo a tus rutinas personalizadas, seguimiento de progreso (peso y medidas), registro de objetivos diarios, hidratación, y canal directo con tu coach. Todo en tiempo real desde el celular o la computadora.',
+              },
+              {
+                q: '¿Cuál es la diferencia entre los planes y la Mentoría 1-1?',
+                a: 'Los planes (Mensual, Trimestral, Semestral) te dan acceso al programa estructurado con rutinas y seguimiento. La Mentoría 1-1 suma atención directa y personalizada con Alejandro: rutina hecha 100% para vos, videollamadas de ajuste cada dos semanas y chat directo ilimitado. Los cupos son limitados.',
+              },
+              {
+                q: '¿Puedo cancelar cuando quiero?',
+                a: 'Los planes Mensual, Trimestral y Semestral son pagos únicos: pagás una vez y tenés acceso por el período contratado. La Mentoría 1-1 funciona como suscripción mensual y se puede cancelar cuando quieras, sin penalización.',
+              },
+              {
+                q: '¿Necesito ir a un gimnasio o puedo hacerlo en casa?',
+                a: 'Las rutinas se adaptan a tu contexto. Podemos trabajar con gimnasio, con equipamiento mínimo en casa, o sin ningún equipo. Al momento de completar el onboarding indicás tu situación y la rutina se arma en función de eso.',
+              },
+              {
+                q: '¿Cuándo tengo acceso después de pagar?',
+                a: 'El acceso es inmediato. Apenas confirmás el pago te llega un mail con tus credenciales (o podés loguearte con el mail que ya usaste para registrarte).',
+              },
+              {
+                q: '¿El programa es sólo para bajar de peso?',
+                a: 'No. El Método R3SET trabaja los tres pilares — Psicología, Entrenamiento y Nutrición — independientemente del objetivo: perder grasa, ganar músculo, mejorar rendimiento deportivo, o simplemente generar hábitos sostenibles.',
+              },
+            ].map(({ q, a }, i) => (
+              <FAQItem key={i} question={q} answer={a} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Contacto ──────────────────────────────────────────────── */}
+      <section id="contact" className="py-24 px-6 bg-[#0e0e0e]">
+        <div className="container mx-auto max-w-4xl">
+          <motion.div
+            className="text-center mb-14 space-y-2"
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
+            variants={fadeUp} custom={0}
+          >
+            <p className="font-label text-[10px] uppercase tracking-[0.3em] text-white/30">¿Tenés dudas?</p>
+            <h2 className="font-headline text-3xl lg:text-4xl font-bold tracking-tighter uppercase italic">HABLEMOS.</h2>
+            <div className="w-12 h-1 bg-[#ff734a] mx-auto" />
+          </motion.div>
+
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto"
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
+            variants={staggerContainer}
+          >
+            <motion.a
+              href={`https://wa.me/${PHONE_NUMBER}?text=Hola!%20Tengo%20una%20consulta%20sobre%20el%20Metodo%20R3SET`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 py-5 px-6 bg-[#c1ed00] text-[#0e0e0e] font-headline font-black text-sm uppercase tracking-widest hover:bg-[#d4ff00] active:scale-95 transition-all duration-200"
+              variants={staggerItem}
+              whileHover={{ scale: 1.02 }}
+            >
+              <span className="material-symbols-outlined text-[20px]">chat</span>
+              WhatsApp
+            </motion.a>
+            <motion.a
+              href="mailto:pmenosvmas@gmail.com?subject=Consulta%20Metodo%20R3SET"
+              className="flex items-center justify-center gap-3 py-5 px-6 border border-white/15 text-white/70 font-headline font-black text-sm uppercase tracking-widest hover:border-white/30 hover:text-white active:scale-95 transition-all duration-200"
+              variants={staggerItem}
+              whileHover={{ scale: 1.02 }}
+            >
+              <span className="material-symbols-outlined text-[20px]">mail</span>
+              Email
+            </motion.a>
+          </motion.div>
+
+          <motion.p
+            className="text-center font-label text-[10px] text-white/25 uppercase tracking-widest mt-8"
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+          >
+            Respondemos dentro de las 24 hs · Sin compromiso
+          </motion.p>
         </div>
       </section>
 

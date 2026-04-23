@@ -63,7 +63,7 @@ export default function CheckoutFailurePage({
             INTENTAR DE NUEVO
           </Link>
           <a
-            href="https://wa.me/5491100000000"
+            href="https://wa.me/5491168201403"
             target="_blank"
             rel="noopener noreferrer"
             className="block py-3 rounded-xl font-bold text-sm border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-colors"

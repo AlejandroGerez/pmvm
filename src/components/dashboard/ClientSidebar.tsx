@@ -19,7 +19,7 @@ export default function ClientSidebar({ locale, profile, userEmail }: Props) {
     { href: 'dashboard',          label: t('nav.home'),          icon: 'home' },
     { href: 'dashboard/goals',    label: t('nav.goals'),         icon: 'track_changes' },
     { href: 'dashboard/routines', label: t('nav.routines'),      icon: 'fitness_center' },
-    { href: 'dashboard/messages', label: t('nav.messages'),      icon: 'chat' },
+    { href: 'dashboard/messages', label: t('nav.messages'),      icon: 'contact_phone' },
     { href: 'dashboard/progress', label: t('nav.progress'),      icon: 'monitoring' },
   ]
 
@@ -27,7 +27,43 @@ export default function ClientSidebar({ locale, profile, userEmail }: Props) {
     .split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2)
 
   return (
-    <aside className="w-56 flex-shrink-0 flex flex-col bg-[#0e0e0e] border-r border-white/5 h-screen overflow-y-auto hide-scrollbar">
+    <>
+    {/* ── Mobile bottom tab bar ─────────────────────────── */}
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0e0e0e]/95 backdrop-blur-xl border-t border-white/8 flex items-stretch h-16 safe-area-pb">
+      {navItems.map(({ href, label, icon }) => {
+        const fullHref = `/${locale}/${href}`
+        const isActive = pathname === fullHref || (href !== 'dashboard' && pathname.startsWith(fullHref))
+        return (
+          <Link
+            key={href}
+            href={fullHref}
+            className={`flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors duration-200 ${
+              isActive ? 'text-[#cefc22]' : 'text-white/30 hover:text-white/60'
+            }`}
+          >
+            <span
+              className="material-symbols-outlined text-[22px]"
+              style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+            >
+              {icon}
+            </span>
+            <span className="font-label text-[8px] uppercase tracking-wider leading-none">{label}</span>
+          </Link>
+        )
+      })}
+      <Link
+        href={`/${locale}/dashboard/profile`}
+        className={`flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors duration-200 ${
+          pathname.includes('/dashboard/profile') ? 'text-[#cefc22]' : 'text-white/30 hover:text-white/60'
+        }`}
+      >
+        <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: pathname.includes('/dashboard/profile') ? "'FILL' 1" : "'FILL' 0" }}>person</span>
+        <span className="font-label text-[8px] uppercase tracking-wider leading-none">{t('nav.profile') ?? 'Perfil'}</span>
+      </Link>
+    </nav>
+
+    {/* ── Desktop sidebar ───────────────────────────────── */}
+    <aside className="hidden md:flex w-56 flex-shrink-0 flex-col bg-[#0e0e0e] border-r border-white/5 h-screen overflow-y-auto hide-scrollbar">
 
       {/* Brand */}
       <div className="px-5 pt-7 pb-5 border-b border-white/5">
@@ -114,5 +150,6 @@ export default function ClientSidebar({ locale, profile, userEmail }: Props) {
         </form>
       </div>
     </aside>
+    </>
   )
 }

@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslations } from 'next-intl'
+import { CheckCircle2, Lock, X } from 'lucide-react'
 
 /* ── Plan catalog (matches API route + Supabase) ── */
 const PLANS = {
@@ -12,8 +13,9 @@ const PLANS = {
     id: 'monthly',
     name: { es: 'Mensual', en: 'Monthly', pt: 'Mensal' },
     price: 100,
-    period: { es: 'cada mes', en: 'per month', pt: 'por mês' },
-    frequency: { es: 'Pago mensual recurrente', en: 'Recurring monthly payment', pt: 'Pagamento mensal recorrente' },
+    isRecurring: false,
+    period: { es: '1 mes de acceso', en: '1 month of access', pt: '1 mês de acesso' },
+    frequency: { es: 'Pago único · no se renueva automáticamente', en: 'One-time payment · does not auto-renew', pt: 'Pagamento único · não renova automaticamente' },
     features: {
       es: ['Rutina de entrenamiento personalizada', 'Videos demostrativos de ejercicios', 'Guía alimentaria + lista de compras', 'App exclusiva (Android + iOS)', 'Soporte por la app'],
       en: ['Personalized training routine', 'Exercise demo videos', 'Food guide + shopping list', 'Exclusive app (Android + iOS)', 'In-app support'],
@@ -24,8 +26,9 @@ const PLANS = {
     id: 'quarterly',
     name: { es: 'Trimestral', en: 'Quarterly', pt: 'Trimestral' },
     price: 150,
-    period: { es: 'cada 3 meses', en: 'every 3 months', pt: 'a cada 3 meses' },
-    frequency: { es: 'Pago trimestral recurrente', en: 'Recurring quarterly payment', pt: 'Pagamento trimestral recorrente' },
+    isRecurring: false,
+    period: { es: '3 meses de acceso', en: '3 months of access', pt: '3 meses de acesso' },
+    frequency: { es: 'Pago único · no se renueva automáticamente', en: 'One-time payment · does not auto-renew', pt: 'Pagamento único · não renova automaticamente' },
     features: {
       es: ['Todo lo del plan Mensual', 'Seguimiento semanal personalizado', 'Ajustes continuos de rutina', 'Prioridad de soporte'],
       en: ['Everything in Monthly', 'Personalized weekly follow-up', 'Continuous routine adjustments', 'Priority support'],
@@ -36,12 +39,26 @@ const PLANS = {
     id: 'semiannual',
     name: { es: 'Semestral', en: 'Semi-annual', pt: 'Semestral' },
     price: 200,
-    period: { es: 'cada 6 meses', en: 'every 6 months', pt: 'a cada 6 meses' },
-    frequency: { es: 'Pago semestral recurrente', en: 'Recurring semi-annual payment', pt: 'Pagamento semestral recorrente' },
+    isRecurring: false,
+    period: { es: '6 meses de acceso', en: '6 months of access', pt: '6 meses de acesso' },
+    frequency: { es: 'Pago único · no se renueva automáticamente', en: 'One-time payment · does not auto-renew', pt: 'Pagamento único · não renova automaticamente' },
     features: {
       es: ['Todo lo del plan Trimestral', 'Plan nutricional completo', 'Comunidad privada WhatsApp', 'Mejor valor por mes'],
       en: ['Everything in Quarterly', 'Complete nutrition plan', 'Private WhatsApp community', 'Best value per month'],
       pt: ['Tudo do plano Trimestral', 'Plano nutricional completo', 'Comunidade privada WhatsApp', 'Melhor custo-benefício'],
+    },
+  },
+  mentoria: {
+    id: 'mentoria',
+    name: { es: 'Mentoría 1-1', en: 'Mentorship 1-1', pt: 'Mentoria 1-1' },
+    price: 300,
+    isRecurring: true,
+    period: { es: 'por mes', en: 'per month', pt: 'por mês' },
+    frequency: { es: 'Suscripción mensual · cancelable en cualquier momento', en: 'Monthly subscription · cancel anytime', pt: 'Assinatura mensal · cancele quando quiser' },
+    features: {
+      es: ['Rutina 100% personalizada a tu biotipo', 'Chat directo con el coach', 'Videollamadas quincenales de ajuste', 'Estrategia de largo plazo', 'Cupos limitados — requiere entrevista previa'],
+      en: ['100% personalized routine for your body type', 'Direct chat with coach', 'Bi-weekly video adjustment calls', 'Long-term strategy', 'Limited spots — requires prior interview'],
+      pt: ['Rotina 100% personalizada ao seu biotipo', 'Chat direto com o coach', 'Videochamadas quinzenais de ajuste', 'Estratégia de longo prazo', 'Vagas limitadas — requer entrevista prévia'],
     },
   },
 } as const
@@ -86,6 +103,7 @@ const i18n = {
     error_password: 'La contraseña debe tener al menos 8 caracteres',
     error_terms: 'Aceptá los términos y condiciones',
     error_login: 'Email o contraseña incorrectos',
+    error_user_exists: 'Ya tenés una cuenta con ese email. Ingresá tu contraseña para continuar.',
   },
   en: {
     header_sub: 'Checkout',
@@ -122,6 +140,7 @@ const i18n = {
     error_password: 'Password must be at least 8 characters',
     error_terms: 'Please accept the terms and conditions',
     error_login: 'Wrong email or password',
+    error_user_exists: 'An account with that email already exists. Enter your password to continue.',
   },
   pt: {
     header_sub: 'Checkout',
@@ -158,6 +177,7 @@ const i18n = {
     error_password: 'A senha deve ter pelo menos 8 caracteres',
     error_terms: 'Aceite os termos e condições',
     error_login: 'Email ou senha incorretos',
+    error_user_exists: 'Já existe uma conta com esse email. Digite sua senha para continuar.',
   },
 }
 
@@ -191,6 +211,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showPlanPicker, setShowPlanPicker] = useState(false)
+  const [showTerms, setShowTerms] = useState(false)
 
   // Check existing session
   useEffect(() => {
@@ -221,7 +242,6 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
         if (!fullName.trim() || !email.trim() || !password) { setError(t.error_required); return }
         if (password.length < 8) { setError(t.error_password); return }
       } else {
-        // Login mode
         if (!email.trim() || !password) { setError(t.error_required); return }
       }
     }
@@ -229,39 +249,73 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
     setSubmitting(true)
 
     try {
-      // If login mode and not authenticated, sign in first
+      let authenticatedUser = user
+
+      // ── Login mode: sign in first, then subscribe ──
       if (!user && mode === 'login') {
-        const { data, error: loginError } = await supabase.auth.signInWithPassword({ email, password })
-        if (loginError || !data.user) {
+        const { data: signInData, error: loginError } = await supabase.auth.signInWithPassword({ email, password })
+        if (loginError || !signInData.user) {
           setError(t.error_login)
           setSubmitting(false)
           return
         }
-        setUser(data.user)
+        authenticatedUser = signInData.user
+        setUser(signInData.user)
+        // After signing in, call API without credentials (session cookie is now set)
+        const res = await fetch('/api/mp/create-subscription', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planId: selectedPlan, locale }),
+        })
+        const data = await res.json()
+        if (!res.ok) { setError(data.error ?? 'Error inesperado'); setSubmitting(false); return }
+        const redirectUrl = data.initPoint || data.sandboxInitPoint
+        if (redirectUrl) { window.location.href = redirectUrl; return }
+        setError('No se pudo obtener el enlace de pago')
+        setSubmitting(false)
+        return
       }
 
-      // Call create-subscription API
+      // ── Already authenticated: subscribe directly ──
+      if (authenticatedUser) {
+        const res = await fetch('/api/mp/create-subscription', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planId: selectedPlan, locale }),
+        })
+        const data = await res.json()
+        if (!res.ok) { setError(data.error ?? 'Error inesperado'); setSubmitting(false); return }
+        const redirectUrl = data.initPoint || data.sandboxInitPoint
+        if (redirectUrl) { window.location.href = redirectUrl; return }
+        setError('No se pudo obtener el enlace de pago')
+        setSubmitting(false)
+        return
+      }
+
+      // ── Register mode: create account + subscribe ──
       const res = await fetch('/api/mp/create-subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          planId: selectedPlan,
-          locale,
-          ...((!user && mode === 'register') ? { email, password, fullName, phone } : {}),
-        }),
+        body: JSON.stringify({ planId: selectedPlan, locale, email, password, fullName, phone }),
       })
-
       const data = await res.json()
 
       if (!res.ok) {
         if (data.code === 'USER_EXISTS') {
-          setError(data.error)
+          // Account already exists — switch to login mode clearly
+          setPassword('')
           setMode('login')
+          setError(t.error_user_exists)
         } else {
           setError(data.error ?? 'Error inesperado')
         }
         setSubmitting(false)
         return
+      }
+
+      // New user created — sign them in client-side so session is established
+      if (data.isNewUser) {
+        await supabase.auth.signInWithPassword({ email, password })
       }
 
       // Redirect to MercadoPago
@@ -373,6 +427,9 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               ) : (
                 /* ── Login form ── */
                 <div className="space-y-4 mb-6">
+                  <div className="bg-[#c8f73a]/5 border border-[#c8f73a]/20 rounded-xl px-4 py-3 text-[12px] text-[#c8f73a]/80">
+                    {locale === 'en' ? '👋 Sign in to your existing account to continue.' : locale === 'pt' ? '👋 Entre na sua conta existente para continuar.' : '👋 Ingresá a tu cuenta existente para continuar.'}
+                  </div>
                   <div>
                     <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">{t.login_email_label} *</label>
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)}
@@ -385,10 +442,15 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                       placeholder={t.password_placeholder}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
                   </div>
-                  <p className="text-white/30 text-[11px]">
-                    {t.no_account}{' '}
-                    <button onClick={() => setMode('register')} className="text-[#c8f73a] hover:underline">{t.create_account}</button>
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-white/30 text-[11px]">
+                      {t.no_account}{' '}
+                      <button onClick={() => { setMode('register'); setPassword('') }} className="text-[#c8f73a] hover:underline">{t.create_account}</button>
+                    </p>
+                    <a href={`/${locale}/reset-password`} className="text-white/30 text-[11px] hover:text-white/50 transition-colors">
+                      {locale === 'en' ? 'Forgot password?' : locale === 'pt' ? 'Esqueceu a senha?' : '¿Olvidaste la contraseña?'}
+                    </a>
+                  </div>
                 </div>
               )}
 
@@ -398,7 +460,9 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                   className="mt-0.5 w-4 h-4 rounded border-white/20 bg-white/5 accent-[#c8f73a]" />
                 <span className="text-white/50 text-sm leading-tight">
                   {t.terms}{' '}
-                  <Link href={`/${locale}/terms`} className="text-[#c8f73a] hover:underline">{t.terms_link}</Link>
+                  <button type="button" onClick={() => setShowTerms(true)} className="text-[#c8f73a] hover:underline">
+                    {t.terms_link}
+                  </button>
                 </span>
               </label>
 
@@ -420,7 +484,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
               {/* Secure note */}
               <div className="flex items-center justify-center gap-2 mt-4">
-                <span className="material-symbols-outlined text-white/20 text-sm">lock</span>
+                <Lock size={13} className="text-white/20 flex-shrink-0" />
                 <p className="text-white/25 text-[11px]">{t.secure_note}</p>
               </div>
             </div>
@@ -464,10 +528,10 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               )}
 
               {/* Selected plan card */}
-              <div className="bg-[#c8f73a]/5 border border-[#c8f73a]/20 rounded-xl p-5 mb-6">
+              <div className={`border rounded-xl p-5 mb-6 ${plan.isRecurring ? 'bg-[#00e3fd]/5 border-[#00e3fd]/20' : 'bg-[#c8f73a]/5 border-[#c8f73a]/20'}`}>
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <p className="text-[10px] text-[#c8f73a] font-black uppercase tracking-widest mb-1">
+                    <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${plan.isRecurring ? 'text-[#00e3fd]' : 'text-[#c8f73a]'}`}>
                       Plan {plan.name[locale]}
                     </p>
                     <p className="font-headline font-black text-3xl text-white">
@@ -475,8 +539,10 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                     </p>
                     <p className="text-white/40 text-sm mt-0.5">{plan.period[locale]}</p>
                   </div>
-                  <div className="bg-[#c8f73a] text-black text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest">
-                    R3SET
+                  <div className={`text-black text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${plan.isRecurring ? 'bg-[#00e3fd]' : 'bg-[#c8f73a]'}`}>
+                    {plan.isRecurring
+                      ? (locale === 'en' ? 'MONTHLY' : locale === 'pt' ? 'MENSAL' : 'MENSUAL')
+                      : (locale === 'en' ? 'ONE-TIME' : locale === 'pt' ? 'ÚNICO' : 'ÚNICO')}
                   </div>
                 </div>
                 <p className="text-white/30 text-[11px]">{plan.frequency[locale]}</p>
@@ -486,8 +552,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               <div className="space-y-3 mb-6">
                 {plan.features[locale].map((feat, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <span className="material-symbols-outlined text-[#c8f73a] text-sm mt-0.5"
-                      style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                    <CheckCircle2 size={16} className="text-[#c8f73a] mt-0.5 flex-shrink-0" />
                     <p className="text-white/60 text-sm">{feat}</p>
                   </div>
                 ))}
@@ -510,6 +575,126 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
         </div>
       </div>
+
+      {/* ── Terms & Conditions Modal ── */}
+      {showTerms && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowTerms(false) }}
+        >
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+          <div className="relative z-10 w-full max-w-2xl max-h-[85vh] bg-[#141414] border border-white/10 rounded-2xl flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-white/10">
+              <h2 className="font-headline font-black text-lg uppercase tracking-tight">
+                {locale === 'en' ? 'Terms & Conditions' : locale === 'pt' ? 'Termos e Condições' : 'Términos y Condiciones'}
+              </h2>
+              <button onClick={() => setShowTerms(false)} className="text-white/40 hover:text-white transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+            {/* Body */}
+            <div className="overflow-y-auto p-6 text-white/60 text-sm leading-relaxed space-y-4">
+              <p className="text-white/30 text-[11px] uppercase tracking-widest">
+                {locale === 'en' ? 'Last updated: April 2026' : locale === 'pt' ? 'Última atualização: Abril 2026' : 'Última actualización: Abril 2026'}
+              </p>
+
+              <section>
+                <h3 className="text-white font-bold mb-2">
+                  {locale === 'en' ? '1. Service' : locale === 'pt' ? '1. Serviço' : '1. Servicio'}
+                </h3>
+                <p>
+                  {locale === 'en'
+                    ? 'MÉTODO R3SET provides personalized fitness coaching, nutrition guidance, and health tracking services through its web platform and mobile app. By subscribing, you gain access to the features included in your chosen plan.'
+                    : locale === 'pt'
+                    ? 'O MÉTODO R3SET oferece serviços de coaching fitness personalizado, orientação nutricional e acompanhamento de saúde através da sua plataforma web e app mobile. Ao assinar, você tem acesso às funcionalidades incluídas no plano escolhido.'
+                    : 'MÉTODO R3SET brinda servicios de coaching fitness personalizado, orientación nutricional y seguimiento de salud a través de su plataforma web y app mobile. Al suscribirte, accedés a las funcionalidades incluidas en el plan elegido.'}
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-white font-bold mb-2">
+                  {locale === 'en' ? '2. Subscription & Billing' : locale === 'pt' ? '2. Assinatura e Cobrança' : '2. Suscripción y Facturación'}
+                </h3>
+                <p>
+                  {locale === 'en'
+                    ? 'Your subscription renews automatically at the end of each billing period. You can cancel at any time through Mercado Pago before the next renewal date. No refunds are issued for partial periods.'
+                    : locale === 'pt'
+                    ? 'Sua assinatura é renovada automaticamente ao final de cada período de cobrança. Você pode cancelar a qualquer momento pelo Mercado Pago antes da data de renovação. Não são emitidos reembolsos por períodos parciais.'
+                    : 'Tu suscripción se renueva automáticamente al finalizar cada período de facturación. Podés cancelar en cualquier momento a través de Mercado Pago antes de la próxima renovación. No se emiten reembolsos por períodos parciales.'}
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-white font-bold mb-2">
+                  {locale === 'en' ? '3. Account' : locale === 'pt' ? '3. Conta' : '3. Cuenta'}
+                </h3>
+                <p>
+                  {locale === 'en'
+                    ? 'You are responsible for maintaining the confidentiality of your account credentials. You must be at least 18 years old to subscribe. One account per person.'
+                    : locale === 'pt'
+                    ? 'Você é responsável por manter a confidencialidade das credenciais da sua conta. Você deve ter pelo menos 18 anos para assinar. Uma conta por pessoa.'
+                    : 'Sos responsable de mantener la confidencialidad de tus credenciales. Debés tener al menos 18 años para suscribirte. Una cuenta por persona.'}
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-white font-bold mb-2">
+                  {locale === 'en' ? '4. Health Disclaimer' : locale === 'pt' ? '4. Aviso de Saúde' : '4. Aviso de Salud'}
+                </h3>
+                <p>
+                  {locale === 'en'
+                    ? 'The content provided is for general fitness and wellness purposes only and does not constitute medical advice. Consult a healthcare professional before starting any exercise or nutrition program.'
+                    : locale === 'pt'
+                    ? 'O conteúdo fornecido é apenas para fins gerais de fitness e bem-estar e não constitui aconselhamento médico. Consulte um profissional de saúde antes de iniciar qualquer programa de exercícios ou nutrição.'
+                    : 'El contenido provisto es solo para fines generales de fitness y bienestar y no constituye asesoramiento médico. Consultá un profesional de la salud antes de comenzar cualquier programa de ejercicio o nutrición.'}
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-white font-bold mb-2">
+                  {locale === 'en' ? '5. Privacy' : locale === 'pt' ? '5. Privacidade' : '5. Privacidad'}
+                </h3>
+                <p>
+                  {locale === 'en'
+                    ? 'Your personal data is processed in accordance with our Privacy Policy. We do not sell your data to third parties. Payment processing is handled securely by Mercado Pago.'
+                    : locale === 'pt'
+                    ? 'Seus dados pessoais são processados de acordo com nossa Política de Privacidade. Não vendemos seus dados a terceiros. O processamento de pagamentos é feito com segurança pelo Mercado Pago.'
+                    : 'Tus datos personales son procesados conforme a nuestra Política de Privacidad. No vendemos tus datos a terceros. El procesamiento de pagos es gestionado de forma segura por Mercado Pago.'}
+                </p>
+              </section>
+
+              <section>
+                <h3 className="text-white font-bold mb-2">
+                  {locale === 'en' ? '6. Changes' : locale === 'pt' ? '6. Alterações' : '6. Cambios'}
+                </h3>
+                <p>
+                  {locale === 'en'
+                    ? 'We reserve the right to update these terms. Continued use of the service after changes constitutes acceptance of the updated terms.'
+                    : locale === 'pt'
+                    ? 'Reservamo-nos o direito de atualizar estes termos. O uso continuado do serviço após as alterações constitui aceitação dos termos atualizados.'
+                    : 'Nos reservamos el derecho de actualizar estos términos. El uso continuado del servicio después de los cambios constituye la aceptación de los términos actualizados.'}
+                </p>
+              </section>
+            </div>
+            {/* Footer */}
+            <div className="p-6 border-t border-white/10 flex gap-3">
+              <button
+                onClick={() => { setAcceptTerms(true); setShowTerms(false) }}
+                className="flex-1 bg-[#c8f73a] text-black font-headline font-black text-sm py-3 rounded-xl uppercase tracking-wider hover:bg-[#d4ff45] transition-all"
+              >
+                {locale === 'en' ? 'Accept & Close' : locale === 'pt' ? 'Aceitar e Fechar' : 'Aceptar y Cerrar'}
+              </button>
+              <button
+                onClick={() => setShowTerms(false)}
+                className="px-6 border border-white/10 text-white/50 text-sm rounded-xl hover:border-white/20 hover:text-white/70 transition-all"
+              >
+                {locale === 'en' ? 'Close' : locale === 'pt' ? 'Fechar' : 'Cerrar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

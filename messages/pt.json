@@ -1,307 +1,308 @@
 {
-	"general": {
-		"choose_plan": "Escolha o plano",
-		"i_want_to_start": "Eu quero começar",
-		"view_detail": "Ver detalhes",
-		"monthly_payment": "Pagamento mensal",
-		"more_information": "Mais informação",
-		"what_this_plan_includes": "O que inclui este Plano?"
-	},
-	"header": {
-		"about": "Sobre Mim",
-		"services": "Serviços",
-		"testimonials": "Depoimentos",
-		"transformations": "Transformações",
-		"contact": "Contato",
-		"schedule-consultation": "Agende a sua Consulta",
-		"join_team_pmvm": "Junte-se à equipa PMVM",
-		"start_your_change": "Inicie a sua alteração"
-	},
-	"hero": {
-		"title_1": "Pese Menos",
-		"title_2": "Viva Mais",
-		"subtitle": "Cada dia é uma nova oportunidade para mudar de vida!",
-		"description": "Os nossos planos de treino personalizados irão ajudá-lo a consciencializar sobre a importância de manter um peso saudável e adotar um estilo de vida equilibrado, estabelecendo metas e objetivos alcançáveis.",
-		"about_me": "Treinador principal e preparador físico",
-		"start_now": "Comece Agora",
-		"learn_more": "Saiba Mais",
-		"get_to_know_me": "Conheça-me"
-	},
-	"services": {
-		"parallax_text_1": "Pesar menos",
-		"parallax_text_2": "Viva mais",
-		"title": "Experiência em que você pode confiar",
-		"description": "Com mais de 10 anos de experiência na indústria de fitness, estou dedicado a ajudá-lo a alcançar seus objetivos através de treinamentos personalizados e orientação nutricional.",
-		"weight_loss": {
-			"title": "Perda de Peso",
-			"description": "Desenvolva um plano personalizado para ajudá-lo a perder peso de forma segura e sustentável."
-		},
-		"muscle_building": {
-			"title": "Construção Muscular",
-			"description": "Ganhe massa muscular magra através de treinamento de força direcionado e nutrição."
-		},
-		"injury_prevention": {
-			"title": "Prevenção de Lesões",
-			"description": "Aprenda a forma e a técnica adequadas para evitar lesões e manter-se ativo."
-		},
-		"image_alt": "Experiência em Fitness"
-	},
-	"about": {
-		"title_1": "Conheça",
-		"title_2": "Alejandro Gerez",
-		"title_3": "fundador do programa P-V+",
-		"greeting": "Olá, eu sou o Ale Gerez",
-		"content_1": "Desde criança, usando a comida como escape, fui acumulando peso até atingir os 160 kg. Acreditava que uma dieta era a solução e procurava a combinação perfeita de alimentos que me fizessem perder peso por magia.",
-		"content_2": "Comecei o meu percurso no programa televisivo “A Cuestión de Peso” e consegui perder 50 kg. No entanto, depois do programa, voltei a engordar porque a mudança que fiz foi apenas física, não mental. Com o passar do tempo, fui compreendendo que a verdadeira transformação vai muito além de uma simples foto de antes e depois.",
-		"content_3": "Hoje posso dizer que me transformei de um lugar de paz com a comida e com o meu corpo, deixando a luta e o sofrimento para trás. Este caminho incluiu não só o autoconhecimento, mas também a terapia, o que me permitiu curar verdadeiramente e construir uma relação mais saudável e amorosa comigo mesma.",
-		"title2": "Transforme Sua Vida com 'Pese Menos Viva Mais'",
-		"content2": "No 'Pese Menos Viva Mais', acreditamos que o caminho para uma vida mais saudável não se trata apenas de perder peso, mas de ganhar bem-estar, energia e confiança. Nosso programa de treinamento personalizado é projetado para se adaptar às suas necessidades, objetivos e estilo de vida. Com uma abordagem holística à saúde física e mental, oferecemos planos de exercícios eficazes, orientação nutricional e apoio contínuo para ajudá-lo a alcançar seus objetivos de forma segura e sustentável. Junte-se a nós e descubra como você pode viver de forma mais plena, mais ativa e mais feliz."
-	},
-	"testimonials": {
-		"title": "O que meus clientes dizem",
-		"description": "Ouça clientes reais que transformaram suas vidas com minha orientação e apoio.",
-		"clients": {
-			"jessica_davis": {
-				"name": "Jessica Davis",
-				"achievement": "Perdeu 11 kg",
-				"quote": "Trabalhar com este treinador mudou minha vida. Ele criou um plano que se encaixava no meu estilo de vida e me ajudou a alcançar meus objetivos."
-			},
-			"michael_roberts": {
-				"name": "Michael Roberts",
-				"achievement": "Ganhou 7 kg de músculo",
-				"quote": "Eu estava com dificuldade para ganhar músculo, mas este treinador desenhou um programa que me ajudou a ganhar massa magra sem lesões."
-			},
-			"sarah_kim": {
-				"name": "Sarah Kim",
-				"achievement": "Melhorou sua aptidão física geral",
-				"quote": "Eu queria melhorar minha aptidão física geral, e este treinador criou um programa completo que fez uma grande diferença na minha energia e força."
-			}
-		}
-	},
-	"contact": {
-		"title": "Comece agora!",
-		"description": "Preencha o formulário para tirar todas as suas dúvidas e iniciar sua mudança. Estamos aqui para ajudá-lo!",
-		"name_placeholder": "Nome",
-		"phone_placeholder": "Telefone",
-		"email_placeholder": "E-mail",
-		"message_placeholder": "Sua consulta",
-		"submit_button": "Agendar Consulta",
-		"calendar_link": "Adicionar ao Google Calendar",
-		"send_message": "Enviar mensagem"
-	},
-	"transformations": {
-		"title": "Transformações",
-		"subtitle": "algumas alterações dos meus alunos",
-		"before": "Antes",
-		"after": "Depois"
-	},
-	"footer": {
-		"copyright": "© 2024 Treinador Físico. Todos os direitos reservados.",
-		"terms": "Termos de Serviço",
-		"privacy": "Política de Privacidade"
-	},
-	"cookies": {
-		"title": "Utilizamos cookies",
-		"text": "Utilizamos cookies para melhorar a sua experiência de navegação, veicular anúncios ou conteúdos personalizados e analisar o nosso tráfego. Ao clicar em \"Aceitar todos os cookies\", concorda com a utilização de cookies.",
-		"btn_accept": "Aceitar todos os cookies",
-		"btn_cancel": "Rejeitar"
-	},
-	"v3": {
-		"nav": {
-			"about": "Sobre Mim",
-			"program": "O Programa",
-			"testimonials": "Depoimentos",
-			"faq": "FAQ",
-			"cta": "Começar agora",
-			"login": "Entrar",
-			"register": "Cadastrar-se",
-			"dashboard": "Meu dashboard",
-			"logout": "Sair"
-		},
-		"hero": {
-			"badge": "Programa de transformação física",
-			"stat1": "Anos especializado em sobrepeso e obesidade",
-			"stat2": "Anos de experiência no mundo fitness",
-			"stat3": "Vidas transformadas no team PMVM",
-			"stat4": "Profissionais de saúde trabalhando em equipe",
-			"cta2": "Ver o programa"
-		},
-		"program": {
-			"label": "O método",
-			"title": "O programa",
-			"highlight": "PMVM",
-			"sub": "Um sistema integral de 3 pilares que trabalham em conjunto para alcançar resultados duradouros sem sacrificar sua qualidade de vida.",
-			"pillar1_title": "Movimento inteligente",
-			"pillar1_desc": "Plano de exercícios personalizado segundo sua condição física atual, disponibilidade de tempo e objetivos. Sem equipamentos obrigatórios, adaptável a qualquer contexto.",
-			"pillar2_title": "Nutrição real",
-			"pillar2_desc": "Orientação nutricional baseada em seus hábitos atuais. Não eliminamos alimentos, os reorganizamos. Você come o que gosta, mas de forma inteligente.",
-			"pillar3_title": "Mentalidade de mudança",
-			"pillar3_desc": "Trabalhamos os padrões de pensamento que te travam. 80% do sucesso está na cabeça. Te damos as ferramentas para manter a motivação ao longo do tempo.",
-			"step1_title": "Diagnóstico",
-			"step1_desc": "Avaliação inicial do seu estado físico e hábitos",
-			"step2_title": "Plano personalizado",
-			"step2_desc": "Rotina e guia nutricional adaptados a você",
-			"step3_title": "Acompanhamento",
-			"step3_desc": "Suporte semanal e ajustes contínuos",
-			"step4_title": "Resultado",
-			"step4_desc": "Transformação sustentável e hábitos para sempre",
-			"step_prefix": "PASSO"
-		},
-		"faq": {
-			"label": "FAQ",
-			"title": "Perguntas",
-			"highlight": "frequentes",
-			"sub": "Tem dúvidas? Aqui respondemos as mais comuns. Se não encontrar a sua, escreva para nós.",
-			"q1": "Preciso ter experiência prévia em exercícios?",
-			"a1": "Não. O programa é desenvolvido do zero para pessoas que nunca fizeram exercício ou que ficaram muito tempo sem se movimentar. Começamos de onde você está.",
-			"q2": "O programa funciona online?",
-			"a2": "Sim, totalmente. Você pode fazer o programa de qualquer lugar do mundo. O acompanhamento é feito por videochamada, WhatsApp e plataforma digital.",
-			"q3": "Quanto tempo dura o programa?",
-			"a3": "O programa base é de 3 meses. Muitos clientes continuam com planos de manutenção para consolidar os resultados e continuar progredindo.",
-			"q4": "Vou precisar seguir uma dieta estrita?",
-			"a4": "Não. A orientação nutricional se adapta aos seus hábitos atuais. Não se trata de eliminar alimentos, mas de reorganizar e entender o que você come.",
-			"q5": "Quanto tempo por dia preciso dedicar?",
-			"a5": "30 a 45 minutos diários são suficientes. O programa é desenhado para pessoas com agenda ocupada.",
-			"q6": "E se eu tiver alguma condição médica?",
-			"a6": "Antes de começar fazemos uma avaliação completa. O programa se adapta a condições como hipertensão, diabetes tipo 2 e outras. Trabalhamos em coordenação com seu médico se necessário."
-		},
-		"contact": {
-			"label": "Contato",
-			"title": "Pronto para",
-			"highlight": "começar?",
-			"sub": "Preencha o formulário e Alejandro entra em contato em menos de 24 horas para uma consulta gratuita sem compromisso.",
-			"location": "Buenos Aires, Argentina (online worldwide)",
-			"form_name": "Seu nome",
-			"form_email": "Seu e-mail",
-			"form_phone": "WhatsApp / telefone",
-			"form_goal": "Qual é o seu objetivo?",
-			"form_opt1": "Perder peso",
-			"form_opt2": "Melhorar minha condição física",
-			"form_opt3": "Mudar meus hábitos",
-			"form_opt4": "Outro",
-			"form_message": "Me conta um pouco sobre você e seus objetivos...",
-			"form_submit": "Enviar consulta",
-			"form_success": "Mensagem enviada! Entraremos em contato."
-		},
-		"about": {
-			"cred1": "Licenciado em Educação Física – UBA",
-			"cred2": "Especialista em obesidade e sobrepeso",
-			"cred3": "Baseado em Buenos Aires, Argentina",
-			"cred4": "Atendimento presencial e online"
-		},
-		"testi": {
-			"label": "Casos reais",
-			"title": "Eles já",
-			"highlight": "conseguiram"
-		},
-		"pricing": {
-			"label": "Planos",
-			"title": "Escolha seu",
-			"highlight": "programa",
-			"popular": "Mais popular",
-			"cta": "Começar agora",
-			"per_month": "/ mês",
-			"all_from_basic": "Tudo do plano Workout, mais:"
-		},
-		"footer": {
-			"rights": "Todos os direitos reservados"
-		}
-	},
-	"app": {
-		"nav": {
-			"home": "Início",
-			"goals": "Metas",
-			"routines": "Treinos",
-			"messages": "Mensagens",
-			"progress": "Progresso",
-			"clients": "Clientes",
-			"subscriptions": "Assinaturas",
-			"dashboard": "Dashboard"
-		},
-		"sidebar": {
-			"my_area": "Minha Área",
-			"admin_portal": "Portal Admin",
-			"trainer_profile": "Treinador · Meu perfil →",
-			"my_profile_link": "Meu perfil →",
-			"view_landing": "Ver Site",
-			"sign_out": "Sair",
-			"view_as_client": "Ver como cliente"
-		},
-		"greeting": {
-			"morning": "Bom dia",
-			"afternoon": "Boa tarde",
-			"evening": "Boa noite"
-		},
-		"home": {
-			"stat_routines": "Treinos Ativos",
-			"stat_messages": "Mensagens do Coach",
-			"stat_weight": "Registros de Peso",
-			"see_more": "Ver mais",
-			"history_label": "Histórico",
-			"history_title": "Meus Últimos Registros",
-			"see_all": "Ver tudo →",
-			"no_records": "Ainda não há registros",
-			"first_record": "Registrar meu primeiro peso",
-			"no_plan_label": "Sem plano ativo",
-			"no_plan_desc": "Adquira um plano para acessar seus treinos personalizados",
-			"see_plans": "Ver planos →",
-			"cta_routines": "Ver meus treinos",
-			"cta_messages": "Mensagens do coach",
-			"plan_active": "Plano ativo",
-			"days_remaining": "Dias restantes",
-			"plan_start": "Início",
-			"plan_completed": "% concluído",
-			"plan_expires": "Vence em",
-			"renew_plan": "Renovar plano →"
-		},
-		"admin": {
-			"overview": "Visão geral",
-			"panel_line1": "PAINEL",
-			"panel_line2": "ADMIN",
-			"stat_clients": "Clientes Ativos",
-			"stat_messages": "Mensagens não lidas",
-			"stat_progress": "Registros de Progresso",
-			"link_view_all": "Ver todos →",
-			"link_attention": "Requer Atenção →",
-			"link_recent": "Últimos registros →",
-			"feed_label": "Feed",
-			"feed_title": "Atividade Recente — Progresso",
-			"no_progress": "Nenhum registro de progresso ainda",
-			"new_clients_label": "Recentes",
-			"new_clients_title": "Novos Clientes",
-			"no_clients": "Nenhum cliente ainda",
-			"btn_clients": "Clientes",
-			"btn_subscriptions": "Assinaturas",
-			"new_record": "Novo registro",
-			"no_name": "Sem nome"
-		},
-		"profile": {
-			"section_config": "Configurações",
-			"section_my_area": "Minha Área",
-			"title": "MEU PERFIL",
-			"subtitle_admin": "Dados da sua conta e preferências.",
-			"subtitle_client": "Seus dados pessoais e preferências.",
-			"avatar_label": "Foto de perfil",
-			"avatar_click": "Clique na imagem para alterá-la",
-			"avatar_uploading": "Enviando...",
-			"avatar_hint": "JPG, PNG ou WEBP · máx. 2 MB",
-			"avatar_error": "Erro ao enviar imagem. Verifique o tamanho (máx. 2MB).",
-			"avatar_save_error": "Imagem enviada mas o perfil não pôde ser salvo.",
-			"name_label": "Nome completo",
-			"name_placeholder": "Seu nome",
-			"phone_label": "WhatsApp / Telefone",
-			"phone_placeholder": "+55 11 91234-5678",
-			"phone_hint_admin": "Seus clientes vão entrar em contato por aqui pelo app.",
-			"phone_hint_client": "Seu treinador pode entrar em contato por este número.",
-			"gender_label": "Gênero",
-			"male": "Masculino",
-			"female": "Feminino",
-			"other": "Outro",
-			"language_label": "Idioma",
-			"save": "Salvar alterações",
-			"saving": "Salvando...",
-			"saved": "Alterações salvas com sucesso.",
-			"save_error": "Erro ao salvar. Tente novamente."
-		}
-	}
+  "general": {
+    "choose_plan": "Escolha o plano",
+    "i_want_to_start": "Eu quero começar",
+    "view_detail": "Ver detalhes",
+    "monthly_payment": "Pagamento mensal",
+    "more_information": "Mais informação",
+    "what_this_plan_includes": "O que inclui este Plano?"
+  },
+  "header": {
+    "about": "Sobre Mim",
+    "services": "Serviços",
+    "testimonials": "Depoimentos",
+    "transformations": "Transformações",
+    "contact": "Contato",
+    "schedule-consultation": "Agende a sua Consulta",
+    "join_team_pmvm": "Junte-se à equipa PMVM",
+    "start_your_change": "Inicie a sua alteração"
+  },
+  "hero": {
+    "title_1": "Pese Menos",
+    "title_2": "Viva Mais",
+    "subtitle": "Cada dia é uma nova oportunidade para mudar de vida!",
+    "description": "Os nossos planos de treino personalizados irão ajudá-lo a consciencializar sobre a importância de manter um peso saudável e adotar um estilo de vida equilibrado, estabelecendo metas e objetivos alcançáveis.",
+    "about_me": "Treinador principal e preparador físico",
+    "start_now": "Comece Agora",
+    "learn_more": "Saiba Mais",
+    "get_to_know_me": "Conheça-me"
+  },
+  "services": {
+    "parallax_text_1": "Pesar menos",
+    "parallax_text_2": "Viva mais",
+    "title": "Experiência em que você pode confiar",
+    "description": "Com mais de 10 anos de experiência na indústria de fitness, estou dedicado a ajudá-lo a alcançar seus objetivos através de treinamentos personalizados e orientação nutricional.",
+    "weight_loss": {
+      "title": "Perda de Peso",
+      "description": "Desenvolva um plano personalizado para ajudá-lo a perder peso de forma segura e sustentável."
+    },
+    "muscle_building": {
+      "title": "Construção Muscular",
+      "description": "Ganhe massa muscular magra através de treinamento de força direcionado e nutrição."
+    },
+    "injury_prevention": {
+      "title": "Prevenção de Lesões",
+      "description": "Aprenda a forma e a técnica adequadas para evitar lesões e manter-se ativo."
+    },
+    "image_alt": "Experiência em Fitness"
+  },
+  "about": {
+    "title_1": "Conheça",
+    "title_2": "Alejandro Gerez",
+    "title_3": "fundador do programa P-V+",
+    "greeting": "Olá, eu sou o Ale Gerez",
+    "content_1": "Desde criança, usando a comida como escape, fui acumulando peso até atingir os 160 kg. Acreditava que uma dieta era a solução e procurava a combinação perfeita de alimentos que me fizessem perder peso por magia.",
+    "content_2": "Comecei o meu percurso no programa televisivo “A Cuestión de Peso” e consegui perder 50 kg. No entanto, depois do programa, voltei a engordar porque a mudança que fiz foi apenas física, não mental. Com o passar do tempo, fui compreendendo que a verdadeira transformação vai muito além de uma simples foto de antes e depois.",
+    "content_3": "Hoje posso dizer que me transformei de um lugar de paz com a comida e com o meu corpo, deixando a luta e o sofrimento para trás. Este caminho incluiu não só o autoconhecimento, mas também a terapia, o que me permitiu curar verdadeiramente e construir uma relação mais saudável e amorosa comigo mesma.",
+    "title2": "Transforme Sua Vida com 'Pese Menos Viva Mais'",
+    "content2": "No 'Pese Menos Viva Mais', acreditamos que o caminho para uma vida mais saudável não se trata apenas de perder peso, mas de ganhar bem-estar, energia e confiança. Nosso programa de treinamento personalizado é projetado para se adaptar às suas necessidades, objetivos e estilo de vida. Com uma abordagem holística à saúde física e mental, oferecemos planos de exercícios eficazes, orientação nutricional e apoio contínuo para ajudá-lo a alcançar seus objetivos de forma segura e sustentável. Junte-se a nós e descubra como você pode viver de forma mais plena, mais ativa e mais feliz."
+  },
+  "testimonials": {
+    "title": "O que meus clientes dizem",
+    "description": "Ouça clientes reais que transformaram suas vidas com minha orientação e apoio.",
+    "clients": {
+      "jessica_davis": {
+        "name": "Jessica Davis",
+        "achievement": "Perdeu 11 kg",
+        "quote": "Trabalhar com este treinador mudou minha vida. Ele criou um plano que se encaixava no meu estilo de vida e me ajudou a alcançar meus objetivos."
+      },
+      "michael_roberts": {
+        "name": "Michael Roberts",
+        "achievement": "Ganhou 7 kg de músculo",
+        "quote": "Eu estava com dificuldade para ganhar músculo, mas este treinador desenhou um programa que me ajudou a ganhar massa magra sem lesões."
+      },
+      "sarah_kim": {
+        "name": "Sarah Kim",
+        "achievement": "Melhorou sua aptidão física geral",
+        "quote": "Eu queria melhorar minha aptidão física geral, e este treinador criou um programa completo que fez uma grande diferença na minha energia e força."
+      }
+    }
+  },
+  "contact": {
+    "title": "Comece agora!",
+    "description": "Preencha o formulário para tirar todas as suas dúvidas e iniciar sua mudança. Estamos aqui para ajudá-lo!",
+    "name_placeholder": "Nome",
+    "phone_placeholder": "Telefone",
+    "email_placeholder": "E-mail",
+    "message_placeholder": "Sua consulta",
+    "submit_button": "Agendar Consulta",
+    "calendar_link": "Adicionar ao Google Calendar",
+    "send_message": "Enviar mensagem"
+  },
+  "transformations": {
+    "title": "Transformações",
+    "subtitle": "algumas alterações dos meus alunos",
+    "before": "Antes",
+    "after": "Depois"
+  },
+  "footer": {
+    "copyright": "© 2024 Treinador Físico. Todos os direitos reservados.",
+    "terms": "Termos de Serviço",
+    "privacy": "Política de Privacidade"
+  },
+  "cookies": {
+    "title": "Utilizamos cookies",
+    "text": "Utilizamos cookies para melhorar a sua experiência de navegação, veicular anúncios ou conteúdos personalizados e analisar o nosso tráfego. Ao clicar em \"Aceitar todos os cookies\", concorda com a utilização de cookies.",
+    "btn_accept": "Aceitar todos os cookies",
+    "btn_cancel": "Rejeitar"
+  },
+  "v3": {
+    "nav": {
+      "about": "Sobre Mim",
+      "program": "O Programa",
+      "testimonials": "Depoimentos",
+      "faq": "FAQ",
+      "cta": "Começar agora",
+      "login": "Entrar",
+      "register": "Cadastrar-se",
+      "dashboard": "Meu dashboard",
+      "logout": "Sair"
+    },
+    "hero": {
+      "badge": "Programa de transformação física",
+      "stat1": "Anos especializado em sobrepeso e obesidade",
+      "stat2": "Anos de experiência no mundo fitness",
+      "stat3": "Vidas transformadas no team PMVM",
+      "stat4": "Profissionais de saúde trabalhando em equipe",
+      "cta2": "Ver o programa"
+    },
+    "program": {
+      "label": "O método",
+      "title": "O programa",
+      "highlight": "PMVM",
+      "sub": "Um sistema integral de 3 pilares que trabalham em conjunto para alcançar resultados duradouros sem sacrificar sua qualidade de vida.",
+      "pillar1_title": "Movimento inteligente",
+      "pillar1_desc": "Plano de exercícios personalizado segundo sua condição física atual, disponibilidade de tempo e objetivos. Sem equipamentos obrigatórios, adaptável a qualquer contexto.",
+      "pillar2_title": "Nutrição real",
+      "pillar2_desc": "Orientação nutricional baseada em seus hábitos atuais. Não eliminamos alimentos, os reorganizamos. Você come o que gosta, mas de forma inteligente.",
+      "pillar3_title": "Mentalidade de mudança",
+      "pillar3_desc": "Trabalhamos os padrões de pensamento que te travam. 80% do sucesso está na cabeça. Te damos as ferramentas para manter a motivação ao longo do tempo.",
+      "step1_title": "Diagnóstico",
+      "step1_desc": "Avaliação inicial do seu estado físico e hábitos",
+      "step2_title": "Plano personalizado",
+      "step2_desc": "Rotina e guia nutricional adaptados a você",
+      "step3_title": "Acompanhamento",
+      "step3_desc": "Suporte semanal e ajustes contínuos",
+      "step4_title": "Resultado",
+      "step4_desc": "Transformação sustentável e hábitos para sempre",
+      "step_prefix": "PASSO"
+    },
+    "faq": {
+      "label": "FAQ",
+      "title": "Perguntas",
+      "highlight": "frequentes",
+      "sub": "Tem dúvidas? Aqui respondemos as mais comuns. Se não encontrar a sua, escreva para nós.",
+      "q1": "Preciso ter experiência prévia em exercícios?",
+      "a1": "Não. O programa é desenvolvido do zero para pessoas que nunca fizeram exercício ou que ficaram muito tempo sem se movimentar. Começamos de onde você está.",
+      "q2": "O programa funciona online?",
+      "a2": "Sim, totalmente. Você pode fazer o programa de qualquer lugar do mundo. O acompanhamento é feito por videochamada, WhatsApp e plataforma digital.",
+      "q3": "Quanto tempo dura o programa?",
+      "a3": "O programa base é de 3 meses. Muitos clientes continuam com planos de manutenção para consolidar os resultados e continuar progredindo.",
+      "q4": "Vou precisar seguir uma dieta estrita?",
+      "a4": "Não. A orientação nutricional se adapta aos seus hábitos atuais. Não se trata de eliminar alimentos, mas de reorganizar e entender o que você come.",
+      "q5": "Quanto tempo por dia preciso dedicar?",
+      "a5": "30 a 45 minutos diários são suficientes. O programa é desenhado para pessoas com agenda ocupada.",
+      "q6": "E se eu tiver alguma condição médica?",
+      "a6": "Antes de começar fazemos uma avaliação completa. O programa se adapta a condições como hipertensão, diabetes tipo 2 e outras. Trabalhamos em coordenação com seu médico se necessário."
+    },
+    "contact": {
+      "label": "Contato",
+      "title": "Pronto para",
+      "highlight": "começar?",
+      "sub": "Preencha o formulário e Alejandro entra em contato em menos de 24 horas para uma consulta gratuita sem compromisso.",
+      "location": "Buenos Aires, Argentina (online worldwide)",
+      "form_name": "Seu nome",
+      "form_email": "Seu e-mail",
+      "form_phone": "WhatsApp / telefone",
+      "form_goal": "Qual é o seu objetivo?",
+      "form_opt1": "Perder peso",
+      "form_opt2": "Melhorar minha condição física",
+      "form_opt3": "Mudar meus hábitos",
+      "form_opt4": "Outro",
+      "form_message": "Me conta um pouco sobre você e seus objetivos...",
+      "form_submit": "Enviar consulta",
+      "form_success": "Mensagem enviada! Entraremos em contato."
+    },
+    "about": {
+      "cred1": "Licenciado em Educação Física – UBA",
+      "cred2": "Especialista em obesidade e sobrepeso",
+      "cred3": "Baseado em Buenos Aires, Argentina",
+      "cred4": "Atendimento presencial e online"
+    },
+    "testi": {
+      "label": "Casos reais",
+      "title": "Eles já",
+      "highlight": "conseguiram"
+    },
+    "pricing": {
+      "label": "Planos",
+      "title": "Escolha seu",
+      "highlight": "programa",
+      "popular": "Mais popular",
+      "cta": "Começar agora",
+      "per_month": "/ mês",
+      "all_from_basic": "Tudo do plano Workout, mais:"
+    },
+    "footer": {
+      "rights": "Todos os direitos reservados"
+    }
+  },
+  "app": {
+    "nav": {
+      "home": "Início",
+      "goals": "Metas",
+      "routines": "Treinos",
+      "messages": "Contato",
+      "progress": "Progresso",
+      "clients": "Clientes",
+      "subscriptions": "Assinaturas",
+      "dashboard": "Dashboard",
+      "profile": "Perfil"
+    },
+    "sidebar": {
+      "my_area": "Minha Área",
+      "admin_portal": "Portal Admin",
+      "trainer_profile": "Treinador · Meu perfil →",
+      "my_profile_link": "Meu perfil →",
+      "view_landing": "Ver Site",
+      "sign_out": "Sair",
+      "view_as_client": "Ver como cliente"
+    },
+    "greeting": {
+      "morning": "Bom dia",
+      "afternoon": "Boa tarde",
+      "evening": "Boa noite"
+    },
+    "home": {
+      "stat_routines": "Treinos Ativos",
+      "stat_messages": "WhatsApp Coach",
+      "stat_weight": "Registros de Peso",
+      "see_more": "Ver mais",
+      "history_label": "Histórico",
+      "history_title": "Meus Últimos Registros",
+      "see_all": "Ver tudo →",
+      "no_records": "Ainda não há registros",
+      "first_record": "Registrar meu primeiro peso",
+      "no_plan_label": "Sem plano ativo",
+      "no_plan_desc": "Adquira um plano para acessar seus treinos personalizados",
+      "see_plans": "Ver planos →",
+      "cta_routines": "Ver meus treinos",
+      "cta_messages": "Mensagens do coach",
+      "plan_active": "Plano ativo",
+      "days_remaining": "Dias restantes",
+      "plan_start": "Início",
+      "plan_completed": "% concluído",
+      "plan_expires": "Vence em",
+      "renew_plan": "Renovar plano →"
+    },
+    "admin": {
+      "overview": "Visão geral",
+      "panel_line1": "PAINEL",
+      "panel_line2": "ADMIN",
+      "stat_clients": "Clientes Ativos",
+      "stat_messages": "Mensagens não lidas",
+      "stat_progress": "Registros de Progresso",
+      "link_view_all": "Ver todos →",
+      "link_attention": "Requer Atenção →",
+      "link_recent": "Últimos registros →",
+      "feed_label": "Feed",
+      "feed_title": "Atividade Recente — Progresso",
+      "no_progress": "Nenhum registro de progresso ainda",
+      "new_clients_label": "Recentes",
+      "new_clients_title": "Novos Clientes",
+      "no_clients": "Nenhum cliente ainda",
+      "btn_clients": "Clientes",
+      "btn_subscriptions": "Assinaturas",
+      "new_record": "Novo registro",
+      "no_name": "Sem nome"
+    },
+    "profile": {
+      "section_config": "Configurações",
+      "section_my_area": "Minha Área",
+      "title": "MEU PERFIL",
+      "subtitle_admin": "Dados da sua conta e preferências.",
+      "subtitle_client": "Seus dados pessoais e preferências.",
+      "avatar_label": "Foto de perfil",
+      "avatar_click": "Clique na imagem para alterá-la",
+      "avatar_uploading": "Enviando...",
+      "avatar_hint": "JPG, PNG ou WEBP · máx. 2 MB",
+      "avatar_error": "Erro ao enviar imagem. Verifique o tamanho (máx. 2MB).",
+      "avatar_save_error": "Imagem enviada mas o perfil não pôde ser salvo.",
+      "name_label": "Nome completo",
+      "name_placeholder": "Seu nome",
+      "phone_label": "WhatsApp / Telefone",
+      "phone_placeholder": "+55 11 91234-5678",
+      "phone_hint_admin": "Seus clientes vão entrar em contato por aqui pelo app.",
+      "phone_hint_client": "Seu treinador pode entrar em contato por este número.",
+      "gender_label": "Gênero",
+      "male": "Masculino",
+      "female": "Feminino",
+      "other": "Outro",
+      "language_label": "Idioma",
+      "save": "Salvar alterações",
+      "saving": "Salvando...",
+      "saved": "Alterações salvas com sucesso.",
+      "save_error": "Erro ao salvar. Tente novamente."
+    }
+  }
 }

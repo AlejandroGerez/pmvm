@@ -1,308 +1,309 @@
 {
-	"general": {
-		"choose_plan": "Choose plan",
-		"i_want_to_start": "I Want to start",
-		"view_detail": "More details",
-		"monthly_payment": "Monthly payment",
-		"more_information": "More information",
-		"what_this_plan_includes": "Que Incluye este Plan"
-	},
-	"header": {
-		"about": "About Me",
-		"services": "Services",
-		"testimonials": "Testimonials",
-		"transformations": "Transformations",
-		"contact": "Contact",
-		"schedule-consultation": "Schedule your consultation",
-		"join_team_pmvm": "Join Team PMVM",
-		"start_your_change": "Start your change",
-		"start_now": "Start now"
-	},
-	"hero": {
-		"title_1": "Weigh Less",
-		"title_2": "Live More",
-		"subtitle": "Every day is a new opportunity to change your life!",
-		"description": "Our personalized training plans will help you raise awareness about the importance of maintaining a healthy weight and adopting a balanced lifestyle, setting achievable goals and objectives.",
-		"about_me": "Head trainer and physical trainer",
-		"start_now": "Start Now",
-		"learn_more": "Learn More",
-		"get_to_know_me": "Get to know me"
-	},
-	"services": {
-		"parallax_text_1": "Weigh less",
-		"parallax_text_2": "Live longer",
-		"title": "Expertise You Can Trust",
-		"description": "With over 10 years of experience in the fitness industry, I am dedicated to helping you achieve your goals through personalized training and nutrition guidance.",
-		"weight_loss": {
-			"title": "Weight Loss",
-			"description": "Develop a customized plan to help you lose weight safely and sustainably."
-		},
-		"muscle_building": {
-			"title": "Muscle Building",
-			"description": "Gain lean muscle mass through targeted strength training and nutrition."
-		},
-		"injury_prevention": {
-			"title": "Injury Prevention",
-			"description": "Learn proper form and technique to avoid injuries and stay active."
-		},
-		"image_alt": "Fitness Expertise"
-	},
-	"about": {
-		"title_1": "Meet",
-		"title_2": "Alejandro Gerez",
-		"title_3": "founder of the P-V+ program",
-		"greeting": "Hi, I'm Ale Gerez",
-		"content_1": "Since I was a child, by using food as an escape route, I accumulated weight until I reached 160 kg. I believed that a diet was the solution and I looked for the perfect combination of foods that would magically make me lose weight.",
-		"content_2": "I started my journey on the television program “Cuestión de Peso” and managed to lose 50 kg. However, after the program, I gained weight again because the change I had achieved was only physical, not mental. Over time, I understood that true transformation goes far beyond a simple before and after photo.",
-		"content_3": "Today, I can say that I transformed myself from a place of peace with food and with my body, leaving behind the struggle and suffering. This path not only included self-knowledge, but also therapy, which allowed me to truly heal and build a healthier and more loving relationship with myself.",
-		"title2": "Transform Your Life with 'Weigh Less Live More'",
-		"content2": "At 'Weigh Less Live More,' we believe that the path to a healthier life is not just about losing weight but gaining wellness, energy, and confidence. Our personalized training program is designed to fit your needs, goals, and lifestyle. With a holistic approach to physical and mental health, we offer effective exercise plans, nutritional guidance, and ongoing support to help you achieve your goals safely and sustainably. Join us and discover how you can live a fuller, more active, and happier life."
-	},
-	"testimonials": {
-		"title": "What My Clients Say",
-		"description": "Hear from real clients who have transformed their lives with my guidance and support.",
-		"clients": {
-			"jessica_davis": {
-				"name": "Jessica Davis",
-				"achievement": "Lost 25 lbs",
-				"quote": "Working with this trainer has been life-changing. They created a plan that fit my lifestyle and helped me reach my goals."
-			},
-			"michael_roberts": {
-				"name": "Michael Roberts",
-				"achievement": "Gained 15 lbs of muscle",
-				"quote": "I was struggling to build muscle, but this trainer designed a program that helped me pack on lean mass without any injuries."
-			},
-			"sarah_kim": {
-				"name": "Sarah Kim",
-				"achievement": "Improved overall fitness",
-				"quote": "I was looking to improve my overall fitness, and this trainer created a well-rounded program that has made a huge difference in my energy and strength."
-			}
-		}
-	},
-	"contact": {
-		"title": "Get Started Now!",
-		"description": "Fill out the form to clear up any doubts you may have and start your change. We are here to help you!",
-		"name_placeholder": "Name",
-		"phone_placeholder": "Phone",
-		"email_placeholder": "E-mail",
-		"message_placeholder": "How can we help you?",
-		"submit_button": "Schedule Consultation",
-		"calendar_link": "Add to Google Calendar",
-		"send_message": "Send message"
-	},
-	"transformations": {
-		"title": "Transformations",
-		"subtitle": "some changes in my students",
-		"before": "Before",
-		"after": "After"
-	},
-	"footer": {
-		"copyright": "© 2024 Fitness Trainer. All rights reserved.",
-		"terms": "Terms of Service",
-		"privacy": "Privacy Policy"
-	},
-	"cookies": {
-		"title": "We use cookies",
-		"text": "We use cookies to improve your browsing experience, serve personalized ads or content and analyze our traffic. By clicking \"Accept All Cookies\", you consent to our use of cookies.",
-		"btn_accept": "Accept All Cookies",
-		"btn_cancel": "Decline"
-	},
-	"v3": {
-		"nav": {
-			"about": "About",
-			"program": "The Program",
-			"testimonials": "Testimonials",
-			"faq": "FAQ",
-			"cta": "Start now",
-			"login": "Sign in",
-			"register": "Sign up",
-			"dashboard": "My dashboard",
-			"logout": "Sign out"
-		},
-		"hero": {
-			"badge": "Physical transformation program",
-			"stat1": "Years specialized in overweight and obesity",
-			"stat2": "Years of experience in the fitness world",
-			"stat3": "Lives transformed in team PMVM",
-			"stat4": "Health professionals working as a team",
-			"cta2": "See the program"
-		},
-		"program": {
-			"label": "The method",
-			"title": "The",
-			"highlight": "PMVM program",
-			"sub": "A comprehensive 3-pillar system that works together to achieve lasting results without sacrificing your quality of life.",
-			"pillar1_title": "Smart movement",
-			"pillar1_desc": "Personalized exercise plan based on your current fitness level, time availability and goals. No mandatory equipment, adaptable to any context.",
-			"pillar2_title": "Real nutrition",
-			"pillar2_desc": "Nutritional guidance based on your current habits. We don't eliminate foods, we reorganize them. You eat what you like, but intelligently.",
-			"pillar3_title": "Growth mindset",
-			"pillar3_desc": "We work on the thinking patterns that hold you back. 80% of success is in the mind. We give you the tools to maintain motivation over time.",
-			"step1_title": "Diagnosis",
-			"step1_desc": "Initial assessment of your physical condition and habits",
-			"step2_title": "Custom plan",
-			"step2_desc": "Routine and nutritional guide tailored to you",
-			"step3_title": "Follow-up",
-			"step3_desc": "Weekly support and continuous adjustments",
-			"step4_title": "Result",
-			"step4_desc": "Sustainable transformation and lifelong habits",
-			"step_prefix": "STEP"
-		},
-		"faq": {
-			"label": "FAQ",
-			"title": "Frequently",
-			"highlight": "asked",
-			"sub": "Have questions? Here are the most common ones. If you don't find yours, write to us.",
-			"q1": "Do I need prior exercise experience?",
-			"a1": "No. The program is designed from scratch for people who have never exercised or haven't moved in a long time. We start from where you are.",
-			"q2": "Does the program work online?",
-			"a2": "Yes, completely. You can do the program from anywhere in the world. Follow-up is done via video call, WhatsApp and digital platform.",
-			"q3": "How long does the program last?",
-			"a3": "The base program is 3 months. Many clients continue with maintenance plans to consolidate results and keep progressing.",
-			"q4": "Do I have to follow a strict diet?",
-			"a4": "No. The nutritional guidance adapts to your current habits. It's not about eliminating foods but about reorganizing and understanding what you eat.",
-			"q5": "How much time per day do I need?",
-			"a5": "30 to 45 minutes a day is enough. The program is designed for busy people.",
-			"q6": "What if I have a medical condition?",
-			"a6": "Before starting we do a full assessment. The program adapts to conditions like hypertension, type 2 diabetes and others. We coordinate with your doctor if needed."
-		},
-		"contact": {
-			"label": "Contact",
-			"title": "Ready to",
-			"highlight": "start?",
-			"sub": "Fill in the form and Alejandro will contact you within 24 hours for a free no-commitment consultation.",
-			"location": "Buenos Aires, Argentina (online worldwide)",
-			"form_name": "Your name",
-			"form_email": "Your email",
-			"form_phone": "WhatsApp / phone",
-			"form_goal": "What's your goal?",
-			"form_opt1": "Lose weight",
-			"form_opt2": "Improve my fitness",
-			"form_opt3": "Change my habits",
-			"form_opt4": "Other",
-			"form_message": "Tell me a bit about yourself and your goals...",
-			"form_submit": "Send inquiry",
-			"form_success": "Message sent! We'll contact you soon."
-		},
-		"about": {
-			"cred1": "Bachelor in Physical Education – UBA",
-			"cred2": "Specialist in obesity and overweight",
-			"cred3": "Based in Buenos Aires, Argentina",
-			"cred4": "In-person and online coaching"
-		},
-		"testi": {
-			"label": "Real cases",
-			"title": "They already",
-			"highlight": "made it"
-		},
-		"pricing": {
-			"label": "Plans",
-			"title": "Choose your",
-			"highlight": "program",
-			"popular": "Most popular",
-			"cta": "Start now",
-			"per_month": "/ month",
-			"all_from_basic": "Everything in Workout, plus:"
-		},
-		"footer": {
-			"rights": "All rights reserved"
-		}
-	},
-	"app": {
-		"nav": {
-			"home": "Home",
-			"goals": "Goals",
-			"routines": "Routines",
-			"messages": "Messages",
-			"progress": "Progress",
-			"clients": "Clients",
-			"subscriptions": "Subscriptions",
-			"dashboard": "Dashboard"
-		},
-		"sidebar": {
-			"my_area": "My Area",
-			"admin_portal": "Admin Portal",
-			"trainer_profile": "Trainer · My profile →",
-			"my_profile_link": "My profile →",
-			"view_landing": "View Site",
-			"sign_out": "Sign Out",
-			"view_as_client": "View as client"
-		},
-		"greeting": {
-			"morning": "Good morning",
-			"afternoon": "Good afternoon",
-			"evening": "Good evening"
-		},
-		"home": {
-			"stat_routines": "Active Routines",
-			"stat_messages": "Coach Messages",
-			"stat_weight": "Weight Records",
-			"see_more": "See more",
-			"history_label": "History",
-			"history_title": "My Latest Records",
-			"see_all": "See all →",
-			"no_records": "No records yet",
-			"first_record": "Record my first weigh-in",
-			"no_plan_label": "No active plan",
-			"no_plan_desc": "Get a plan to access your personalized routines",
-			"see_plans": "See plans →",
-			"cta_routines": "See my routines",
-			"cta_messages": "Coach messages",
-			"plan_active": "Active plan",
-			"days_remaining": "Days remaining",
-			"plan_start": "Start",
-			"plan_completed": "% completed",
-			"plan_expires": "Expires",
-			"renew_plan": "Renew plan →"
-		},
-		"admin": {
-			"overview": "Overview",
-			"panel_line1": "ADMIN",
-			"panel_line2": "PANEL",
-			"stat_clients": "Active Clients",
-			"stat_messages": "Unread messages",
-			"stat_progress": "Progress Records",
-			"link_view_all": "View all →",
-			"link_attention": "Needs Attention →",
-			"link_recent": "Latest records →",
-			"feed_label": "Feed",
-			"feed_title": "Recent Activity — Progress",
-			"no_progress": "No progress records yet",
-			"new_clients_label": "Recent",
-			"new_clients_title": "New Clients",
-			"no_clients": "No clients yet",
-			"btn_clients": "Clients",
-			"btn_subscriptions": "Subscriptions",
-			"new_record": "New record",
-			"no_name": "No name"
-		},
-		"profile": {
-			"section_config": "Settings",
-			"section_my_area": "My Area",
-			"title": "MY PROFILE",
-			"subtitle_admin": "Your account data and preferences.",
-			"subtitle_client": "Your personal data and preferences.",
-			"avatar_label": "Profile photo",
-			"avatar_click": "Click the image to change it",
-			"avatar_uploading": "Uploading...",
-			"avatar_hint": "JPG, PNG or WEBP · max. 2 MB",
-			"avatar_error": "Error uploading image. Check the size (max 2MB).",
-			"avatar_save_error": "Image uploaded but profile could not be saved.",
-			"name_label": "Full name",
-			"name_placeholder": "Your name",
-			"phone_label": "WhatsApp / Phone",
-			"phone_placeholder": "+1 555 123 4567",
-			"phone_hint_admin": "Your clients will contact you here from the app.",
-			"phone_hint_client": "Your trainer can contact you at this number.",
-			"gender_label": "Gender",
-			"male": "Male",
-			"female": "Female",
-			"other": "Other",
-			"language_label": "Language",
-			"save": "Save changes",
-			"saving": "Saving...",
-			"saved": "Changes saved successfully.",
-			"save_error": "Error saving. Please try again."
-		}
-	}
+  "general": {
+    "choose_plan": "Choose plan",
+    "i_want_to_start": "I Want to start",
+    "view_detail": "More details",
+    "monthly_payment": "Monthly payment",
+    "more_information": "More information",
+    "what_this_plan_includes": "Que Incluye este Plan"
+  },
+  "header": {
+    "about": "About Me",
+    "services": "Services",
+    "testimonials": "Testimonials",
+    "transformations": "Transformations",
+    "contact": "Contact",
+    "schedule-consultation": "Schedule your consultation",
+    "join_team_pmvm": "Join Team PMVM",
+    "start_your_change": "Start your change",
+    "start_now": "Start now"
+  },
+  "hero": {
+    "title_1": "Weigh Less",
+    "title_2": "Live More",
+    "subtitle": "Every day is a new opportunity to change your life!",
+    "description": "Our personalized training plans will help you raise awareness about the importance of maintaining a healthy weight and adopting a balanced lifestyle, setting achievable goals and objectives.",
+    "about_me": "Head trainer and physical trainer",
+    "start_now": "Start Now",
+    "learn_more": "Learn More",
+    "get_to_know_me": "Get to know me"
+  },
+  "services": {
+    "parallax_text_1": "Weigh less",
+    "parallax_text_2": "Live longer",
+    "title": "Expertise You Can Trust",
+    "description": "With over 10 years of experience in the fitness industry, I am dedicated to helping you achieve your goals through personalized training and nutrition guidance.",
+    "weight_loss": {
+      "title": "Weight Loss",
+      "description": "Develop a customized plan to help you lose weight safely and sustainably."
+    },
+    "muscle_building": {
+      "title": "Muscle Building",
+      "description": "Gain lean muscle mass through targeted strength training and nutrition."
+    },
+    "injury_prevention": {
+      "title": "Injury Prevention",
+      "description": "Learn proper form and technique to avoid injuries and stay active."
+    },
+    "image_alt": "Fitness Expertise"
+  },
+  "about": {
+    "title_1": "Meet",
+    "title_2": "Alejandro Gerez",
+    "title_3": "founder of the P-V+ program",
+    "greeting": "Hi, I'm Ale Gerez",
+    "content_1": "Since I was a child, by using food as an escape route, I accumulated weight until I reached 160 kg. I believed that a diet was the solution and I looked for the perfect combination of foods that would magically make me lose weight.",
+    "content_2": "I started my journey on the television program “Cuestión de Peso” and managed to lose 50 kg. However, after the program, I gained weight again because the change I had achieved was only physical, not mental. Over time, I understood that true transformation goes far beyond a simple before and after photo.",
+    "content_3": "Today, I can say that I transformed myself from a place of peace with food and with my body, leaving behind the struggle and suffering. This path not only included self-knowledge, but also therapy, which allowed me to truly heal and build a healthier and more loving relationship with myself.",
+    "title2": "Transform Your Life with 'Weigh Less Live More'",
+    "content2": "At 'Weigh Less Live More,' we believe that the path to a healthier life is not just about losing weight but gaining wellness, energy, and confidence. Our personalized training program is designed to fit your needs, goals, and lifestyle. With a holistic approach to physical and mental health, we offer effective exercise plans, nutritional guidance, and ongoing support to help you achieve your goals safely and sustainably. Join us and discover how you can live a fuller, more active, and happier life."
+  },
+  "testimonials": {
+    "title": "What My Clients Say",
+    "description": "Hear from real clients who have transformed their lives with my guidance and support.",
+    "clients": {
+      "jessica_davis": {
+        "name": "Jessica Davis",
+        "achievement": "Lost 25 lbs",
+        "quote": "Working with this trainer has been life-changing. They created a plan that fit my lifestyle and helped me reach my goals."
+      },
+      "michael_roberts": {
+        "name": "Michael Roberts",
+        "achievement": "Gained 15 lbs of muscle",
+        "quote": "I was struggling to build muscle, but this trainer designed a program that helped me pack on lean mass without any injuries."
+      },
+      "sarah_kim": {
+        "name": "Sarah Kim",
+        "achievement": "Improved overall fitness",
+        "quote": "I was looking to improve my overall fitness, and this trainer created a well-rounded program that has made a huge difference in my energy and strength."
+      }
+    }
+  },
+  "contact": {
+    "title": "Get Started Now!",
+    "description": "Fill out the form to clear up any doubts you may have and start your change. We are here to help you!",
+    "name_placeholder": "Name",
+    "phone_placeholder": "Phone",
+    "email_placeholder": "E-mail",
+    "message_placeholder": "How can we help you?",
+    "submit_button": "Schedule Consultation",
+    "calendar_link": "Add to Google Calendar",
+    "send_message": "Send message"
+  },
+  "transformations": {
+    "title": "Transformations",
+    "subtitle": "some changes in my students",
+    "before": "Before",
+    "after": "After"
+  },
+  "footer": {
+    "copyright": "© 2024 Fitness Trainer. All rights reserved.",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy"
+  },
+  "cookies": {
+    "title": "We use cookies",
+    "text": "We use cookies to improve your browsing experience, serve personalized ads or content and analyze our traffic. By clicking \"Accept All Cookies\", you consent to our use of cookies.",
+    "btn_accept": "Accept All Cookies",
+    "btn_cancel": "Decline"
+  },
+  "v3": {
+    "nav": {
+      "about": "About",
+      "program": "The Program",
+      "testimonials": "Testimonials",
+      "faq": "FAQ",
+      "cta": "Start now",
+      "login": "Sign in",
+      "register": "Sign up",
+      "dashboard": "My dashboard",
+      "logout": "Sign out"
+    },
+    "hero": {
+      "badge": "Physical transformation program",
+      "stat1": "Years specialized in overweight and obesity",
+      "stat2": "Years of experience in the fitness world",
+      "stat3": "Lives transformed in team PMVM",
+      "stat4": "Health professionals working as a team",
+      "cta2": "See the program"
+    },
+    "program": {
+      "label": "The method",
+      "title": "The",
+      "highlight": "PMVM program",
+      "sub": "A comprehensive 3-pillar system that works together to achieve lasting results without sacrificing your quality of life.",
+      "pillar1_title": "Smart movement",
+      "pillar1_desc": "Personalized exercise plan based on your current fitness level, time availability and goals. No mandatory equipment, adaptable to any context.",
+      "pillar2_title": "Real nutrition",
+      "pillar2_desc": "Nutritional guidance based on your current habits. We don't eliminate foods, we reorganize them. You eat what you like, but intelligently.",
+      "pillar3_title": "Growth mindset",
+      "pillar3_desc": "We work on the thinking patterns that hold you back. 80% of success is in the mind. We give you the tools to maintain motivation over time.",
+      "step1_title": "Diagnosis",
+      "step1_desc": "Initial assessment of your physical condition and habits",
+      "step2_title": "Custom plan",
+      "step2_desc": "Routine and nutritional guide tailored to you",
+      "step3_title": "Follow-up",
+      "step3_desc": "Weekly support and continuous adjustments",
+      "step4_title": "Result",
+      "step4_desc": "Sustainable transformation and lifelong habits",
+      "step_prefix": "STEP"
+    },
+    "faq": {
+      "label": "FAQ",
+      "title": "Frequently",
+      "highlight": "asked",
+      "sub": "Have questions? Here are the most common ones. If you don't find yours, write to us.",
+      "q1": "Do I need prior exercise experience?",
+      "a1": "No. The program is designed from scratch for people who have never exercised or haven't moved in a long time. We start from where you are.",
+      "q2": "Does the program work online?",
+      "a2": "Yes, completely. You can do the program from anywhere in the world. Follow-up is done via video call, WhatsApp and digital platform.",
+      "q3": "How long does the program last?",
+      "a3": "The base program is 3 months. Many clients continue with maintenance plans to consolidate results and keep progressing.",
+      "q4": "Do I have to follow a strict diet?",
+      "a4": "No. The nutritional guidance adapts to your current habits. It's not about eliminating foods but about reorganizing and understanding what you eat.",
+      "q5": "How much time per day do I need?",
+      "a5": "30 to 45 minutes a day is enough. The program is designed for busy people.",
+      "q6": "What if I have a medical condition?",
+      "a6": "Before starting we do a full assessment. The program adapts to conditions like hypertension, type 2 diabetes and others. We coordinate with your doctor if needed."
+    },
+    "contact": {
+      "label": "Contact",
+      "title": "Ready to",
+      "highlight": "start?",
+      "sub": "Fill in the form and Alejandro will contact you within 24 hours for a free no-commitment consultation.",
+      "location": "Buenos Aires, Argentina (online worldwide)",
+      "form_name": "Your name",
+      "form_email": "Your email",
+      "form_phone": "WhatsApp / phone",
+      "form_goal": "What's your goal?",
+      "form_opt1": "Lose weight",
+      "form_opt2": "Improve my fitness",
+      "form_opt3": "Change my habits",
+      "form_opt4": "Other",
+      "form_message": "Tell me a bit about yourself and your goals...",
+      "form_submit": "Send inquiry",
+      "form_success": "Message sent! We'll contact you soon."
+    },
+    "about": {
+      "cred1": "Bachelor in Physical Education – UBA",
+      "cred2": "Specialist in obesity and overweight",
+      "cred3": "Based in Buenos Aires, Argentina",
+      "cred4": "In-person and online coaching"
+    },
+    "testi": {
+      "label": "Real cases",
+      "title": "They already",
+      "highlight": "made it"
+    },
+    "pricing": {
+      "label": "Plans",
+      "title": "Choose your",
+      "highlight": "program",
+      "popular": "Most popular",
+      "cta": "Start now",
+      "per_month": "/ month",
+      "all_from_basic": "Everything in Workout, plus:"
+    },
+    "footer": {
+      "rights": "All rights reserved"
+    }
+  },
+  "app": {
+    "nav": {
+      "home": "Home",
+      "goals": "Goals",
+      "routines": "Routines",
+      "messages": "Contact",
+      "progress": "Progress",
+      "clients": "Clients",
+      "subscriptions": "Subscriptions",
+      "dashboard": "Dashboard",
+      "profile": "Profile"
+    },
+    "sidebar": {
+      "my_area": "My Area",
+      "admin_portal": "Admin Portal",
+      "trainer_profile": "Trainer · My profile →",
+      "my_profile_link": "My profile →",
+      "view_landing": "View Site",
+      "sign_out": "Sign Out",
+      "view_as_client": "View as client"
+    },
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "home": {
+      "stat_routines": "Active Routines",
+      "stat_messages": "WhatsApp Coach",
+      "stat_weight": "Weight Records",
+      "see_more": "See more",
+      "history_label": "History",
+      "history_title": "My Latest Records",
+      "see_all": "See all →",
+      "no_records": "No records yet",
+      "first_record": "Record my first weigh-in",
+      "no_plan_label": "No active plan",
+      "no_plan_desc": "Get a plan to access your personalized routines",
+      "see_plans": "See plans →",
+      "cta_routines": "See my routines",
+      "cta_messages": "Coach messages",
+      "plan_active": "Active plan",
+      "days_remaining": "Days remaining",
+      "plan_start": "Start",
+      "plan_completed": "% completed",
+      "plan_expires": "Expires",
+      "renew_plan": "Renew plan →"
+    },
+    "admin": {
+      "overview": "Overview",
+      "panel_line1": "ADMIN",
+      "panel_line2": "PANEL",
+      "stat_clients": "Active Clients",
+      "stat_messages": "Unread messages",
+      "stat_progress": "Progress Records",
+      "link_view_all": "View all →",
+      "link_attention": "Needs Attention →",
+      "link_recent": "Latest records →",
+      "feed_label": "Feed",
+      "feed_title": "Recent Activity — Progress",
+      "no_progress": "No progress records yet",
+      "new_clients_label": "Recent",
+      "new_clients_title": "New Clients",
+      "no_clients": "No clients yet",
+      "btn_clients": "Clients",
+      "btn_subscriptions": "Subscriptions",
+      "new_record": "New record",
+      "no_name": "No name"
+    },
+    "profile": {
+      "section_config": "Settings",
+      "section_my_area": "My Area",
+      "title": "MY PROFILE",
+      "subtitle_admin": "Your account data and preferences.",
+      "subtitle_client": "Your personal data and preferences.",
+      "avatar_label": "Profile photo",
+      "avatar_click": "Click the image to change it",
+      "avatar_uploading": "Uploading...",
+      "avatar_hint": "JPG, PNG or WEBP · max. 2 MB",
+      "avatar_error": "Error uploading image. Check the size (max 2MB).",
+      "avatar_save_error": "Image uploaded but profile could not be saved.",
+      "name_label": "Full name",
+      "name_placeholder": "Your name",
+      "phone_label": "WhatsApp / Phone",
+      "phone_placeholder": "+1 555 123 4567",
+      "phone_hint_admin": "Your clients will contact you here from the app.",
+      "phone_hint_client": "Your trainer can contact you at this number.",
+      "gender_label": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "language_label": "Language",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "saved": "Changes saved successfully.",
+      "save_error": "Error saving. Please try again."
+    }
+  }
 }

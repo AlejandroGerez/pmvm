@@ -42,7 +42,7 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-[#0e0e0e] text-white font-body">
       <div className="flex h-screen overflow-hidden">
         <ClientSidebar locale={params.locale} profile={profile} userEmail={user.email ?? ''} />
-        <main className="flex-1 overflow-y-auto hide-scrollbar">
+        <main className="flex-1 overflow-y-auto hide-scrollbar pb-16 md:pb-0">
           <AdminPageTransition>
             {children}
           </AdminPageTransition>

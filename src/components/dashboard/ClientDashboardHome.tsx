@@ -43,9 +43,9 @@ export default function ClientDashboardHome({
   const t = useTranslations('app')
 
   const stats = [
-    { icon: 'fitness_center', color: '#c1ed00', label: t('home.stat_routines'),  value: routinesCount,  href: `/${locale}/dashboard/routines` },
-    { icon: 'chat',           color: '#00e3fd', label: t('home.stat_messages'),  value: unreadMessages, href: `/${locale}/dashboard/messages` },
-    { icon: 'monitoring',     color: '#ff734a', label: t('home.stat_weight'),    value: progressCount,  href: `/${locale}/dashboard/progress` },
+    { icon: 'fitness_center', color: '#c1ed00', label: t('home.stat_routines'),  value: routinesCount, href: `/${locale}/dashboard/routines` },
+    { icon: 'contact_phone',  color: '#00e3fd', label: t('home.stat_messages'),  value: null,          href: `/${locale}/dashboard/messages` },
+    { icon: 'monitoring',     color: '#ff734a', label: t('home.stat_weight'),    value: progressCount, href: `/${locale}/dashboard/progress` },
   ]
 
   const hour = new Date().getHours()
@@ -130,10 +130,16 @@ export default function ClientDashboardHome({
                   {icon}
                 </span>
                 <p className="font-label text-[10px] text-white/30 uppercase tracking-widest mb-1">{label}</p>
-                <p className="font-headline font-black text-4xl text-white">{value}</p>
-                <div className="absolute -bottom-3 -right-3 text-white/[0.04] font-black text-7xl font-headline select-none pointer-events-none">
-                  {value}
-                </div>
+                {value !== null ? (
+                  <>
+                    <p className="font-headline font-black text-4xl text-white">{value}</p>
+                    <div className="absolute -bottom-3 -right-3 text-white/[0.04] font-black text-7xl font-headline select-none pointer-events-none">
+                      {value}
+                    </div>
+                  </>
+                ) : (
+                  <p className="font-label text-xs text-white/50 mt-1">Escribir al coach →</p>
+                )}
                 <div className="mt-3 flex items-center gap-1">
                   <span className="material-symbols-outlined text-sm" style={{ color }}>arrow_forward</span>
                   <span className="font-label text-[10px] uppercase tracking-widest" style={{ color }}>{t('home.see_more')}</span>
@@ -253,14 +259,35 @@ function SubscriptionCard({ sub, locale, dateLocale }: { sub: ActiveSub; locale:
 
   const urgencyColor = daysRemaining <= 7 ? '#ff734a' : daysRemaining <= 14 ? '#ffcc00' : '#c1ed00'
 
+  const isExpiringSoon = daysRemaining <= 7
+
   return (
     <motion.div
-      className="mb-8 p-5 rounded-2xl border border-[#c1ed00]/20 bg-[#c1ed00]/3 relative overflow-hidden"
+      className={`mb-8 relative overflow-hidden ${isExpiringSoon ? '' : ''}`}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.35, duration: 0.4 }}
     >
-      <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#c1ed00]/8 blur-3xl rounded-full pointer-events-none" />
+      {/* Expiry warning banner */}
+      {isExpiringSoon && (
+        <div className="flex items-center gap-3 px-5 py-3 bg-[#ff734a]/15 border border-[#ff734a]/30 mb-0 text-sm">
+          <span className="material-symbols-outlined text-[#ff734a] text-[18px] flex-shrink-0">warning</span>
+          <p className="font-label text-xs uppercase tracking-widest text-[#ff734a]">
+            {daysRemaining === 0
+              ? 'Tu plan venció hoy — renovalo para no perder el acceso'
+              : `Tu plan vence en ${daysRemaining} día${daysRemaining === 1 ? '' : 's'} — renovalo para continuar`}
+          </p>
+          <Link
+            href={`/${locale}#pricing`}
+            className="ml-auto flex-shrink-0 px-3 py-1.5 bg-[#ff734a] text-[#0e0e0e] font-black text-[10px] uppercase tracking-widest hover:bg-[#ff9060] transition-colors"
+          >
+            RENOVAR
+          </Link>
+        </div>
+      )}
+
+    <div className={`p-5 border relative overflow-hidden ${isExpiringSoon ? 'border-[#ff734a]/30 bg-[#ff734a]/[0.03]' : 'border-[#c1ed00]/20 bg-[#c1ed00]/3 rounded-2xl'}`}>
+      <div className="absolute -top-10 -right-10 w-40 h-40 blur-3xl rounded-full pointer-events-none" style={{ backgroundColor: isExpiringSoon ? 'rgba(255,115,74,0.08)' : 'rgba(193,237,0,0.08)' }} />
 
       <div className="relative">
         <div className="flex items-start justify-between mb-4 flex-wrap gap-3">
@@ -296,7 +323,7 @@ function SubscriptionCard({ sub, locale, dateLocale }: { sub: ActiveSub; locale:
           </div>
         </div>
 
-        {daysRemaining <= 14 && (
+        {daysRemaining > 7 && daysRemaining <= 14 && (
           <Link
             href={`/${locale}#pricing`}
             className="inline-flex items-center gap-2 px-4 py-2 bg-[#c1ed00] text-[#0e0e0e] font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#d4ff00] transition-colors"
@@ -305,6 +332,7 @@ function SubscriptionCard({ sub, locale, dateLocale }: { sub: ActiveSub; locale:
           </Link>
         )}
       </div>
+    </div>
     </motion.div>
   )
 }

@@ -1,23 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createClient as createAdminSupabaseClient } from '@supabase/supabase-js'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
 /**
- * Planes con frecuencia para suscripción recurrente de MP.
- * Los precios son de prueba — ajustar en producción.
+ * Planes disponibles.
+ * - isRecurring: false → cobro único (usa MP Preferences API)
+ * - isRecurring: true  → suscripción mes a mes (usa MP Preapproval API)
  */
 const PLANS: Record<string, {
   name: string
   price: number
   days: number
-  frequency: number
-  frequencyType: 'months' | 'days'
+  isRecurring: boolean
+  frequency?: number
+  frequencyType?: 'months' | 'days'
 }> = {
-  monthly:    { name: 'Plan Mensual R3SET',    price: 100,  days: 30,  frequency: 1, frequencyType: 'months' },
-  quarterly:  { name: 'Plan Trimestral R3SET',  price: 150,  days: 90,  frequency: 3, frequencyType: 'months' },
-  semiannual: { name: 'Plan Semestral R3SET',   price: 200,  days: 180, frequency: 6, frequencyType: 'months' },
+  monthly:    { name: 'Plan Mensual R3SET',    price: 100,  days: 30,  isRecurring: false },
+  quarterly:  { name: 'Plan Trimestral R3SET',  price: 150,  days: 90,  isRecurring: false },
+  semiannual: { name: 'Plan Semestral R3SET',   price: 200,  days: 180, isRecurring: false },
+  mentoria:   { name: 'Mentoría 1-1 R3SET',     price: 300,  days: 30,  isRecurring: true, frequency: 1, frequencyType: 'months' },
 }
 
 export async function POST(req: NextRequest) {
@@ -42,31 +44,12 @@ export async function POST(req: NextRequest) {
     const { data: { user: existingUser } } = await supabase.auth.getUser()
 
     if (existingUser) {
-      // Already logged in — use their ID
       userId = existingUser.id
       userEmail = existingUser.email!
     } else if (email && password) {
-      // New user — register them via admin API (bypasses email confirmation)
-      const adminClient = createAdminSupabaseClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SECRET_KEY!
-      )
+      // New user — register via admin API (bypasses email confirmation)
+      const adminClient = createAdminClient()
 
-      // First check if user already exists
-      const { data: existingProfile } = await adminClient
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .maybeSingle()
-
-      if (existingProfile) {
-        return NextResponse.json({
-          error: 'Ya existe una cuenta con ese email. Iniciá sesión primero.',
-          code: 'USER_EXISTS',
-        }, { status: 409 })
-      }
-
-      // Create user (email_confirm: true so they can sign in immediately)
       const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
         email,
         password,
@@ -74,8 +57,23 @@ export async function POST(req: NextRequest) {
         user_metadata: { full_name: fullName ?? '' },
       })
 
-      if (createError || !newUser.user) {
-        console.error('Error creating user:', createError)
+      if (createError) {
+        console.error('Error creating user:', createError.message)
+        const isAlreadyRegistered =
+          createError.message.toLowerCase().includes('already been registered') ||
+          createError.message.toLowerCase().includes('already registered') ||
+          createError.message.toLowerCase().includes('email already') ||
+          createError.status === 422
+        if (isAlreadyRegistered) {
+          return NextResponse.json({
+            error: 'Ya existe una cuenta con ese email. Iniciá sesión primero.',
+            code: 'USER_EXISTS',
+          }, { status: 409 })
+        }
+        return NextResponse.json({ error: `Error al crear la cuenta: ${createError.message}` }, { status: 500 })
+      }
+
+      if (!newUser.user) {
         return NextResponse.json({ error: 'Error al crear la cuenta' }, { status: 500 })
       }
 
@@ -83,85 +81,170 @@ export async function POST(req: NextRequest) {
       userEmail = email
       isNewUser = true
 
-      // Update profile with extra fields
+      // Update profile — only use columns that definitely exist
       await adminClient
         .from('profiles')
         .update({
           full_name: fullName?.trim() || null,
           phone: phone?.trim() || null,
-          onboarding_completed: true, // skip onboarding since they're coming from checkout
-          locale,
+          onboarding_completed: true,
         })
         .eq('id', userId)
     } else {
       return NextResponse.json({ error: 'Datos incompletos' }, { status: 400 })
     }
 
-    // ── Create pending subscription in Supabase ──
-    const adminClient = createAdminSupabaseClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SECRET_KEY!
-    )
+    // ── Create pending subscription ──
+    const adminClient = createAdminClient()
+
+    // Only include columns that exist in the current schema
+    // Run supabase/add-recurring-subscriptions.sql to unlock locale + mp_preapproval_id
+    const insertPayload: Record<string, unknown> = {
+      user_id: userId,
+      plan_id: planId,
+      status: 'pending',
+    }
 
     const { data: subscription, error: subError } = await adminClient
       .from('subscriptions')
-      .insert({
-        user_id: userId,
-        plan_id: planId,
-        status: 'pending',
-        recurring: true,
-        locale,
-      })
+      .insert(insertPayload)
       .select()
       .single()
 
-    if (subError) throw subError
-
-    // ── Create MP preapproval (recurring subscription) ──
-    const preapprovalBody = {
-      reason: plan.name,
-      auto_recurring: {
-        frequency: plan.frequency,
-        frequency_type: plan.frequencyType,
-        transaction_amount: plan.price,
-        currency_id: 'ARS',
-      },
-      back_url: `${siteUrl}/${locale}/checkout/success?sub=${subscription.id}`,
-      payer_email: userEmail,
-      external_reference: subscription.id,
+    if (subError) {
+      console.error('Error creating subscription:', subError)
+      throw subError
     }
 
-    const mpRes = await fetch('https://api.mercadopago.com/preapproval', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${mpAccessToken}`,
-      },
-      body: JSON.stringify(preapprovalBody),
-    })
-
-    if (!mpRes.ok) {
-      const errText = await mpRes.text()
-      console.error('MP preapproval error:', errText)
-      return NextResponse.json({ error: 'Error al crear suscripción en Mercado Pago' }, { status: 500 })
+    // ── Route to correct MP API based on plan type ──
+    if (plan.isRecurring) {
+      return await createRecurringPreapproval({ plan, planId, subscription, userEmail, siteUrl, locale, adminClient, mpAccessToken, isNewUser })
+    } else {
+      return await createOneTimePreference({ plan, planId, subscription, userEmail, siteUrl, locale, mpAccessToken, isNewUser })
     }
 
-    const mpData = await mpRes.json()
-
-    // Store MP preapproval ID
-    await adminClient
-      .from('subscriptions')
-      .update({ mp_preapproval_id: mpData.id })
-      .eq('id', subscription.id)
-
-    return NextResponse.json({
-      initPoint: mpData.init_point,
-      sandboxInitPoint: mpData.sandbox_init_point,
-      subscriptionId: subscription.id,
-      isNewUser,
-    })
   } catch (error) {
     console.error('create-subscription error:', error)
     return NextResponse.json({ error: 'Error interno' }, { status: 500 })
   }
+}
+
+// ── One-time payment via MP Preferences ──────────────────────────────────────
+async function createOneTimePreference({
+  plan, planId, subscription, userEmail, siteUrl, locale, mpAccessToken, isNewUser,
+}: {
+  plan: typeof PLANS[string]
+  planId: string
+  subscription: { id: string }
+  userEmail: string
+  siteUrl: string
+  locale: string
+  mpAccessToken: string
+  isNewUser: boolean
+}) {
+  const preferenceBody = {
+    items: [{
+      title: plan.name,
+      quantity: 1,
+      unit_price: plan.price,
+      currency_id: 'ARS',
+    }],
+    payer: { email: userEmail },
+    back_urls: {
+      success: `${siteUrl}/${locale}/checkout/success?sub=${subscription.id}`,
+      failure: `${siteUrl}/${locale}/checkout/failure`,
+      pending: `${siteUrl}/${locale}/checkout/success?sub=${subscription.id}&pending=1`,
+    },
+    auto_return: 'approved',
+    external_reference: subscription.id,
+    statement_descriptor: 'R3SET',
+  }
+
+  const mpRes = await fetch('https://api.mercadopago.com/checkout/preferences', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${mpAccessToken}`,
+    },
+    body: JSON.stringify(preferenceBody),
+  })
+
+  if (!mpRes.ok) {
+    const errText = await mpRes.text()
+    console.error('MP preference error:', errText)
+    return NextResponse.json({ error: 'Error al crear preferencia de pago' }, { status: 500 })
+  }
+
+  const mpData = await mpRes.json()
+
+  return NextResponse.json({
+    initPoint: mpData.init_point,
+    sandboxInitPoint: mpData.sandbox_init_point,
+    subscriptionId: subscription.id,
+    isNewUser,
+    type: 'one_time',
+  })
+}
+
+// ── Recurring subscription via MP Preapproval ─────────────────────────────────
+async function createRecurringPreapproval({
+  plan, planId, subscription, userEmail, siteUrl, locale, adminClient, mpAccessToken, isNewUser,
+}: {
+  plan: typeof PLANS[string]
+  planId: string
+  subscription: { id: string }
+  userEmail: string
+  siteUrl: string
+  locale: string
+  adminClient: ReturnType<typeof createAdminClient>
+  mpAccessToken: string
+  isNewUser: boolean
+}) {
+  const preapprovalBody = {
+    reason: plan.name,
+    auto_recurring: {
+      frequency: plan.frequency ?? 1,
+      frequency_type: plan.frequencyType ?? 'months',
+      transaction_amount: plan.price,
+      currency_id: 'ARS',
+    },
+    back_url: `${siteUrl}/${locale}/checkout/success?sub=${subscription.id}`,
+    payer_email: userEmail,
+    external_reference: subscription.id,
+  }
+
+  const mpRes = await fetch('https://api.mercadopago.com/preapproval', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${mpAccessToken}`,
+    },
+    body: JSON.stringify(preapprovalBody),
+  })
+
+  if (!mpRes.ok) {
+    const errText = await mpRes.text()
+    console.error('MP preapproval error:', errText)
+    return NextResponse.json({ error: 'Error al crear suscripción en Mercado Pago' }, { status: 500 })
+  }
+
+  const mpData = await mpRes.json()
+
+  // Store preapproval ID if column exists (requires migration)
+  try {
+    await adminClient
+      .from('subscriptions')
+      .update({ mp_preapproval_id: mpData.id })
+      .eq('id', subscription.id)
+  } catch {
+    console.warn('mp_preapproval_id column not found — run add-recurring-subscriptions.sql migration')
+  }
+
+  return NextResponse.json({
+    initPoint: mpData.init_point,
+    sandboxInitPoint: mpData.sandbox_init_point,
+    subscriptionId: subscription.id,
+    isNewUser,
+    type: 'recurring',
+  })
 }

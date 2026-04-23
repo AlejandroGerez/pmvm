@@ -1,3 +1,5 @@
+"use client";
+
 import pricingData from "@/data/plans.json";
 import Link from "next/link";
 import { useLocale } from "next-intl";
