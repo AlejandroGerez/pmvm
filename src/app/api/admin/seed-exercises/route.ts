@@ -27,7 +27,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 300 // 5 min — Vercel Pro/hobby limits apply
+export const maxDuration = 60 // Vercel hobby plan max
 
 const RAPIDAPI_HOST = 'edb-with-videos-and-images-by-ascendapi.p.rapidapi.com'
 const RAPIDAPI_BASE = `https://${RAPIDAPI_HOST}`
