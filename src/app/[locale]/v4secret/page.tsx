@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import V4SplashManager from '@/components/v4/V4SplashScreen'
-import { Menu, X, ChevronDown, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight } from 'lucide-react'
+import { Menu, X, ChevronDown, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone } from 'lucide-react'
 import { PHONE_NUMBER } from '@/lib/data'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -99,7 +99,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
       <ul className="space-y-2.5 mb-8 flex-1">
         {plan.features.map((f: string, i: number) => (
           <li key={i} className="flex items-start gap-3 text-sm text-on-surface-variant font-body">
-            <span className="material-symbols-outlined text-[16px] mt-0.5 flex-shrink-0" style={{ color: plan.color }}>check</span>
+            <Check className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: plan.color }} />
             {f}
           </li>
         ))}
@@ -216,9 +216,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         <span className="font-headline font-bold text-base lg:text-lg uppercase tracking-tight group-hover:text-[#c1ed00] transition-colors duration-200">
           {question}
         </span>
-        <span className={`material-symbols-outlined text-[20px] flex-shrink-0 text-white/30 transition-transform duration-300 mt-0.5 ${open ? 'rotate-45' : ''}`}>
-          add
-        </span>
+        <Plus className={`w-5 h-5 flex-shrink-0 text-white/30 transition-transform duration-300 mt-0.5 ${open ? 'rotate-45' : ''}`} />
       </button>
       <AnimatePresence initial={false}>
         {open && (
@@ -598,7 +596,7 @@ export default function V4Page() {
                 />
               </div>
               <div className="relative z-10">
-                <span className="material-symbols-outlined text-[#ff734a] text-4xl mb-4 block">psychology</span>
+                <Brain className="w-10 h-10 text-[#ff734a] mb-4" />
                 <h3 className="font-headline text-2xl font-bold uppercase mb-2">Psicología</h3>
                 <p className="text-on-surface-variant text-sm leading-relaxed max-w-sm">
                   Dejás de autosabotearte y empezás a sostener hábitos reales. Trabajamos tu mentalidad, tu relación con la comida y los patrones que hoy te frenan.
@@ -628,7 +626,7 @@ export default function V4Page() {
                 />
               </div>
               <div className="relative z-10">
-                <span className="material-symbols-outlined text-[#c1ed00] text-4xl">fitness_center</span>
+                <Dumbbell className="w-10 h-10 text-[#c1ed00]" />
               </div>
               <div className="relative z-10">
                 <h3 className="font-headline text-xl font-bold uppercase mb-2">Entrenamiento</h3>
@@ -658,7 +656,7 @@ export default function V4Page() {
                 />
               </div>
               <div className="relative z-10 flex-shrink-0">
-                <span className="material-symbols-outlined text-[#00e3fd] text-4xl">restaurant</span>
+                <Utensils className="w-10 h-10 text-[#00e3fd]" />
               </div>
               <div className="relative z-10 flex-1">
                 <h3 className="font-headline text-xl font-bold uppercase mb-2">Nutrición</h3>
@@ -929,15 +927,15 @@ export default function V4Page() {
           {/* Trust */}
           <div className="flex flex-wrap justify-center gap-8 text-white/30 text-xs font-label uppercase tracking-widest">
             <span className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[16px] text-[#c1ed00]">bolt</span>
+              <Zap className="w-4 h-4 text-[#c1ed00]" />
               Acceso inmediato al pagar
             </span>
             <span className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[16px] text-[#00e3fd]">shield</span>
+              <Shield className="w-4 h-4 text-[#00e3fd]" />
               Pago seguro con Mercado Pago
             </span>
             <span className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[16px] text-[#ff734a]">chat</span>
+              <MessageCircle className="w-4 h-4 text-[#ff734a]" />
               Soporte por WhatsApp incluido
             </span>
           </div>
@@ -1115,7 +1113,7 @@ export default function V4Page() {
               variants={staggerItem}
               whileHover={{ scale: 1.02 }}
             >
-              <span className="material-symbols-outlined text-[20px]">chat</span>
+              <MessageCircle className="w-5 h-5" />
               WhatsApp
             </motion.a>
             <motion.a
@@ -1124,7 +1122,7 @@ export default function V4Page() {
               variants={staggerItem}
               whileHover={{ scale: 1.02 }}
             >
-              <span className="material-symbols-outlined text-[20px]">mail</span>
+              <Mail className="w-5 h-5" />
               Email
             </motion.a>
           </motion.div>
@@ -1205,8 +1203,8 @@ export default function V4Page() {
           <a href="#" className="font-label text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">Contacto</a>
         </div>
         <div className="flex gap-4">
-          <span className="material-symbols-outlined text-white/30 hover:text-[#00e3fd] transition-colors duration-300 cursor-pointer">share</span>
-          <span className="material-symbols-outlined text-white/30 hover:text-[#00e3fd] transition-colors duration-300 cursor-pointer">brand_awareness</span>
+          <Share2 className="w-5 h-5 text-white/30 hover:text-[#00e3fd] transition-colors duration-300 cursor-pointer" />
+          <Megaphone className="w-5 h-5 text-white/30 hover:text-[#00e3fd] transition-colors duration-300 cursor-pointer" />
         </div>
       </motion.footer>
 
