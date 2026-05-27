@@ -32,6 +32,30 @@ html {
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* R3SET v4 marquee */
+@keyframes r3set-marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes r3set-marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+.r3set-marquee-left {
+  display: flex;
+  width: 200%;
+  animation: r3set-marquee-left 30s linear infinite;
+}
+.r3set-marquee-right {
+  display: flex;
+  width: 200%;
+  animation: r3set-marquee-right 30s linear infinite;
+}
+.r3set-text-stroke {
+  -webkit-text-stroke: 1px rgba(193, 237, 0, 0.55);
+  color: rgba(193, 237, 0, 0.08);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -58,7 +58,7 @@ function V4Splash({ onFinish }: { onFinish: () => void }) {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          Método R3SET
+          BY ALE GEREZ
         </motion.p>
       </motion.div>
 
