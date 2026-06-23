@@ -697,34 +697,55 @@ export default function V4Page() {
       {/* ── Coach Section ─────────────────────────────────────────── */}
       <section id="coach" className="px-6 py-24 bg-[#0e0e0e]">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row gap-12 items-center">
+          <div className="flex flex-col md:flex-row gap-12 items-start">
             <motion.div
-              className="w-full md:w-1/2 flex-shrink-0 relative"
+              className="w-full md:w-1/2 flex-shrink-0 relative pb-6"
               variants={fadeLeft}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
             >
-              <div className="flex flex-col gap-1.5">
-                {[
-                  { src: '/images/ale/ale-cuerpo.jpg', alt: 'Ale Gerez — transformación corporal', pos: 'object-top' },
-                  { src: '/images/ale/ale-cara.jpg',   alt: 'Ale Gerez — antes y después',        pos: 'object-center' },
-                  { src: '/images/ale/ale-vida.jpg',   alt: 'Ale Gerez — coach',                  pos: 'object-top' },
-                ].map(({ src, alt, pos }) => (
-                  <div key={src} className="overflow-hidden">
-                    <motion.img
-                      src={src}
-                      alt={alt}
-                      className={`w-full h-44 object-cover ${pos}`}
-                      whileHover={{ scale: 1.03 }}
-                      transition={{ duration: 0.6 }}
-                    />
-                  </div>
-                ))}
+              {/* Etiqueta ANTES → DESPUÉS */}
+              <span className="inline-block mb-2 px-2 py-0.5 bg-[#c1ed00] text-[#1a2400] font-label font-black text-[9px] uppercase tracking-[0.2em]">
+                ANTES → DESPUÉS
+              </span>
+
+              {/* Foto principal */}
+              <div className="overflow-hidden mb-1.5">
+                <motion.img
+                  src="/images/ale/ale-cuerpo.jpg"
+                  alt="Alejandro Gerez — transformación corporal"
+                  className="w-full h-52 object-cover object-center"
+                  whileHover={{ scale: 1.03 }}
+                  transition={{ duration: 0.6 }}
+                />
               </div>
+
+              {/* 2 stamps */}
+              <div className="grid grid-cols-2 gap-1.5">
+                <div className="overflow-hidden">
+                  <motion.img
+                    src="/images/ale/ale-cara.jpg"
+                    alt="Alejandro Gerez — antes y después"
+                    className="w-full h-32 object-cover object-center"
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.6 }}
+                  />
+                </div>
+                <div className="overflow-hidden">
+                  <motion.img
+                    src="/images/ale/ale-vida.jpg"
+                    alt="Alejandro Gerez — coach"
+                    className="w-full h-32 object-cover object-top"
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.6 }}
+                  />
+                </div>
+              </div>
+
               {/* Badge */}
               <motion.div
-                className="absolute -bottom-5 -right-5 max-w-[260px] bg-[#00e3fd] text-[#003a42] px-5 py-3 font-headline font-black text-xs sm:text-sm uppercase tracking-tight leading-tight z-10"
+                className="absolute -bottom-1 -right-5 max-w-[220px] bg-[#00e3fd] text-[#003a42] px-5 py-3 font-headline font-black text-xs uppercase tracking-tight leading-tight z-10"
                 initial={{ x: 60, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 viewport={{ once: true }}
