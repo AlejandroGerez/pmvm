@@ -69,9 +69,114 @@
 			"en": "I had never managed to sustain it. With this method I did."
 		},
 		"clientDetail": {
-			"es": "Maxi lleva meses con el proceso y sigue avanzando. La diferencia con otros métodos es que acá se trabaja de verdad el lado mental.",
-			"pt": "Maxi está há meses no processo e continua avançando. A diferença com outros métodos é que aqui se trabalha de verdade o lado mental.",
-			"en": "Maxi has been in the process for months and keeps progressing. The difference with other methods is that here the mental side is truly worked on."
+			"es": "La diferencia con otros métodos es que acá se trabaja de verdad el lado mental.",
+			"pt": "A diferença com outros métodos é que aqui se trabalha de verdade o lado mental.",
+			"en": "The difference with other methods is that here the mental side is truly worked on."
+		}
+	},
+	{
+		"clientName": "Romina",
+		"beforeImage": "/images/transformations/Romina/cambio1.png",
+		"afterImage": "/images/transformations/Romina/cambio2.png",
+		"clientTestimonial": {
+			"es": "A los 50 años, estoy en la mejor forma de mi vida. Nunca es tarde para empezar.",
+			"pt": "Aos 50 anos, estou na melhor forma da minha vida. Nunca é tarde para começar.",
+			"en": "At 50, I am in the best shape of my life. It's never too late to start."
+		},
+		"clientDetail": {
+			"es": "Ahora que he perdido peso, me siento libre y con más confianza. Aprendí a quererme y cuidarme.",
+			"pt": "Agora que perdi peso, me sinto livre e mais confiante. Aprendi a amar e cuidar de mim mesma.",
+			"en": "Now that I have lost weight, I feel free and more confident. I have learned to love and take care of myself."
+		}
+	},
+	{
+		"clientName": "Joha",
+		"beforeImage": "/images/transformations/Joha/cambio1.png",
+		"afterImage": "/images/transformations/Joha/cambio2.png",
+		"clientTestimonial": {
+			"es": "En 6 meses, logré el cuerpo que siempre soñé. Increíble experiencia.",
+			"pt": "Em 6 meses, consegui o corpo que sempre sonhei. Experiência incrível.",
+			"en": "In 6 months, I achieved the body I always dreamed of. Incredible experience."
+		},
+		"clientDetail": {
+			"es": "Bajar de peso me enseñó que soy capaz de cualquier cosa que me proponga. Gané en salud y autoestima.",
+			"pt": "Perder peso me ensinou que sou capaz de qualquer coisa que me propuser. Ganhei saúde e autoestima.",
+			"en": "Losing weight taught me that I am capable of anything I set my mind to. I gained in health and self-esteem."
+		}
+	},
+	{
+		"clientName": "Laura",
+		"beforeImage": "/images/transformations/Laura/cambio1.png",
+		"afterImage": "/images/transformations/Laura/cambio2.png",
+		"clientTestimonial": {
+			"es": "Aumenté mi masa muscular y mejoré mi salud general. Altamente recomendado.",
+			"pt": "Aumentei minha massa muscular e melhorei minha saúde geral. Altamente recomendado.",
+			"en": "I increased my muscle mass and improved my overall health. Highly recommended."
+		},
+		"clientDetail": {
+			"es": "Mi transformación física fue el comienzo. Ahora mi estilo de vida es más activo y saludable.",
+			"pt": "Minha transformação física foi o começo. Agora meu estilo de vida é mais ativo e saudável.",
+			"en": "My physical transformation was just the beginning. I now have a more active and healthy lifestyle."
+		}
+	},
+	{
+		"clientName": "Ana",
+		"beforeImage": "/images/transformations/Ana/cambio1.png",
+		"afterImage": "/images/transformations/Ana/cambio2.png",
+		"clientTestimonial": {
+			"es": "Recuperé mi forma después del embarazo. Los entrenadores son excelentes.",
+			"pt": "Recuperei minha forma após a gravidez. Os treinadores são excelentes.",
+			"en": "I regained my shape after pregnancy. The trainers are excellent."
+		},
+		"clientDetail": {
+			"es": "El proceso fue duro, pero valió la pena. No solo cambié mi cuerpo, sino también mi mentalidad.",
+			"pt": "O processo foi difícil, mas valeu a pena. Não mudei só o meu corpo, mas também a minha mentalidade.",
+			"en": "The process was hard, but it was worth it. I not only changed my body, but also my mentality."
+		}
+	},
+	{
+		"clientName": "Manu",
+		"beforeImage": "/images/transformations/Manu/cambio1.png",
+		"afterImage": "/images/transformations/Manu/cambio2.png",
+		"clientTestimonial": {
+			"es": "Perder peso no solo mejoró mi salud física, sino también mi bienestar emocional.",
+			"pt": "Perder peso não só melhorou minha saúde física, mas também meu bem-estar emocional.",
+			"en": "Losing weight not only improved my physical health, but also my emotional well-being."
+		},
+		"clientDetail": {
+			"es": "Ahora vivo una vida más plena y feliz. El cambio fue integral, no solo físico.",
+			"pt": "Agora vivo uma vida mais plena e feliz. A mudança foi integral, não só física.",
+			"en": "I now live a fuller and happier life. The change was comprehensive, not just physical."
+		}
+	},
+	{
+		"clientName": "Jose",
+		"beforeImage": "/images/transformations/Jose/cambio1.png",
+		"afterImage": "/images/transformations/Jose/cambio2.png",
+		"clientTestimonial": {
+			"es": "Me volví más seguro y motivado para alcanzar mis metas.",
+			"pt": "Fiquei mais confiante e motivado para alcançar meus objetivos.",
+			"en": "I became more confident and motivated to achieve my goals."
+		},
+		"clientDetail": {
+			"es": "Al adelgazar, me di cuenta de que el verdadero cambio no era solo físico.",
+			"pt": "Quando perdi peso, percebi que a verdadeira mudança não era apenas física.",
+			"en": "As I lost weight, I realized that the real change was not just physical."
+		}
+	},
+	{
+		"clientName": "Victor",
+		"beforeImage": "/images/transformations/Victor/cambio1.png",
+		"afterImage": "/images/transformations/Victor/cambio2.png",
+		"clientTestimonial": {
+			"es": "Ahora tengo más energía, me siento más feliz y estoy disfrutando más de cada día.",
+			"pt": "Agora tenho mais energia, me sinto mais feliz e estou aproveitando cada dia mais.",
+			"en": "I now have more energy, I feel happier and I am enjoying each day more."
+		},
+		"clientDetail": {
+			"es": "Perder peso me permitió redescubrirme. Ahora vivo cada día con más entusiasmo.",
+			"pt": "Perder peso me permitiu me redescobrir. Agora vivo cada dia com mais entusiasmo.",
+			"en": "Losing weight allowed me to rediscover myself. I now live each day with more enthusiasm."
 		}
 	}
 ]

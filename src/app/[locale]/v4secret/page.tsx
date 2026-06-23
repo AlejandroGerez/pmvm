@@ -279,7 +279,7 @@ export default function V4Page() {
       >
         <div className="flex items-center justify-between px-5 sm:px-6 h-16">
           {/* Logo */}
-          <span className="text-xl sm:text-2xl font-black text-[#D1FF26] font-headline tracking-[-0.04em] uppercase">METODO R3SET</span>
+          <Image src="/images/icon-r3set.png" alt="MÉTODO R3SET" width={40} height={40} className="rounded-xl" />
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-8">
@@ -1161,8 +1161,8 @@ export default function V4Page() {
         transition={{ duration: 0.6 }}
       >
         <div className="flex flex-col items-center md:items-start gap-2">
-          <span className="text-[#D1FF26] font-black font-headline text-xl tracking-tighter uppercase">METODO R3SET</span>
-          <p className="font-label text-xs uppercase text-white/30 tracking-widest">© {new Date().getFullYear()} METODO R3SET. TODOS LOS DERECHOS RESERVADOS.</p>
+          <Image src="/images/icon-r3set.png" alt="MÉTODO R3SET" width={36} height={36} className="rounded-xl" />
+          <p className="font-label text-xs uppercase text-white/30 tracking-widest">© {new Date().getFullYear()} MÉTODO R3SET. TODOS LOS DERECHOS RESERVADOS.</p>
         </div>
         <div className="flex gap-8">
           <a href="#" className="font-label text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">Privacidad</a>
