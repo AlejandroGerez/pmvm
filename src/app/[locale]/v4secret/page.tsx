@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState, useRef, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import V4SplashManager from '@/components/v4/V4SplashScreen'
 import { Menu, X, ChevronDown, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone } from 'lucide-react'
@@ -28,42 +28,22 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
   const router = useRouter()
 
   const isMentoria = plan.id === 'mentoria'
-
-  // Determine state relative to active subscription (only for non-mentoria plans)
   const isCurrent = activeSub?.plan_id === plan.id
-  const planTier = { monthly: 1, quarterly: 2, semiannual: 3 }
-  const currentTier = activeSub ? (planTier[activeSub.plan_id as keyof typeof planTier] ?? 0) : 0
-  const thisTier = planTier[plan.id as keyof typeof planTier] ?? 0
-  const isUpgrade = activeSub && thisTier > currentTier
-  const isTopPlan = plan.id === 'semiannual'
-  const hasActiveSub = !!activeSub
-
-  let btnLabel = 'COMPRAR AHORA'
-  if (!isMentoria && hasActiveSub) {
-    if (isCurrent) btnLabel = 'RENOVAR PLAN'
-    else if (isUpgrade && isTopPlan) btnLabel = 'PLAN COMPLETO'
-    else if (isUpgrade) btnLabel = 'MEJORAR PLAN'
-    else btnLabel = 'CAMBIAR PLAN'
-  }
 
   const handleBuy = () => {
     if (isMentoria) {
-      window.open(`https://wa.me/${PHONE_NUMBER}?text=Hola!%20Quiero%20aplicar%20a%20la%20Mentor%C3%ADa%201-1`, '_blank')
+      const el = document.getElementById('contact')
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
     } else {
       router.push(`/${locale}/checkout?plan=${plan.id}`)
     }
   }
 
-  // Semiannual subscriber sees a "complete" state, no need to push more
-  const isComplete = activeSub?.plan_id === 'semiannual' && plan.id === 'semiannual'
-
   return (
     <div className={`relative flex flex-col rounded-none p-6 lg:p-8 border transition-all duration-300 hover:-translate-y-1 ${
-      plan.badge === 'MÁS POPULAR'
-        ? 'border-[#c1ed00]/40 bg-[#c1ed00]/[0.04] shadow-[0_0_50px_rgba(193,237,0,0.08)] scale-[1.02]'
-        : isMentoria
-          ? 'border-[#ff734a]/30 bg-[#ff734a]/[0.03] hover:border-[#ff734a]/50'
-          : 'border-white/10 bg-surface-container hover:border-white/20'
+      isMentoria
+        ? 'border-[#ff734a]/40 bg-[#ff734a]/[0.04] hover:border-[#ff734a]/60'
+        : 'border-[#c1ed00]/30 bg-[#c1ed00]/[0.03] hover:border-[#c1ed00]/50'
     }`}>
       {/* Badge */}
       {isCurrent ? (
@@ -77,25 +57,43 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
         </div>
       ) : null}
 
-      {/* Duration label */}
+      {/* Label */}
       <p className="font-label text-xs font-bold tracking-widest uppercase mb-2" style={{ color: plan.color }}>
-        {isMentoria ? 'MENTORÍA PERSONAL' : `${plan.days} días`}
+        {isMentoria ? 'ACOMPAÑAMIENTO PERSONALIZADO' : 'ACCESO INMEDIATO'}
       </p>
       <h3 className="font-headline text-2xl font-black mb-3">{plan.name}</h3>
 
       {/* Price */}
-      <div className="flex items-baseline gap-1 mb-1">
-        <span className="text-sm text-white/40 font-label">ARS</span>
-        <span className="font-headline text-4xl font-black">${plan.price.toLocaleString('es-AR')}</span>
-        {isMentoria && <span className="text-sm text-white/40 font-label">/mes</span>}
-      </div>
+      {isMentoria ? (
+        <div className="mb-1">
+          <span className="font-headline text-2xl font-black text-white/50 uppercase tracking-tight">Precio a consultar</span>
+        </div>
+      ) : (
+        <div className="flex items-baseline gap-1 mb-1">
+          <span className="text-sm text-white/40 font-label">Desde ARS</span>
+          <span className="font-headline text-4xl font-black">${plan.price.toLocaleString('es-AR')}</span>
+          <span className="text-sm text-white/40 font-label">/mes</span>
+        </div>
+      )}
+      {plan.priceNote && (
+        <p className="text-[11px] text-white/30 font-label uppercase tracking-widest mb-3">
+          {plan.priceNote}
+        </p>
+      )}
       {isMentoria && (
         <p className="text-[11px] text-white/30 font-label uppercase tracking-widest mb-3">
-          Suscripción mensual · Cancelable cuando quieras
+          Cancelable cuando quieras · Sin permanencia
         </p>
       )}
 
       <p className="text-on-surface-variant text-sm leading-relaxed mb-6 font-body">{plan.desc}</p>
+
+      {isMentoria && (
+        <p className="text-[11px] text-white/40 font-label italic mb-4 border-l-2 border-[#ff734a]/30 pl-3">
+          Incluye todo lo del Plan Base más el acompañamiento directo y personalizado de Ale Gerez.
+        </p>
+      )}
+
       <ul className="space-y-2.5 mb-8 flex-1">
         {plan.features.map((f: string, i: number) => (
           <li key={i} className="flex items-start gap-3 text-sm text-on-surface-variant font-body">
@@ -104,24 +102,14 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
           </li>
         ))}
       </ul>
-      {isMentoria && (
-        <p className="text-[11px] text-white/40 font-label text-center mb-3">
-          Requiere entrevista previa · Cupos limitados
-        </p>
-      )}
+
       {error && <p className="text-red-400 text-xs mb-3 text-center bg-red-400/10 rounded py-2 px-3 font-label">{error}</p>}
 
-      {isComplete ? (
-        <div className="w-full py-3.5 text-center font-headline font-black text-sm tracking-widest uppercase border border-white/10 text-white/30">
-          ✓ YA TENÉS EL MEJOR PLAN
-        </div>
-      ) : (
-        <button onClick={handleBuy} disabled={loading}
-          className="w-full py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-          style={{ backgroundColor: loading ? '#333' : plan.color, color: '#0e0e0e' }}>
-          {loading ? 'PROCESANDO...' : isMentoria ? 'APLICAR VÍA WHATSAPP' : btnLabel}
-        </button>
-      )}
+      <button onClick={handleBuy} disabled={loading}
+        className="w-full py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer hover:opacity-90 active:scale-95"
+        style={{ backgroundColor: loading ? '#333' : plan.color, color: '#0e0e0e' }}>
+        {loading ? 'PROCESANDO...' : isMentoria ? 'SOLICITAR EVALUACIÓN' : isCurrent ? 'RENOVAR PLAN' : 'EMPEZAR AHORA'}
+      </button>
     </div>
   )
 }
@@ -164,43 +152,11 @@ const staggerItem = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 }
 
-/* ── Animated Counter ──────────────────────────────────────── */
-function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: string }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const started = useRef(false)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started.current) {
-          started.current = true
-          const duration = 2000
-          const start = performance.now()
-          const update = (now: number) => {
-            const progress = Math.min((now - start) / duration, 1)
-            const eased = 1 - Math.pow(1 - progress, 3)
-            el.textContent = Math.floor(eased * target) + suffix
-            if (progress < 1) requestAnimationFrame(update)
-          }
-          requestAnimationFrame(update)
-        }
-      },
-      { threshold: 0.5 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [target, suffix])
-
-  return <span ref={ref}>0{suffix}</span>
-}
-
 const PLAN_NAMES: Record<string, string> = {
-  monthly:    'Plan Mensual',
+  monthly:    'Plan Base',
   quarterly:  'Plan Trimestral',
   semiannual: 'Plan Semestral',
-  mentoria:   'Mentoría 1-1',
+  mentoria:   'Mentoría 1 a 1',
 }
 
 /* ── FAQ Item ──────────────────────────────────────────────── */
@@ -380,16 +336,10 @@ export default function V4Page() {
                   </AnimatePresence>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
-                  <Link href={`/${locale}/login`}
-                    className="text-[11px] font-semibold tracking-widest uppercase text-white/50 hover:text-white transition-colors px-3 py-2 border border-white/15 hover:border-white/30 rounded">
-                    Login
-                  </Link>
-                  <Link href={`/${locale}/register`}
-                    className="bg-[#cefc22] text-[#3b4a00] px-5 py-2 font-headline font-bold text-xs tracking-widest uppercase hover:opacity-90 active:scale-95 transition-all">
-                    Comenzar
-                  </Link>
-                </div>
+                <a href="#pricing" onClick={smoothScroll}
+                  className="bg-[#cefc22] text-[#3b4a00] px-5 py-2 font-headline font-bold text-xs tracking-widest uppercase hover:opacity-90 active:scale-95 transition-all">
+                  Comenzar
+                </a>
               )
             )}
           </div>
@@ -456,16 +406,10 @@ export default function V4Page() {
                         </button>
                       </div>
                     ) : (
-                      <div className="flex flex-col gap-2">
-                        <Link href={`/${locale}/login`} onClick={() => setMobileMenuOpen(false)}
-                          className="text-center py-3.5 border border-white/15 text-sm font-bold tracking-widest uppercase text-white/70 hover:text-white rounded">
-                          Iniciar sesión
-                        </Link>
-                        <Link href={`/${locale}/register`} onClick={() => setMobileMenuOpen(false)}
-                          className="text-center py-3.5 bg-[#c1ed00] text-[#0e0e0e] text-sm font-black tracking-widest uppercase rounded">
-                          Comenzar ahora
-                        </Link>
-                      </div>
+                      <a href="#pricing" onClick={smoothScroll}
+                        className="block text-center py-3.5 bg-[#c1ed00] text-[#0e0e0e] text-sm font-black tracking-widest uppercase rounded">
+                        Ver planes
+                      </a>
                     )
                   )}
                 </div>
@@ -524,13 +468,14 @@ export default function V4Page() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.7 }}
           >
-            <Link
-              href={`/${locale}/register`}
+            <a
+              href="#pricing"
+              onClick={smoothScroll}
               className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-8 py-4 text-base lg:text-lg tracking-tight hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(206,252,34,0.3)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
-              ¡QUIERO EMPEZAR!
+              ¡VER PLANES!
               <ArrowRight className="w-5 h-5" />
-            </Link>
+            </a>
           </motion.div>
         </motion.div>
 
@@ -838,46 +783,27 @@ export default function V4Page() {
         </div>
       </section>
 
-      {/* ── Stats ─────────────────────────────────────────────────── */}
-      <section className="py-16 px-6 bg-surface-container-low overflow-hidden">
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            {[
-              { value: 10, prefix: '+', suffix: ' años', label: 'Ayudando a personas con sobrepeso a cambiar su vida' },
-              { value: 12, prefix: '+', suffix: ' años', label: 'Perfeccionando un método que funciona en la vida real' },
-              { value: 100, prefix: '+', suffix: '', label: 'Personas que hoy viven distinto' },
-              { value: 10, prefix: '+', suffix: '', label: 'Profesionales enfocados en resultados sostenibles' },
-            ].map(({ value, prefix, suffix, label }) => (
-              <motion.div key={label} className="text-center p-4 lg:p-6" variants={staggerItem}>
-                <span className="font-headline text-3xl lg:text-5xl font-black text-[#c1ed00] block mb-3 leading-none">
-                  {prefix}<AnimatedCounter target={value} suffix={suffix} />
-                </span>
-                <span className="font-body text-xs lg:text-sm text-on-surface-variant leading-snug block max-w-[200px] mx-auto">{label}</span>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       {/* ── Marquee Mantra ────────────────────────────────────────── */}
       <section aria-hidden="true" className="bg-[#000000] py-10 lg:py-14 border-y border-white/5 overflow-hidden select-none">
         <div className="r3set-marquee-left whitespace-nowrap mb-4 lg:mb-6">
-          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">PESAR MENOS —</span>
-          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-[#c1ed00] italic">VIVIR MÁS —</span>
-          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">PESAR MENOS —</span>
-          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-[#c1ed00] italic">VIVIR MÁS —</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">AMOR PROPIO ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-[#c1ed00] italic">CONSTANCIA ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">DISCIPLINA ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-[#c1ed00] italic">PROPÓSITO ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">AMOR PROPIO ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-[#c1ed00] italic">CONSTANCIA ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">DISCIPLINA ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-[#c1ed00] italic">PROPÓSITO ·</span>
         </div>
         <div className="r3set-marquee-right whitespace-nowrap">
-          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">DISCIPLINA —</span>
-          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-white/10 italic">PROPÓSITO —</span>
-          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">DISCIPLINA —</span>
-          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-white/10 italic">PROPÓSITO —</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">RESILIENCIA ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-white/10 italic">CONFIANZA ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">SEGURIDAD ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-white/10 italic">FORTALEZA ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">RESILIENCIA ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-white/10 italic">CONFIANZA ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase r3set-text-stroke italic">SEGURIDAD ·</span>
+          <span className="font-headline text-5xl md:text-7xl lg:text-8xl font-black px-6 uppercase text-white/10 italic">FORTALEZA ·</span>
         </div>
       </section>
 
@@ -897,27 +823,39 @@ export default function V4Page() {
           </div>
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8 mb-16 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16 items-start max-w-4xl mx-auto">
             {[
               {
-                id: 'monthly', name: 'Plan Mensual', price: 100, days: 30, badge: null, color: '#00e3fd',
-                desc: 'Perfecto para empezar. Un mes de entrenamiento personalizado.',
-                features: ['Rutina personalizada en tu dashboard', 'Seguimiento semanal de progreso', 'Chat directo con tu coach', 'Acceso al dashboard personal'],
+                id: 'monthly', name: 'PLAN BASE', price: 44999, days: 30, badge: null, color: '#c1ed00',
+                desc: 'La forma más simple de empezar tu transformación.',
+                features: [
+                  'Rutina personalizada',
+                  'App exclusiva Android e iPhone',
+                  'Videos explicativos de cada ejercicio',
+                  'Seguimiento semanal',
+                  'Soporte en plataforma',
+                  'Comunidad privada',
+                  'Consultas nutricionales',
+                  'Acompañamiento psicológico',
+                ],
+                priceNote: 'Trimestral $119.999 · Semestral $219.999',
               },
               {
-                id: 'quarterly', name: 'Plan Trimestral', price: 150, days: 90, badge: 'MÁS POPULAR', color: '#c1ed00',
-                desc: '3 meses para construir hábitos reales. Ahorrás $10.000.',
-                features: ['Todo lo del plan mensual', 'Actualizaciones de rutina c/4 semanas', 'Análisis de progreso mensual', 'Prioridad de respuesta del coach'],
-              },
-              {
-                id: 'semiannual', name: 'Plan Semestral', price: 200, days: 180, badge: 'MEJOR VALOR', color: '#ff734a',
-                desc: '6 meses de transformación completa. El camino definitivo.',
-                features: ['Todo lo del plan trimestral', 'Plan nutricional básico incluido', 'Check-in quincenal por videollamada', 'Comunidad privada de alumnos'],
-              },
-              {
-                id: 'mentoria', name: 'Mentoría 1-1', price: 300, days: 0, badge: 'CUPOS LIMITADOS', color: '#ff734a',
-                desc: 'Acompañamiento directo con el coach. Rutina y nutrición 100% personalizadas a tu biotipo.',
-                features: ['Rutina 100% personalizada a tu biotipo', 'Chat directo con el coach', 'Videollamadas quincenales de ajuste', 'Estrategia de largo plazo', 'Cancelable cuando quieras'],
+                id: 'mentoria', name: 'MENTORÍA 1 A 1', price: 0, days: 0, badge: 'CUPOS LIMITADOS', color: '#ff734a',
+                desc: 'Trabajá directamente con Ale Gerez para lograr un cambio real y definitivo.',
+                features: [
+                  'Comunicación directa todos los días',
+                  '100% personalizado a vos',
+                  'Estrategia alimentaria individualizada',
+                  'Seguimiento de comidas',
+                  'Ajustes permanentes',
+                  'Sesiones individuales',
+                  'Prioridad en la respuesta',
+                  'App exclusiva Android e iPhone',
+                  'Comunidad privada',
+                  'Consultas nutricionales',
+                  'Acompañamiento psicológico',
+                ],
               },
             ].map((plan) => (
               <PricingCard key={plan.id} plan={plan} locale={locale} activeSub={activeSub} />
@@ -1030,13 +968,14 @@ export default function V4Page() {
             <p className="font-headline text-2xl lg:text-3xl font-bold uppercase tracking-tight mb-6">
               Vos podés ser el <span className="text-[#c1ed00] italic">próximo caso</span>
             </p>
-            <Link
-              href={`/${locale}/register`}
+            <a
+              href="#pricing"
+              onClick={smoothScroll}
               className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-8 py-4 text-base lg:text-lg tracking-tight hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(206,252,34,0.3)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
-              ¡QUIERO EMPEZAR!
+              ¡VER PLANES!
               <ArrowRight className="w-5 h-5" />
-            </Link>
+            </a>
           </motion.div>
         </div>
       </section>
@@ -1057,28 +996,36 @@ export default function V4Page() {
           <div className="space-y-0 divide-y divide-white/8">
             {[
               {
-                q: '¿Qué incluye el acceso al dashboard?',
-                a: 'Tenés acceso completo a tus rutinas personalizadas, seguimiento de progreso (peso y medidas), registro de objetivos diarios, hidratación, y canal directo con tu coach. Todo en tiempo real desde el celular o la computadora.',
+                q: '¿Necesito experiencia previa?',
+                a: 'No. Adaptamos el entrenamiento a tu nivel, sea cual sea tu punto de partida. El Método R3SET está diseñado para acompañarte desde donde estés.',
               },
               {
-                q: '¿Cuál es la diferencia entre los planes y la Mentoría 1-1?',
-                a: 'Los planes (Mensual, Trimestral, Semestral) te dan acceso al programa estructurado con rutinas y seguimiento. La Mentoría 1-1 suma atención directa y personalizada con Alejandro: rutina hecha 100% para vos, videollamadas de ajuste cada dos semanas y chat directo ilimitado. Los cupos son limitados.',
+                q: '¿Cómo funciona el seguimiento?',
+                a: 'A través de la app registrás tus entrenamientos, tu progreso y tus comidas. Cada semana revisamos cómo vas y ajustamos lo que sea necesario para que el proceso no se detenga.',
+              },
+              {
+                q: '¿Qué incluye el acompañamiento nutricional y psicológico?',
+                a: 'Contamos con profesionales especializados que te acompañan en los tres pilares del Método: mente, cuerpo y alimentación. No es solo entrenamiento; es un proceso integral.',
+              },
+              {
+                q: '¿Cuál es la diferencia entre el Plan Base y la Mentoría 1 a 1?',
+                a: 'El Plan Base incluye entrenamiento personalizado, seguimiento semanal, app exclusiva y soporte en plataforma. La Mentoría 1 a 1 incluye todo eso más comunicación directa diaria con Ale Gerez, un programa 100% a medida y ajustes permanentes.',
+              },
+              {
+                q: '¿Cuándo obtengo acceso?',
+                a: 'Con el Plan Base, el acceso es inmediato al confirmar el pago. Con la Mentoría 1 a 1, primero completás una solicitud de evaluación y dentro de las 24 hs hábiles te contactamos para coordinar el inicio.',
               },
               {
                 q: '¿Puedo cancelar cuando quiero?',
-                a: 'Los planes Mensual, Trimestral y Semestral son pagos únicos: pagás una vez y tenés acceso por el período contratado. La Mentoría 1-1 funciona como suscripción mensual y se puede cancelar cuando quieras, sin penalización.',
+                a: 'Sí. No hay permanencias ni penalizaciones. Podés cancelar cuando quieras.',
               },
               {
-                q: '¿Necesito ir a un gimnasio o puedo hacerlo en casa?',
-                a: 'Las rutinas se adaptan a tu contexto. Podemos trabajar con gimnasio, con equipamiento mínimo en casa, o sin ningún equipo. Al momento de completar el onboarding indicás tu situación y la rutina se arma en función de eso.',
+                q: '¿Por qué el Método R3SET es diferente?',
+                a: 'Ale Gerez llegó a pesar más de 160 kg y atravesó personalmente el proceso de transformación. No enseña desde la teoría, sino desde la experiencia real. Eso cambia todo.',
               },
               {
-                q: '¿Cuándo tengo acceso después de pagar?',
-                a: 'El acceso es inmediato. Apenas confirmás el pago te llega un mail con tus credenciales (o podés loguearte con el mail que ya usaste para registrarte).',
-              },
-              {
-                q: '¿El programa es sólo para bajar de peso?',
-                a: 'No. El Método R3SET trabaja los tres pilares — Psicología, Entrenamiento y Nutrición — independientemente del objetivo: perder grasa, ganar músculo, mejorar rendimiento deportivo, o simplemente generar hábitos sostenibles.',
+                q: '¿Cómo sé qué plan es el adecuado para mí?',
+                a: 'Si querés empezar a trabajar de manera estructurada con seguimiento y soporte, el Plan Base es el camino. Si buscás algo más personalizado con acompañamiento directo, la Mentoría 1 a 1 es para vos.',
               },
             ].map(({ q, a }, i) => (
               <FAQItem key={i} question={q} answer={a} />
@@ -1117,7 +1064,7 @@ export default function V4Page() {
               WhatsApp
             </motion.a>
             <motion.a
-              href="mailto:pmenosvmas@gmail.com?subject=Consulta%20Metodo%20R3SET"
+              href="mailto:alegerezcoach@gmail.com?subject=Consulta%20Metodo%20R3SET"
               className="flex items-center justify-center gap-3 py-5 px-6 border border-white/15 text-white/70 font-headline font-black text-sm uppercase tracking-widest hover:border-white/30 hover:text-white active:scale-95 transition-all duration-200"
               variants={staggerItem}
               whileHover={{ scale: 1.02 }}
@@ -1171,13 +1118,14 @@ export default function V4Page() {
             Sumate a la mentoría 1-1 del método R3SET y empezá a construir resultados que sí puedas sostener.
           </motion.p>
           <motion.div variants={fadeUp} custom={3} className="flex flex-col items-center gap-4">
-            <Link
-              href={`/${locale}/register`}
+            <a
+              href="#contact"
+              onClick={smoothScroll}
               className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-10 py-5 text-base lg:text-lg tracking-tight hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(206,252,34,0.3)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
-              QUIERO EMPEZAR
+              SOLICITAR EVALUACIÓN
               <ArrowRight className="w-5 h-5" />
-            </Link>
+            </a>
             <p className="font-label text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-white/40">
               Cupos limitados <span className="text-[#c1ed00]/60 mx-1">•</span> Acceso online <span className="text-[#c1ed00]/60 mx-1">•</span> Empezá ya
             </p>
