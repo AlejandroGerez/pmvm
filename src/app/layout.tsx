@@ -52,11 +52,8 @@ const lexend = Lexend({
 // });
 
 export const metadata: Metadata = {
-	title: "PMVM",
-	description: "Pesar Menos Vivir Más",
-	icons: {
-		icon: "/favico.ico",
-	},
+	title: "MÉTODO R3SET",
+	description: "Transformá tu cuerpo y tu mente con el Método R3SET de Ale Gerez.",
 };
 
 export default function RootLayout({
