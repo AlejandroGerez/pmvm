@@ -705,17 +705,36 @@ export default function V4Page() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
             >
-              {/* Image wrapper with overflow-hidden so scale hover stays clipped */}
-              <div className="aspect-[4/5] bg-surface-container overflow-hidden">
-                <motion.img
-                  src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=800&q=80&auto=format&fit=crop"
-                  alt="Alejandro Gerez - Head Coach"
-                  className="w-full h-full object-cover"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.8 }}
-                />
+              <div className="grid grid-cols-2 gap-2">
+                <div className="col-span-2 overflow-hidden">
+                  <motion.img
+                    src="/images/ale/ale-cuerpo.jpg"
+                    alt="Alejandro Gerez - Transformación"
+                    className="w-full h-48 object-cover object-top"
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.6 }}
+                  />
+                </div>
+                <div className="overflow-hidden">
+                  <motion.img
+                    src="/images/ale/ale-cara.jpg"
+                    alt="Alejandro Gerez - Antes y Después"
+                    className="w-full h-44 object-cover object-center"
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.6 }}
+                  />
+                </div>
+                <div className="overflow-hidden">
+                  <motion.img
+                    src="/images/ale/ale-vida.jpg"
+                    alt="Alejandro Gerez - Coach"
+                    className="w-full h-44 object-cover object-top"
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.6 }}
+                  />
+                </div>
               </div>
-              {/* Badge OUTSIDE the overflow-hidden wrapper so it's fully visible */}
+              {/* Badge */}
               <motion.div
                 className="absolute -bottom-5 -right-5 max-w-[260px] bg-[#00e3fd] text-[#003a42] px-5 py-3 font-headline font-black text-xs sm:text-sm uppercase tracking-tight leading-tight z-10"
                 initial={{ x: 60, opacity: 0 }}
