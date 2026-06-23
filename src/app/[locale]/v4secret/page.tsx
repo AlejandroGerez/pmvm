@@ -40,7 +40,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
   }
 
   return (
-    <div className={`relative flex flex-col rounded-none p-6 lg:p-8 border transition-all duration-300 hover:-translate-y-1 ${
+    <div className={`relative flex flex-col h-full rounded-none p-6 lg:p-8 border transition-all duration-300 hover:-translate-y-1 ${
       isMentoria
         ? 'border-[#ff734a]/40 bg-[#ff734a]/[0.04] hover:border-[#ff734a]/60'
         : 'border-[#c1ed00]/30 bg-[#c1ed00]/[0.03] hover:border-[#c1ed00]/50'
@@ -705,34 +705,22 @@ export default function V4Page() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
             >
-              <div className="grid grid-cols-2 gap-2">
-                <div className="col-span-2 overflow-hidden">
-                  <motion.img
-                    src="/images/ale/ale-cuerpo.jpg"
-                    alt="Alejandro Gerez - Transformación"
-                    className="w-full h-48 object-cover object-top"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.6 }}
-                  />
-                </div>
-                <div className="overflow-hidden">
-                  <motion.img
-                    src="/images/ale/ale-cara.jpg"
-                    alt="Alejandro Gerez - Antes y Después"
-                    className="w-full h-44 object-cover object-center"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.6 }}
-                  />
-                </div>
-                <div className="overflow-hidden">
-                  <motion.img
-                    src="/images/ale/ale-vida.jpg"
-                    alt="Alejandro Gerez - Coach"
-                    className="w-full h-44 object-cover object-top"
-                    whileHover={{ scale: 1.03 }}
-                    transition={{ duration: 0.6 }}
-                  />
-                </div>
+              <div className="flex flex-col gap-1.5">
+                {[
+                  { src: '/images/ale/ale-cuerpo.jpg', alt: 'Ale Gerez — transformación corporal', pos: 'object-top' },
+                  { src: '/images/ale/ale-cara.jpg',   alt: 'Ale Gerez — antes y después',        pos: 'object-center' },
+                  { src: '/images/ale/ale-vida.jpg',   alt: 'Ale Gerez — coach',                  pos: 'object-top' },
+                ].map(({ src, alt, pos }) => (
+                  <div key={src} className="overflow-hidden">
+                    <motion.img
+                      src={src}
+                      alt={alt}
+                      className={`w-full h-44 object-cover ${pos}`}
+                      whileHover={{ scale: 1.03 }}
+                      transition={{ duration: 0.6 }}
+                    />
+                  </div>
+                ))}
               </div>
               {/* Badge */}
               <motion.div
@@ -842,7 +830,7 @@ export default function V4Page() {
           </div>
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16 items-start max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16 items-stretch max-w-4xl mx-auto">
             {[
               {
                 id: 'monthly', name: 'PLAN BASE', price: 44999, days: 30, badge: null, color: '#c1ed00',
