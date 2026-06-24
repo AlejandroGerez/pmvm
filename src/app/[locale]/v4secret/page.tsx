@@ -279,7 +279,7 @@ export default function V4Page() {
       >
         <div className="flex items-center justify-between px-5 sm:px-6 h-16">
           {/* Logo */}
-          <Image src="/images/icon-r3set.png" alt="MÉTODO R3SET" width={40} height={40} className="rounded-xl" />
+          <span className="font-headline font-black text-base tracking-widest uppercase text-[#c1ed00]">MÉTODO R3SET</span>
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-8">
@@ -510,7 +510,7 @@ export default function V4Page() {
             <h2 className="font-headline text-3xl lg:text-5xl font-bold tracking-tighter uppercase italic">LOS TRES PILARES</h2>
             <div className="w-12 h-1 bg-[#00e3fd]" />
             <p className="text-on-surface-variant text-sm max-w-lg mt-3">
-              No se trata de hacer dieta ni entrenar más fuerte. Se trata de construir un sistema que puedas sostener para siempre.
+              No se trata de hacer dieta ni entrenar más fuerte.<br />Se trata de construir un sistema que puedas sostener para siempre.
             </p>
           </motion.div>
 
@@ -529,7 +529,6 @@ export default function V4Page() {
               whileHover={{ scale: 1.01 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
-              <div className="absolute top-6 right-6 text-[#c1ed00]/10 font-headline font-black text-8xl italic pointer-events-none select-none">01</div>
               {/* Background image */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700">
                 <Image
@@ -543,8 +542,8 @@ export default function V4Page() {
               <div className="relative z-10">
                 <Brain className="w-10 h-10 text-[#ff734a] mb-4" />
                 <h3 className="font-headline text-2xl font-bold uppercase mb-2">Psicología</h3>
-                <p className="text-on-surface-variant text-sm leading-relaxed max-w-sm">
-                  Dejás de autosabotearte y empezás a sostener hábitos reales. Trabajamos tu mentalidad, tu relación con la comida y los patrones que hoy te frenan.
+                <p className="text-on-surface-variant text-sm leading-relaxed max-w-md">
+                  Dejás de autosabotearte y empezás a sostener hábitos&nbsp;reales.<br />Trabajamos tu mentalidad, tu relación con la comida<br />y los patrones que hoy te frenan.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {['Constancia Real', 'Control de Impulsos', 'Aceptación'].map((tag) => (
@@ -575,7 +574,7 @@ export default function V4Page() {
               </div>
               <div className="relative z-10">
                 <h3 className="font-headline text-xl font-bold uppercase mb-2">Entrenamiento</h3>
-                <p className="text-on-surface-variant text-sm leading-relaxed">Sabés exactamente qué hacer para ver resultados sin perder tiempo. Sesiones adaptadas a tu nivel para mejorar tu cuerpo de forma inteligente y progresiva.</p>
+                <p className="text-on-surface-variant text-sm leading-relaxed">Sabés exactamente qué hacer para ver resultados sin perder tiempo.<br />Sesiones adaptadas a tu nivel para mejorar tu cuerpo de forma inteligente y progresiva.</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {['Bajar Grasa', 'Ganar Músculo'].map((tag) => (
                     <span key={tag} className="px-3 py-1 bg-[#c1ed00]/15 text-[#c1ed00] font-label text-[10px] uppercase tracking-widest">{tag}</span>
@@ -606,7 +605,7 @@ export default function V4Page() {
               <div className="relative z-10 flex-1">
                 <h3 className="font-headline text-xl font-bold uppercase mb-2">Nutrición</h3>
                 <p className="text-on-surface-variant text-sm leading-relaxed max-w-lg">
-                  La diferencia no está en hacer más, sino en hacerlo sostenible. Nuestro enfoque elimina los extremos y prioriza resultados reales a largo plazo.
+                  La diferencia no está en hacer más, sino en hacerlo sostenible.<br />Nuestro enfoque elimina los extremos y prioriza resultados reales a largo plazo.
                 </p>
               </div>
               <div className="relative z-10 hidden lg:flex gap-12 flex-shrink-0">
@@ -616,7 +615,7 @@ export default function V4Page() {
                 </div>
                 <div className="text-center">
                   <span className="font-headline text-3xl font-black text-[#00e3fd] block">100%</span>
-                  <span className="font-label text-[10px] uppercase tracking-widest text-white/40">Sustentabilidad</span>
+                  <span className="font-label text-[10px] uppercase tracking-widest text-white/40">Hábitos Sostenibles</span>
                 </div>
               </div>
             </motion.div>
@@ -624,82 +623,13 @@ export default function V4Page() {
         </div>
       </section>
 
-      {/* ── Methodology / Phases ──────────────────────────────────── */}
-      <section className="py-24 px-6 bg-[#000000] relative overflow-hidden">
-        <div className="absolute left-0 top-0 w-24 h-full border-r border-white/5 hidden xl:block" />
-        <div className="container mx-auto max-w-6xl xl:pl-32">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              className="relative order-2 lg:order-1"
-              variants={fadeLeft}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-            >
-              <div className="aspect-[4/5] bg-surface-container overflow-hidden border border-white/5">
-                <motion.img
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80&auto=format&fit=crop"
-                  alt="Entrenamiento"
-                  className="w-full h-full object-cover"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.8 }}
-                />
-              </div>
-              <motion.div
-                className="absolute -bottom-6 -right-6 bg-[#cefc22] p-8 hidden lg:block"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4, duration: 0.5, type: 'spring' }}
-              >
-                <span className="font-headline text-5xl font-black text-[#3b4a00] leading-none">R3</span>
-                <span className="font-label text-[#3b4a00] block text-xs font-bold tracking-[0.4em] mt-1">MÉTODO</span>
-              </motion.div>
-            </motion.div>
-            <motion.div
-              className="order-1 lg:order-2"
-              variants={fadeRight}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-            >
-              <h2 className="font-headline text-4xl lg:text-5xl font-black tracking-tighter uppercase mb-10 leading-tight italic">
-                RECODIFICÁ.<br />RECONSTRUÍ.<br /><span className="text-[#c1ed00]">R3SET.</span>
-              </h2>
-              <div className="space-y-8">
-                {[
-                  { n: '01', t: 'Recodificación', d: 'Identificamos los patrones que hoy te frenan y construimos una mentalidad que te permita sostener el cambio.' },
-                  { n: '02', t: 'Reconstrucción', d: 'Aplicamos entrenamiento y nutrición de forma progresiva para transformar tu cuerpo sin extremos.' },
-                  { n: '03', t: 'R3SET', d: 'Consolidás hábitos y resultados hasta que se convierten en tu nueva forma de vivir.' },
-                ].map(({ n, t, d }, i) => (
-                  <motion.div
-                    key={n}
-                    className="group flex gap-5"
-                    custom={i}
-                    variants={fadeUp}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true }}
-                  >
-                    <span className="text-3xl font-headline font-black text-white/15 group-hover:text-[#c1ed00] transition-colors duration-500 flex-shrink-0">{n}</span>
-                    <div>
-                      <h4 className="text-lg font-headline font-bold uppercase tracking-tight mb-2">{t}</h4>
-                      <p className="text-on-surface-variant font-body text-sm leading-relaxed">{d}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
       {/* ── Coach Section ─────────────────────────────────────────── */}
       <section id="coach" className="px-6 py-24 bg-[#0e0e0e]">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row gap-12 items-start">
+          <div className="flex flex-col md:flex-row gap-12 items-stretch">
             <motion.div
-              className="w-full md:w-1/2 flex-shrink-0 relative pb-6"
+              className="w-full md:w-1/2 flex-shrink-0 relative pb-6 flex flex-col"
               variants={fadeLeft}
               initial="hidden"
               whileInView="visible"
@@ -711,23 +641,23 @@ export default function V4Page() {
               </span>
 
               {/* Foto principal */}
-              <div className="overflow-hidden mb-1.5">
+              <div className="overflow-hidden mb-1.5 flex-1 min-h-0">
                 <motion.img
                   src="/images/ale/ale-cuerpo.jpg"
                   alt="Alejandro Gerez — transformación corporal"
-                  className="w-full h-52 object-cover object-center"
+                  className="w-full h-full object-cover object-center"
                   whileHover={{ scale: 1.03 }}
                   transition={{ duration: 0.6 }}
                 />
               </div>
 
               {/* 2 stamps */}
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-2 gap-1.5 flex-shrink-0">
                 <div className="overflow-hidden">
                   <motion.img
                     src="/images/ale/ale-cara.jpg"
                     alt="Alejandro Gerez — antes y después"
-                    className="w-full h-32 object-cover object-center"
+                    className="w-full h-48 object-cover object-center"
                     whileHover={{ scale: 1.03 }}
                     transition={{ duration: 0.6 }}
                   />
@@ -736,7 +666,7 @@ export default function V4Page() {
                   <motion.img
                     src="/images/ale/ale-vida.jpg"
                     alt="Alejandro Gerez — coach"
-                    className="w-full h-32 object-cover object-top"
+                    className="w-full h-48 object-cover object-top"
                     whileHover={{ scale: 1.03 }}
                     transition={{ duration: 0.6 }}
                   />
