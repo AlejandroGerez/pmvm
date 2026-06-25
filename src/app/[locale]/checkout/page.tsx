@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslations } from 'next-intl'
-import { CheckCircle2, Lock, X } from 'lucide-react'
+import { CheckCircle2, Lock, Sparkles, X } from 'lucide-react'
 
 /* ── Plan catalog (matches API route + Supabase) ── */
 const PLANS = {
@@ -62,6 +62,15 @@ const PLANS = {
     },
   },
 } as const
+
+const DISPLAY_PRICES: Record<string, { monthly: string; total: string | null; savings: string | null }> = {
+  monthly:    { monthly: '$44.999', total: null,       savings: null },
+  quarterly:  { monthly: '$39.999', total: '$119.999', savings: '11% off' },
+  semiannual: { monthly: '$36.666', total: '$219.999', savings: '18% off' },
+  mentoria:   { monthly: 'A consultar', total: null,   savings: null },
+}
+
+const PICKER_PLANS = ['monthly', 'quarterly', 'semiannual'] as const
 
 type PlanId = keyof typeof PLANS
 type Locale = 'es' | 'en' | 'pt'
@@ -204,6 +213,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [phonePrefix, setPhonePrefix] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
   const [password, setPassword] = useState('')
   const [acceptTerms, setAcceptTerms] = useState(false)
 
@@ -211,6 +222,17 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showPlanPicker, setShowPlanPicker] = useState(false)
+  const planPickerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (planPickerRef.current && !planPickerRef.current.contains(e.target as Node)) {
+        setShowPlanPicker(false)
+      }
+    }
+    if (showPlanPicker) document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showPlanPicker])
   const [showTerms, setShowTerms] = useState(false)
 
   // Check existing session
@@ -356,15 +378,29 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 py-8 lg:py-16">
 
+        {/* Top bar */}
+        <div className="flex items-start justify-between mb-10">
+          <div>
+            <Link href={`/${locale}/v4secret#pricing`} className="flex items-center gap-1 text-white/40 text-[11px] uppercase tracking-widest hover:text-white transition-colors mb-3">
+              ← Volver a planes
+            </Link>
+            <Link href={`/${locale}`}>
+              <span className="text-xl font-black text-[#c1ed00] font-headline tracking-[-0.04em] uppercase italic">
+                R3SET
+              </span>
+            </Link>
+          </div>
+          <div className="flex items-center gap-2 pt-1">
+            <Lock size={13} className="text-white/30 flex-shrink-0" />
+            <span className="text-white/30 text-[11px]">Pago seguro con Mercado Pago</span>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
-          <Link href={`/${locale}`}>
-            <span className="text-xl font-black text-[#c1ed00] font-headline tracking-[-0.04em] uppercase italic">
-              METODO R3SET
-            </span>
-          </Link>
-          <p className="text-white/30 text-[10px] uppercase tracking-[0.25em] mt-2">{t.header_sub}</p>
-          <h1 className="font-headline font-black text-3xl lg:text-4xl tracking-tight mt-3">{t.header_title}</h1>
+          <p className="text-[13px] font-black uppercase tracking-[0.25em] text-[#c1ed00] mb-2">CHECKOUT</p>
+          <h1 className="font-headline font-black text-3xl lg:text-4xl tracking-tight uppercase">COMPLETÁ TU SUSCRIPCIÓN</h1>
+          <p className="text-white/40 text-base mt-3">Estás a un paso de comenzar tu transformación.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -375,7 +411,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
               {/* Section title */}
               <h2 className="font-headline font-bold text-lg uppercase tracking-tight mb-6">
-                {user ? t.section_account_logged : t.section_account}
+                <span className="text-[#c1ed00]">1.</span> Tus datos
               </h2>
 
               {user ? (
@@ -398,7 +434,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                   <div>
                     <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">{t.name_label} *</label>
                     <input type="text" value={fullName} onChange={e => setFullName(e.target.value)}
-                      placeholder={t.name_placeholder}
+                      placeholder="Tu nombre completo"
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
                   </div>
                   <div>
@@ -407,11 +443,28 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                       placeholder={t.email_placeholder}
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
                   </div>
-                  <div>
-                    <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">{t.phone_label}</label>
-                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
-                      placeholder={t.phone_placeholder}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
+                  <div className="flex gap-2">
+                    <div className="flex-shrink-0 w-20">
+                      <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">Cod. País</label>
+                      <input
+                        type="text"
+                        value={phonePrefix}
+                        onChange={e => { setPhonePrefix(e.target.value); setPhone(`${e.target.value} ${phoneNumber}`.trim()) }}
+                        placeholder="+54"
+                        maxLength={6}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all text-center text-sm font-label"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">WhatsApp / Teléfono</label>
+                      <input
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={e => { setPhoneNumber(e.target.value); setPhone(`${phonePrefix} ${e.target.value}`.trim()) }}
+                        placeholder="11 1234 5678"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">{t.password_label} *</label>
@@ -454,6 +507,27 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 </div>
               )}
 
+              {/* Mentoría upsell */}
+              <div className="border border-[#c1ed00]/30 bg-[#c1ed00]/5 rounded-xl p-6 mt-auto mb-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-[#c1ed00]/15 border border-[#c1ed00]/25 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Sparkles size={18} className="text-[#c1ed00]" />
+                  </div>
+                  <div>
+                    <p className="font-headline font-black text-sm uppercase tracking-tight text-[#c1ed00] mb-2">
+                      ¿Buscás un acompañamiento más personalizado?
+                    </p>
+                    <p className="text-white/50 text-sm leading-relaxed mb-1">
+                      Solicitá una evaluación para la Mentoría 1 a 1<br />con Ale Gerez.
+                    </p>
+                    <p className="text-white/30 text-xs mb-4">Cupos limitados.</p>
+                    <Link href={`/${locale}/v4secret#pricing`} className="text-[#c1ed00] text-sm font-bold hover:underline">
+                      Solicitar evaluación →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
               {/* T&C */}
               <label className="flex items-start gap-3 mb-6 cursor-pointer group">
                 <input type="checkbox" checked={acceptTerms} onChange={e => setAcceptTerms(e.target.checked)}
@@ -479,13 +553,13 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 disabled={submitting}
                 className="w-full bg-[#c8f73a] text-black font-headline font-black text-base py-4 rounded-xl hover:bg-[#d4ff45] transition-all disabled:opacity-60 tracking-wider uppercase active:scale-[0.98]"
               >
-                {submitting ? t.cta_processing : t.cta_subscribe}
+                {submitting ? t.cta_processing : 'CONTINUAR AL PAGO →'}
               </button>
 
               {/* Secure note */}
               <div className="flex items-center justify-center gap-2 mt-4">
                 <Lock size={13} className="text-white/20 flex-shrink-0" />
-                <p className="text-white/25 text-[11px]">{t.secure_note}</p>
+                <p className="text-white/25 text-[11px]">Tus datos están protegidos. Proceso 100% seguro.</p>
               </div>
             </div>
           </div>
@@ -494,82 +568,136 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
           <div className="lg:col-span-5 order-1 lg:order-2">
             <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 lg:p-8 lg:sticky lg:top-8">
 
+              {/* Header */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-headline font-bold text-lg uppercase tracking-tight">{t.plan_label}</h2>
-                <button onClick={() => setShowPlanPicker(!showPlanPicker)}
-                  className="text-[10px] uppercase tracking-widest text-[#c8f73a] hover:underline">
-                  {t.change_plan}
-                </button>
-              </div>
+                <h2 className="font-headline font-bold text-lg uppercase tracking-tight">
+                  <span className="text-[#c1ed00]">2.</span> Tu plan
+                </h2>
+                {/* Change plan button with border */}
+                <div className="relative" ref={planPickerRef}>
+                  <button
+                    onClick={() => setShowPlanPicker(!showPlanPicker)}
+                    className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#c8f73a] border border-[#c8f73a]/40 rounded-lg px-3 py-1.5 hover:border-[#c8f73a]/70 transition-colors"
+                  >
+                    Cambiar plan <span className="text-[10px]">{showPlanPicker ? '▴' : '▾'}</span>
+                  </button>
 
-              {/* Plan picker (collapsible) */}
-              {showPlanPicker && (
-                <div className="mb-6 space-y-2">
-                  {(Object.keys(PLANS) as PlanId[]).map(id => {
-                    const p = PLANS[id]
-                    const isActive = id === selectedPlan
-                    return (
-                      <button key={id} onClick={() => { setSelectedPlan(id); setShowPlanPicker(false) }}
-                        className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${
-                          isActive
-                            ? 'border-[#c8f73a] bg-[#c8f73a]/10'
-                            : 'border-white/10 bg-white/5 hover:border-white/20'
-                        }`}>
-                        <span className={`font-headline font-bold text-sm uppercase ${isActive ? 'text-[#c8f73a]' : 'text-white/60'}`}>
-                          {p.name[locale]}
-                        </span>
-                        <span className={`font-headline font-black text-sm ${isActive ? 'text-white' : 'text-white/40'}`}>
-                          ${p.price.toLocaleString('es-AR')}
-                        </span>
-                      </button>
-                    )
-                  })}
+                  {/* Floating dropdown */}
+                  <div className={`absolute right-0 top-full mt-2 w-72 bg-[#1a1a1a] border border-white/15 rounded-xl z-50 overflow-hidden transition-all duration-200 shadow-[0_16px_40px_rgba(0,0,0,0.7)] ring-1 ring-[#c1ed00]/10 ${
+                    showPlanPicker ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
+                  }`}>
+                    {PICKER_PLANS.map(id => {
+                      const p = PLANS[id]
+                      const dp = DISPLAY_PRICES[id]
+                      const isActive = id === selectedPlan
+                      return (
+                        <button key={id}
+                          onClick={() => { setSelectedPlan(id); setShowPlanPicker(false) }}
+                          className={`w-full flex items-center justify-between px-4 py-3 border-b border-white/5 last:border-0 transition-colors text-left gap-3 ${
+                            isActive ? 'bg-[#c8f73a]/10' : 'hover:bg-white/5'
+                          }`}>
+                          <span className={`font-headline font-bold text-sm uppercase ${isActive ? 'text-[#c8f73a]' : 'text-white/60'}`}>
+                            {p.name[locale]}
+                          </span>
+                          <div className="text-right flex-shrink-0">
+                            <span className={`font-headline font-black text-sm leading-none ${isActive ? 'text-white' : 'text-white/60'}`}>
+                              {dp.monthly}/mes
+                            </span>
+                            {dp.total && (
+                              <span className="text-white/30 text-[10px] ml-1.5">· {dp.total}</span>
+                            )}
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
-              )}
+              </div>
 
               {/* Selected plan card */}
-              <div className={`border rounded-xl p-5 mb-6 ${plan.isRecurring ? 'bg-[#00e3fd]/5 border-[#00e3fd]/20' : 'bg-[#c8f73a]/5 border-[#c8f73a]/20'}`}>
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${plan.isRecurring ? 'text-[#00e3fd]' : 'text-[#c8f73a]'}`}>
-                      Plan {plan.name[locale]}
-                    </p>
-                    <p className="font-headline font-black text-3xl text-white">
-                      ${plan.price.toLocaleString('es-AR')}
-                    </p>
-                    <p className="text-white/40 text-sm mt-0.5">{plan.period[locale]}</p>
-                  </div>
-                  <div className={`text-black text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest ${plan.isRecurring ? 'bg-[#00e3fd]' : 'bg-[#c8f73a]'}`}>
-                    {plan.isRecurring
-                      ? (locale === 'en' ? 'MONTHLY' : locale === 'pt' ? 'MENSAL' : 'MENSUAL')
-                      : (locale === 'en' ? 'ONE-TIME' : locale === 'pt' ? 'ÚNICO' : 'ÚNICO')}
-                  </div>
-                </div>
-                <p className="text-white/30 text-[11px]">{plan.frequency[locale]}</p>
+              <div className="bg-[#c8f73a]/5 border border-[#c8f73a]/20 rounded-xl p-5 mb-6">
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#c8f73a] mb-2">
+                  Plan {plan.name[locale]}
+                </p>
+                <p className="font-headline font-black text-3xl text-white">
+                  {DISPLAY_PRICES[selectedPlan].monthly}
+                  <span className="text-white/40 text-base font-normal font-body ml-1">/mes</span>
+                </p>
+                {DISPLAY_PRICES[selectedPlan].total && (
+                  <p className="text-white/30 text-[11px] mt-1.5">
+                    Total {DISPLAY_PRICES[selectedPlan].total} · {DISPLAY_PRICES[selectedPlan].savings}
+                  </p>
+                )}
+                <p className="text-white/25 text-[11px] mt-2">Suscripción mensual · Renovación automática</p>
               </div>
 
-              {/* Features */}
-              <div className="space-y-3 mb-6">
-                {plan.features[locale].map((feat, i) => (
+              {/* Features — exact items from Plan Base */}
+              <div className="space-y-2.5 mb-2">
+                {[
+                  'Rutina personalizada (gimnasio - hogar)',
+                  'App exclusiva Android e iPhone',
+                  'Videos explicativos de cada ejercicio',
+                  'Seguimiento semanal',
+                  'Soporte en plataforma',
+                  'Comunidad privada de alumnos',
+                  'Cancelá en cualquier momento',
+                ].map((feat, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <CheckCircle2 size={16} className="text-[#c8f73a] mt-0.5 flex-shrink-0" />
-                    <p className="text-white/60 text-sm">{feat}</p>
+                    <p className="text-white/70 text-sm">{feat}</p>
                   </div>
                 ))}
               </div>
 
-              {/* Totals */}
-              <div className="border-t border-white/10 pt-4 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-white/40 text-sm">{t.subtotal}</span>
-                  <span className="text-white/60 text-sm">${plan.price.toLocaleString('es-AR')}</span>
+              {/* Additional benefits */}
+              <div className="mb-6">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mt-4 mb-3">Complementá tu proceso con:</p>
+                <div className="space-y-2.5">
+                  {[
+                    'Consultas nutricionales con profesionales especializados',
+                    'Acompañamiento psicológico para fortalecer hábitos y emociones',
+                  ].map((feat, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <CheckCircle2 size={16} className="text-[#c8f73a] mt-0.5 flex-shrink-0" />
+                      <p className="text-white/70 text-sm">{feat}</p>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-white font-bold">{t.total}</span>
-                  <span className="text-white font-headline font-black text-xl">${plan.price.toLocaleString('es-AR')}</span>
-                </div>
-                <p className="text-white/25 text-[11px] pt-2">{t.recurring_note}</p>
               </div>
+
+              {/* Método de pago */}
+              <div className="border border-white/10 rounded-xl p-4 mb-6">
+                <p className="font-headline font-bold text-base uppercase tracking-tight mb-3">
+                  <span className="text-[#c1ed00]">3.</span> Método de pago
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#00b1ea] flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-black text-[9px] leading-none text-center">MP</span>
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-sm">Mercado Pago</p>
+                    <p className="text-white/40 text-xs mt-0.5">Pagar con tarjeta, débito o dinero en cuenta.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Resumen de compra */}
+              <div className="border-t border-white/10 pt-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Resumen de compra</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-white/40 text-sm">{t.subtotal}</span>
+                    <span className="text-white/60 text-sm">{DISPLAY_PRICES[selectedPlan].monthly}/mes</span>
+                  </div>
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-white font-bold">{t.total}</span>
+                    <span className="text-white font-headline font-black text-xl">
+                      {DISPLAY_PRICES[selectedPlan].total ?? DISPLAY_PRICES[selectedPlan].monthly}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 

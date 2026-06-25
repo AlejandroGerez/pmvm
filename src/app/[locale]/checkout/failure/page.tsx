@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { XCircle } from 'lucide-react'
+import Image from 'next/image'
+import { AlertCircle, Lock, Shield, CreditCard, Wallet, Wifi, RefreshCw, Heart, MessageCircle } from 'lucide-react'
 
 export default function CheckoutFailurePage({
   params,
@@ -9,72 +10,152 @@ export default function CheckoutFailurePage({
   searchParams: { sub?: string }
 }) {
   return (
-    <div className="bg-[#0e0e0e] min-h-screen text-white flex items-center justify-center px-4">
+    <div className="bg-[#0e0e0e] min-h-screen text-white px-4 py-8">
       {/* Ambient */}
       <div className="fixed top-0 left-1/2 w-[500px] h-[500px] bg-red-500/5 blur-[160px] rounded-full -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-      <div className="relative z-10 max-w-md w-full text-center">
+      <div className="relative z-10 max-w-2xl w-full mx-auto">
 
-        {/* Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-full bg-red-500/10 flex items-center justify-center">
-            <XCircle className="w-10 h-10 text-red-400" />
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-12">
+          <span className="text-xl font-black text-[#c1ed00] font-headline tracking-[-0.04em] uppercase italic">
+            R3SET
+          </span>
+          <div className="flex items-center gap-2">
+            <Lock size={13} className="text-white/30 flex-shrink-0" />
+            <span className="text-white/30 text-[11px]">Pago 100% seguro con Mercado Pago</span>
           </div>
         </div>
 
-        {/* Logo */}
-        <p className="text-xs font-black tracking-widest text-[#c1ed00] mb-4">R3SET</p>
+        {/* Centered header */}
+        <div className="max-w-lg mx-auto text-center">
 
-        {/* Title */}
-        <h1 className="text-4xl font-black tracking-tighter mb-3">
-          PAGO<br />
-          <span className="text-red-400">NO PROCESADO.</span>
-        </h1>
-
-        <p className="text-white/50 mb-8 text-sm leading-relaxed">
-          Tu pago no pudo completarse. No se realizó ningún cargo a tu cuenta.
-          Podés intentarlo de nuevo cuando quieras.
-        </p>
-
-        {/* Reasons */}
-        <div className="bg-white/3 border border-white/8 rounded-2xl p-5 mb-8 text-left">
-          <p className="text-xs font-black tracking-widest text-red-400 uppercase mb-4">
-            Posibles causas
-          </p>
-          {[
-            'Fondos insuficientes en tu cuenta',
-            'La tarjeta fue rechazada por tu banco',
-            'Cancelaste el proceso de pago',
-            'Problema temporal con Mercado Pago',
-          ].map((reason, i) => (
-            <div key={i} className="flex items-start gap-3 mb-2 last:mb-0">
-              <div className="w-1.5 h-1.5 rounded-full bg-red-400/60 flex-shrink-0 mt-1.5" />
-              <p className="text-white/50 text-sm">{reason}</p>
+          {/* Icon with decorative rings */}
+          <div className="flex justify-center mb-6">
+            <div className="relative flex items-center justify-center">
+              <div className="absolute w-44 h-44 rounded-full border border-red-400/15" />
+              <div className="absolute w-36 h-36 rounded-full border border-red-400/25" />
+              <div className="absolute w-24 h-24 rounded-full border-2 border-red-400/40" />
+              <div className="w-16 h-16 rounded-full bg-red-400/15 flex items-center justify-center">
+                <AlertCircle className="w-9 h-9 text-red-400" />
+              </div>
             </div>
-          ))}
+          </div>
+
+          {/* Label */}
+          <p className="text-base font-black uppercase tracking-[0.25em] text-red-400 mb-4">
+            Casi lo logramos
+          </p>
+
+          {/* Title */}
+          <h1 className="font-headline text-5xl font-black tracking-tighter uppercase mb-5">
+            Tu pago no pudo procesarse
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-white/50 text-base leading-relaxed mb-8">
+            No te preocupes, no se realizó ningún cobro.<br />
+            Podés intentarlo nuevamente cuando quieras.
+          </p>
+
+        </div>{/* end centered header */}
+
+        {/* Bloque 1 — Seguridad */}
+        <div className="max-w-lg mx-auto border-t border-white/10 pt-6 mb-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-full bg-red-400/10 border border-red-400/25 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <Shield size={22} className="text-red-400" />
+            </div>
+            <div>
+              <p className="text-white font-bold text-lg mb-1">
+                Tu seguridad es nuestra prioridad.
+              </p>
+              <p className="text-white/45 text-base leading-relaxed">
+                Si el problema persiste, puede deberse a tu banco<br />o al método de pago. Te ayudamos a resolverlo.
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* CTAs */}
-        <div className="flex flex-col gap-3">
+        {/* Bloque 2 — ¿Qué podés hacer? */}
+        <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 mb-8">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-red-400 mb-6">
+            ¿Qué podés hacer?
+          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            {[
+              { icon: <CreditCard size={26} />, label: 'Revisá los datos de tu tarjeta' },
+              { icon: <Wallet size={26} />,     label: 'Probá con otro método de pago' },
+              { icon: <Wifi size={26} />,       label: 'Verificá tu conexión a internet' },
+              { icon: <RefreshCw size={26} />,  label: 'Volvé a intentarlo' },
+            ].map((step, i, arr) => (
+              <div key={i} className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                <div className="flex flex-col items-center gap-3 flex-1 text-center">
+                  <div className="w-16 h-16 rounded-full bg-[#c1ed00]/10 border border-[#c1ed00]/25 flex items-center justify-center text-[#c1ed00]">
+                    {step.icon}
+                  </div>
+                  <p className="text-white/60 text-sm leading-snug max-w-[130px]">{step.label}</p>
+                </div>
+                {i < arr.length - 1 && (
+                  <>
+                    <span className="text-white/20 text-lg hidden sm:block">→</span>
+                    <span className="text-white/20 text-lg sm:hidden">↓</span>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Frase motivacional */}
+        <div className="text-center pt-3 pb-6">
+          <Heart size={36} className="text-[#c1ed00] mx-auto mb-4" />
+          <p className="text-white/60 text-base leading-relaxed">
+            Estamos para ayudarte en todo el proceso.
+          </p>
+          <p className="text-white font-bold text-base mt-1">
+            No te rindas, tu cambio empieza hoy.
+          </p>
+        </div>
+
+        {/* Recuadro de contacto */}
+        <div className="bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden mb-8">
+          <div className="flex items-center justify-center">
+            <Image src="/images/logoblanco.png" alt="R3SET" width={110} height={110} className="object-contain flex-shrink-0 -m-3" />
+            <div className="py-3 pr-4">
+              <p className="text-red-400 font-black text-base mb-1">
+                ¿Necesitás ayuda?
+              </p>
+              <p className="text-white/45 text-sm leading-relaxed mb-2">
+                Escribinos por WhatsApp<br />y te respondemos personalmente.
+              </p>
+              <a
+                href="https://wa.me/5491170632860"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 text-[#c1ed00] font-bold text-base hover:underline"
+              >
+                <MessageCircle size={16} />
+                +54 9 11 7063-2860
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Botones */}
+        <div className="flex flex-col items-center gap-3 max-w-lg mx-auto">
           <Link
-            href={`/${params.locale}#pricing`}
-            className="block py-3.5 rounded-xl font-black text-sm bg-[#c1ed00] text-[#0e0e0e] hover:bg-[#d4ff00] transition-colors"
+            href={`/${params.locale}/checkout`}
+            className="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-headline font-black text-sm bg-[#c1ed00] text-[#0e0e0e] hover:bg-[#d4ff00] transition-colors uppercase tracking-wider"
           >
-            INTENTAR DE NUEVO
+            <RefreshCw size={16} />
+            Volver a intentar
           </Link>
-          <a
-            href="https://wa.me/5491168201403"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block py-3 rounded-xl font-bold text-sm border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-colors"
-          >
-            Contactar soporte por WhatsApp
-          </a>
           <Link
             href={`/${params.locale}`}
-            className="block py-3 rounded-xl font-bold text-sm text-white/30 hover:text-white/50 transition-colors"
+            className="text-sm text-white/30 hover:text-white/60 transition-colors"
           >
-            Volver al inicio
+            ← Volver a la web
           </Link>
         </div>
 
