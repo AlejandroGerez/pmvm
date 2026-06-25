@@ -40,18 +40,21 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
   }
 
   return (
-    <div className={`relative flex flex-col h-full rounded-none p-6 lg:p-8 border transition-all duration-300 hover:-translate-y-1 ${
+    <div className={`relative flex flex-col h-full rounded-none p-6 lg:p-8 border transition-all duration-300 ${
       isMentoria
-        ? 'border-[#ff734a]/40 bg-[#ff734a]/[0.04] hover:border-[#ff734a]/60'
-        : 'border-[#c1ed00]/30 bg-[#c1ed00]/[0.03] hover:border-[#c1ed00]/50'
+        ? 'mentoria-holographic border-[#ff734a]/40 bg-[#ff734a]/[0.04] hover:border-[#ff734a]/60'
+        : 'border-[#c1ed00]/30 bg-[#c1ed00]/[0.03] hover:border-[#c1ed00]/50 hover:-translate-y-1'
     }`}>
+      {/* Shimmer layer — solo mentoría */}
+      {isMentoria && <div className="mentoria-shimmer-layer" aria-hidden="true" />}
+
       {/* Badge */}
       {isCurrent ? (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest font-label uppercase bg-white text-[#0e0e0e]">
           TU PLAN ACTUAL
         </div>
       ) : plan.badge ? (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest font-label uppercase"
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-5 py-1.5 text-xs font-black tracking-widest font-label uppercase"
           style={{ backgroundColor: plan.color, color: '#0e0e0e' }}>
           {plan.badge}
         </div>
@@ -63,12 +66,25 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
       </p>
       <h3 className="font-headline text-2xl font-black mb-3">{plan.name}</h3>
 
-      {/* Price */}
-      {isMentoria ? (
-        <div className="mb-1">
-          <span className="font-headline text-2xl font-black text-white/50 uppercase tracking-tight">Precio a consultar</span>
+      {isMentoria && (
+        <div className="flex items-baseline gap-2 mb-1">
+          <span className="font-headline text-4xl font-black text-white leading-none">100%</span>
+          <span className="font-headline text-xl font-black text-white/40 tracking-tight">personalizado</span>
         </div>
-      ) : (
+      )}
+
+      {isMentoria && (
+        <p className="text-[11px] text-white/30 font-label uppercase tracking-widest mb-3">
+          Diseñado exclusivamente para vos.
+        </p>
+      )}
+
+      {isMentoria && (
+        <p className="text-on-surface-variant text-sm leading-relaxed mb-6 font-body font-bold">Mi nivel más alto de acompañamiento.</p>
+      )}
+
+      {/* Price */}
+      {!isMentoria && (
         <div className="flex items-baseline gap-1 mb-1">
           <span className="text-sm text-white/40 font-label">Desde ARS</span>
           <span className="font-headline text-4xl font-black">${plan.price.toLocaleString('es-AR')}</span>
@@ -80,35 +96,56 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
           {plan.priceNote}
         </p>
       )}
-      {isMentoria && (
-        <p className="text-[11px] text-white/30 font-label uppercase tracking-widest mb-3">
-          Cancelable cuando quieras · Sin permanencia
-        </p>
-      )}
 
-      <p className="text-on-surface-variant text-sm leading-relaxed mb-6 font-body">{plan.desc}</p>
+      {!isMentoria && <p className="text-on-surface-variant text-sm leading-relaxed mb-6 font-body font-bold">{plan.desc}</p>}
 
-      {isMentoria && (
-        <p className="text-[11px] text-white/40 font-label italic mb-4 border-l-2 border-[#ff734a]/30 pl-3">
-          Incluye todo lo del Plan Base más el acompañamiento directo y personalizado de Ale Gerez.
-        </p>
-      )}
+      <div className="min-h-[1.5rem] mb-0">
+        {isMentoria ? (
+          <p className="text-[11px] font-black font-label uppercase tracking-widest text-[#ff734a]">
+            Incluye lo del Plan Base y además:
+          </p>
+        ) : (
+          <p className="text-[11px] font-black font-label uppercase tracking-widest" style={{ color: plan.color }}>
+            El Plan Base incluye:
+          </p>
+        )}
+      </div>
 
-      <ul className="space-y-2.5 mb-8 flex-1">
-        {plan.features.map((f: string, i: number) => (
-          <li key={i} className="flex items-start gap-3 text-sm text-on-surface-variant font-body">
-            <Check className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: plan.color }} />
-            {f}
-          </li>
+      <ul className={`space-y-2.5 mb-8 ${isMentoria ? 'flex-1' : ''}`}>
+        {plan.features.map((f: any, i: number) => (
+          typeof f === 'object' && f.section ? (
+            <li key={i} className="pt-2 pb-0.5">
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/60 font-label">{f.section}</span>
+            </li>
+          ) : (
+            <li key={i} className="flex items-start gap-3 text-sm font-body">
+              <Check className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: plan.color }} />
+              <span className={typeof f === 'object' && f.bold ? 'font-bold text-white' : 'text-on-surface-variant'}>
+                {typeof f === 'object' ? f.text : f}
+                {typeof f === 'object' && f.sub && (
+                  <><br /><span className="whitespace-nowrap">{f.sub}</span></>
+                )}
+              </span>
+            </li>
+          )
         ))}
       </ul>
+
+      {!isMentoria && (
+        <p className="text-[11px] font-black font-label uppercase tracking-widest mb-4 px-3 py-2 bg-[#c1ed00]/15 text-[#c1ed00] border border-[#c1ed00]/40 text-center">
+          El primer paso es el más importante.
+        </p>
+      )}
+
+      {!isMentoria && <div className="flex-1" />}
+
 
       {error && <p className="text-red-400 text-xs mb-3 text-center bg-red-400/10 rounded py-2 px-3 font-label">{error}</p>}
 
       <button onClick={handleBuy} disabled={loading}
-        className="w-full py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer hover:opacity-90 active:scale-95"
+        className={`w-full py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer hover:scale-[1.05] active:scale-[0.98] ${isMentoria ? 'hover:shadow-[0_0_20px_rgba(255,115,74,0.5)]' : 'hover:shadow-[0_0_20px_rgba(193,237,0,0.5)]'}`}
         style={{ backgroundColor: loading ? '#333' : plan.color, color: '#0e0e0e' }}>
-        {loading ? 'PROCESANDO...' : isMentoria ? 'SOLICITAR EVALUACIÓN' : isCurrent ? 'RENOVAR PLAN' : 'EMPEZAR AHORA'}
+        {loading ? 'PROCESANDO...' : isMentoria ? 'SOLICITAR EVALUACIÓN' : isCurrent ? 'RENOVAR PLAN' : 'EMPEZAR HOY'}
       </button>
     </div>
   )
@@ -337,7 +374,7 @@ export default function V4Page() {
                 </div>
               ) : (
                 <a href="#pricing" onClick={smoothScroll}
-                  className="bg-[#cefc22] text-[#3b4a00] px-5 py-2 font-headline font-bold text-xs tracking-widest uppercase hover:opacity-90 active:scale-95 transition-all">
+                  className="bg-[#cefc22] text-[#3b4a00] px-5 py-2 font-headline font-bold text-xs tracking-widest uppercase hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(193,237,0,0.5)] active:scale-[0.98] transition-all duration-300">
                   Comenzar
                 </a>
               )
@@ -451,7 +488,7 @@ export default function V4Page() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            TRANSFORMA TUS <span className="text-[#c1ed00] italic">HÁBITOS</span>,<br className="hidden md:block" /> NO SOLO TU PESO.
+            TRANSFORMA TUS <span className="text-[#c1ed00] italic">HÁBITOS</span>,<br className="hidden md:block" /> NO SOLO<br />TU PESO.
           </motion.h1>
           <motion.p
             className="font-body text-on-surface-variant text-lg max-w-md leading-relaxed border-l-4 border-[#c1ed00] pl-5"
@@ -459,7 +496,7 @@ export default function V4Page() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5 }}
           >
-            Un sistema diseñado para cambiar tu cuerpo y tu mentalidad de forma sostenible.<br />
+            Un sistema diseñado para cambiar tu cuerpo<br />y tu mentalidad de forma sostenible.<br />
             Sin extremos. Sin culpa. Con resultados reales.
           </motion.p>
           <motion.div
@@ -471,7 +508,7 @@ export default function V4Page() {
             <a
               href="#pricing"
               onClick={smoothScroll}
-              className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-8 py-4 text-base lg:text-lg tracking-tight hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(206,252,34,0.3)] active:scale-[0.98] transition-all duration-300 uppercase"
+              className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-8 py-4 text-base lg:text-lg tracking-tight hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(193,237,0,0.5)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
               ¡VER PLANES!
               <ArrowRight className="w-5 h-5" />
@@ -776,7 +813,7 @@ export default function V4Page() {
               EMPEZÁ TU<br /><span className="text-[#c1ed00] italic">TRANSFORMACIÓN.</span>
             </h2>
             <p className="text-on-surface-variant max-w-lg text-base leading-relaxed font-body">
-              Entrenamiento personalizado, seguimiento real y un coach que te acompaña. Elegí el plan que mejor se adapte a tus objetivos.
+              Entrenamiento personalizado, seguimiento real y un coach<br />que te acompaña. Elegí el plan que mejor se adapte a tus objetivos.
             </p>
           </div>
 
@@ -787,32 +824,35 @@ export default function V4Page() {
                 id: 'monthly', name: 'PLAN BASE', price: 44999, days: 30, badge: null, color: '#c1ed00',
                 desc: 'La forma más simple de empezar tu transformación.',
                 features: [
-                  'Rutina personalizada',
+                  'Rutina personalizada (gimnasio - hogar)',
                   'App exclusiva Android e iPhone',
                   'Videos explicativos de cada ejercicio',
                   'Seguimiento semanal',
                   'Soporte en plataforma',
-                  'Comunidad privada',
-                  'Consultas nutricionales',
-                  'Acompañamiento psicológico',
+                  'Comunidad privada de alumnos',
+                  'Sin permanencia — cancelá cuando quieras',
+                  { section: 'Además, tendrás acceso a:' },
+                  'Consultas nutricionales con profesionales especializados',
+                  'Acompañamiento psicológico para fortalecer hábitos y emociones',
                 ],
-                priceNote: 'Trimestral $119.999 · Semestral $219.999',
+                priceNote: 'Ahorrá en los planes de 3 y 6 meses',
               },
               {
                 id: 'mentoria', name: 'MENTORÍA 1 A 1', price: 0, days: 0, badge: 'CUPOS LIMITADOS', color: '#ff734a',
-                desc: 'Trabajá directamente con Ale Gerez para lograr un cambio real y definitivo.',
+                desc: 'Trabajá directamente conmigo y construyamos juntos un cambio que puedas sostener para toda la vida.',
                 features: [
-                  'Comunicación directa todos los días',
-                  '100% personalizado a vos',
-                  'Estrategia alimentaria individualizada',
-                  'Seguimiento de comidas',
+                  { text: 'Comunicación directa conmigo', bold: true },
+                  { text: 'Entrenamiento personalizado 100%', sub: '(gimnasio - hogar)' },
+                  'Estrategia alimentaria adaptada',
+                  { text: 'Seguimiento y análisis de todas tus comidas', bold: true },
                   'Ajustes permanentes',
-                  'Sesiones individuales',
-                  'Prioridad en la respuesta',
-                  'App exclusiva Android e iPhone',
-                  'Comunidad privada',
-                  'Consultas nutricionales',
-                  'Acompañamiento psicológico',
+                  'Aplicación exclusiva para Android e iPhone',
+                  { text: 'Sesiones 1-1 conmigo', bold: true },
+                  'Comunidad privada de alumnos',
+                  'Prioridad absoluta en la respuesta',
+                  { section: 'Además, tendrás acceso a:' },
+                  'Consultas nutricionales con profesionales especializados',
+                  'Acompañamiento psicológico para fortalecer hábitos y emociones',
                 ],
               },
             ].map((plan) => (
@@ -929,7 +969,7 @@ export default function V4Page() {
             <a
               href="#pricing"
               onClick={smoothScroll}
-              className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-8 py-4 text-base lg:text-lg tracking-tight hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(206,252,34,0.3)] active:scale-[0.98] transition-all duration-300 uppercase"
+              className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-8 py-4 text-base lg:text-lg tracking-tight hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(193,237,0,0.5)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
               ¡VER PLANES!
               <ArrowRight className="w-5 h-5" />
@@ -1079,7 +1119,7 @@ export default function V4Page() {
             <a
               href="#contact"
               onClick={smoothScroll}
-              className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-10 py-5 text-base lg:text-lg tracking-tight hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(206,252,34,0.3)] active:scale-[0.98] transition-all duration-300 uppercase"
+              className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-10 py-5 text-base lg:text-lg tracking-tight hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(193,237,0,0.5)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
               SOLICITAR EVALUACIÓN
               <ArrowRight className="w-5 h-5" />

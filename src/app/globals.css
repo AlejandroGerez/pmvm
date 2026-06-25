@@ -43,17 +43,59 @@ html {
 }
 .r3set-marquee-left {
   display: flex;
-  width: 200%;
+  width: max-content;
   animation: r3set-marquee-left 30s linear infinite;
 }
 .r3set-marquee-right {
   display: flex;
-  width: 200%;
+  width: max-content;
   animation: r3set-marquee-right 30s linear infinite;
 }
 .r3set-text-stroke {
   -webkit-text-stroke: 1px rgba(193, 237, 0, 0.55);
   color: rgba(193, 237, 0, 0.08);
+}
+
+/* Mentoría 1 a 1 — efecto holográfico hover */
+.mentoria-holographic {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
+}
+.mentoria-holographic:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 50px rgba(255, 115, 74, 0.3), 0 8px 50px rgba(255, 115, 74, 0.12);
+}
+
+/* Capa interna con overflow:hidden que contiene el shimmer */
+.mentoria-shimmer-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+.mentoria-shimmer-layer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255, 115, 74, 0.14) 50%,
+    transparent 80%
+  );
+  transform: skewX(-15deg);
+  opacity: 0;
+}
+.mentoria-holographic:hover .mentoria-shimmer-layer::before {
+  opacity: 1;
+  animation: mentoria-shimmer-slide 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes mentoria-shimmer-slide {
+  0%   { left: -60%; }
+  100% { left: 130%; }
 }
 
 @layer base {
