@@ -16,10 +16,12 @@ const PLANS: Record<string, {
   frequency?: number
   frequencyType?: 'months' | 'days'
 }> = {
-  monthly:    { name: 'Plan Mensual R3SET',    price: 100,  days: 30,  isRecurring: false },
-  quarterly:  { name: 'Plan Trimestral R3SET',  price: 150,  days: 90,  isRecurring: false },
-  semiannual: { name: 'Plan Semestral R3SET',   price: 200,  days: 180, isRecurring: false },
-  mentoria:   { name: 'Mentoría 1-1 R3SET',     price: 300,  days: 30,  isRecurring: true, frequency: 1, frequencyType: 'months' },
+  // Todos los planes son suscripciones recurrentes automáticas (Preapproval API de MP).
+  // Plan B si MP Argentina no soporta frequency: 3 o 6 → cambiar a frequency: 1 y ajustar price al equivalente mensual.
+  monthly:    { name: 'Plan Mensual R3SET',    price: 44999,  days: 30,  isRecurring: true, frequency: 1, frequencyType: 'months' },
+  quarterly:  { name: 'Plan Trimestral R3SET',  price: 119999, days: 90,  isRecurring: true, frequency: 3, frequencyType: 'months' },
+  semiannual: { name: 'Plan Semestral R3SET',   price: 219999, days: 180, isRecurring: true, frequency: 6, frequencyType: 'months' },
+  // Mentoría 1-1: sin cobro web. El flujo es solo por /evaluacion (formulario → coach).
 }
 
 export async function POST(req: NextRequest) {
@@ -228,7 +230,11 @@ async function createRecurringPreapproval({
 
   if (!mpRes.ok) {
     const errText = await mpRes.text()
-    console.error('MP preapproval error:', errText)
+    console.error('─── MP preapproval error ───────────────────────')
+    console.error('HTTP status:', mpRes.status, mpRes.statusText)
+    console.error('Body enviado a MP:', JSON.stringify(preapprovalBody, null, 2))
+    try { console.error('Respuesta de MP:', JSON.parse(errText)) } catch { console.error('Respuesta de MP (raw):', errText) }
+    console.error('────────────────────────────────────────────────')
     return NextResponse.json({ error: 'Error al crear suscripción en Mercado Pago' }, { status: 500 })
   }
 

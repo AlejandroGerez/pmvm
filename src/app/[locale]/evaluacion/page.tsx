@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function EvaluacionPage({
   params,
 }: {
   params: { locale: string }
 }) {
+  const router = useRouter()
+
   const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
   const [whatsapp, setWhatsapp] = useState('')
@@ -17,7 +20,9 @@ export default function EvaluacionPage({
   const [objetivo, setObjetivo] = useState('')
   const [situacion, setSituacion] = useState('')
   const [termsAccepted, setTermsAccepted] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
 
   const inputClass = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/25 text-sm focus:outline-none focus:border-[#c1ed00]/50 transition-colors"
   const labelClass = "block text-xs font-black uppercase tracking-wider text-white/50 mb-1.5"
@@ -163,25 +168,45 @@ export default function EvaluacionPage({
                   </span>
                 </label>
 
-                {/* Botón / Mensaje de éxito */}
-                {submitted ? (
-                  <div className="bg-[#c1ed00]/10 border border-[#c1ed00]/30 rounded-xl px-6 py-4 flex items-center gap-3">
-                    <svg className="w-5 h-5 text-[#c1ed00] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                {/* Error */}
+                {error && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-5 py-4 flex items-start gap-3">
+                    <svg className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                     </svg>
-                    <p className="text-[#c1ed00] font-bold text-sm">
-                      ¡Gracias! Pronto nos pondremos en contacto con vos.
-                    </p>
+                    <p className="text-red-400 text-sm leading-snug">{error}</p>
                   </div>
-                ) : (
-                  <button
-                    onClick={() => setSubmitted(true)}
-                    disabled={!termsAccepted}
-                    className="w-full py-4 rounded-xl font-headline font-black text-sm bg-[#c1ed00] text-[#0e0e0e] hover:bg-[#d4ff00] transition-all uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-[0_0_20px_rgba(193,237,0,0.3)] disabled:hover:shadow-none"
-                  >
-                    ENVIAR SOLICITUD →
-                  </button>
                 )}
+
+                {/* Botón */}
+                <button
+                  onClick={async () => {
+                    if (!termsAccepted || loading) return
+                    setError(null)
+                    setLoading(true)
+                    try {
+                      const res = await fetch('/api/evaluacion', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nombre, email, whatsapp, ciudad, peso, altura, skipMedidas, objetivo, situacion }),
+                      })
+                      const data = await res.json()
+                      if (!res.ok) {
+                        setError(data.error ?? 'Ocurrió un error. Intentá de nuevo.')
+                        setLoading(false)
+                        return
+                      }
+                      router.push(`/${params.locale}/evaluacion/gracias`)
+                    } catch {
+                      setError('Error de conexión. Verificá tu internet e intentá de nuevo.')
+                      setLoading(false)
+                    }
+                  }}
+                  disabled={!termsAccepted || loading}
+                  className="w-full py-4 rounded-xl font-headline font-black text-sm bg-[#c1ed00] text-[#0e0e0e] hover:bg-[#d4ff00] transition-all uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-[0_0_20px_rgba(193,237,0,0.3)] disabled:hover:shadow-none"
+                >
+                  {loading ? 'ENVIANDO...' : 'ENVIAR SOLICITUD →'}
+                </button>
 
               </div>
             </div>

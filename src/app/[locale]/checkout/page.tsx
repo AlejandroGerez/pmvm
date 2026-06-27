@@ -48,26 +48,12 @@ const PLANS = {
       pt: ['Tudo do plano Trimestral', 'Plano nutricional completo', 'Comunidade privada WhatsApp', 'Melhor custo-benefício'],
     },
   },
-  mentoria: {
-    id: 'mentoria',
-    name: { es: 'Mentoría 1-1', en: 'Mentorship 1-1', pt: 'Mentoria 1-1' },
-    price: 300,
-    isRecurring: true,
-    period: { es: 'por mes', en: 'per month', pt: 'por mês' },
-    frequency: { es: 'Suscripción mensual · cancelable en cualquier momento', en: 'Monthly subscription · cancel anytime', pt: 'Assinatura mensal · cancele quando quiser' },
-    features: {
-      es: ['Rutina 100% personalizada a tu biotipo', 'Chat directo con el coach', 'Videollamadas quincenales de ajuste', 'Estrategia de largo plazo', 'Cupos limitados — requiere entrevista previa'],
-      en: ['100% personalized routine for your body type', 'Direct chat with coach', 'Bi-weekly video adjustment calls', 'Long-term strategy', 'Limited spots — requires prior interview'],
-      pt: ['Rotina 100% personalizada ao seu biotipo', 'Chat direto com o coach', 'Videochamadas quinzenais de ajuste', 'Estratégia de longo prazo', 'Vagas limitadas — requer entrevista prévia'],
-    },
-  },
 } as const
 
 const DISPLAY_PRICES: Record<string, { monthly: string; total: string | null; savings: string | null }> = {
   monthly:    { monthly: '$44.999', total: null,       savings: null },
   quarterly:  { monthly: '$39.999', total: '$119.999', savings: '11% off' },
   semiannual: { monthly: '$36.666', total: '$219.999', savings: '18% off' },
-  mentoria:   { monthly: 'A consultar', total: null,   savings: null },
 }
 
 const PICKER_PLANS = ['monthly', 'quarterly', 'semiannual'] as const
