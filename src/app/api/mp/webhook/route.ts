@@ -239,7 +239,7 @@ async function processPreapprovalStatus(
 
   // Send notifications only on first activation (pending → active)
   if (mpStatus === 'authorized' && sub.status === 'pending') {
-    await sendActivationNotifications(admin, sub)
+    await sendActivationNotifications(admin, sub, false, preapproval.auto_recurring?.transaction_amount)
   }
 
   return NextResponse.json({ ok: true, subscriptionId: sub.id, status: newStatus })
@@ -287,7 +287,7 @@ async function handleAuthorizedPayment(paymentId: string) {
   console.log(`Recurring payment collected → subscription ${sub.id} renewed until ${expiresAt.toISOString()}`)
 
   // Send renewal notifications
-  await sendActivationNotifications(admin, sub, true)
+  await sendActivationNotifications(admin, sub, true, authPayment.transaction_amount)
 
   return NextResponse.json({ ok: true, renewed: sub.id })
 }
@@ -333,7 +333,7 @@ async function handleOneTimePayment(paymentId: string) {
   }).eq('id', subscriptionId)
 
   const admin = getAdminClient()
-  await sendActivationNotifications(admin, sub)
+  await sendActivationNotifications(admin, sub, false, payment.transaction_amount)
 
   console.log(`Pago único activado: ${subscriptionId}`)
   return NextResponse.json({ ok: true, activated: subscriptionId })
@@ -344,6 +344,7 @@ async function sendActivationNotifications(
   admin: ReturnType<typeof getAdminClient>,
   sub: any,
   isRenewal = false,
+  amount?: number,
 ) {
   try {
     // Detect if user is returning (had previous subscriptions)
@@ -380,6 +381,7 @@ async function sendActivationNotifications(
     await Promise.all([
       sendEmail({ userEmail, displayName, planName, days, expiresAt, isReturning, locale, strings, siteUrl }),
       phone ? sendWhatsApp({ phone, displayName, planName, isReturning, strings }) : Promise.resolve(),
+      notifyCoach({ displayName, userEmail, phone, planName, amount, expiresAt, isReturning }),
     ])
   } catch (err) {
     console.error('Error en notificaciones:', err)
@@ -564,4 +566,146 @@ async function sendWhatsApp({
   )
 
   console.log(`WhatsApp enviado a: ${toNumber} | ${isReturning ? 'renovación' : 'nuevo'}`)
+}
+
+// ── Notificación al coach ─────────────────────────────────────────────────────
+async function notifyCoach({
+  displayName, userEmail, phone, planName, amount, expiresAt, isReturning,
+}: {
+  displayName: string
+  userEmail: string
+  phone: string
+  planName: string
+  amount?: number
+  expiresAt: Date
+  isReturning: boolean
+}) {
+  try {
+    const accountSid = process.env.TWILIO_ACCOUNT_SID
+    const authToken = process.env.TWILIO_AUTH_TOKEN
+    const fromNumber = process.env.TWILIO_WHATSAPP_FROM
+    const resendKey = process.env.RESEND_API_KEY
+    const coachPhone = process.env.NEXT_PUBLIC_COACH_WHATSAPP
+
+    const tipo = isReturning ? 'Renovación' : 'Cliente nuevo ⭐'
+    const monto = amount ? `$${amount.toLocaleString('es-AR')} ARS` : 'No disponible'
+    const vence = expiresAt.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })
+    const telDisplay = phone || 'No proporcionado'
+
+    // ── WhatsApp al coach via Twilio ──
+    if (coachPhone && accountSid && authToken && fromNumber) {
+      const coachNumber = coachPhone.startsWith('+') ? coachPhone : `+${coachPhone}`
+      const message =
+        `🎉 *NUEVO PAGO RECIBIDO*\n\n` +
+        `👤 *Cliente:* ${displayName}\n` +
+        `📧 *Email:* ${userEmail}\n` +
+        `📱 *Teléfono:* ${telDisplay}\n` +
+        `📋 *Plan:* ${planName}\n` +
+        `💰 *Monto:* ${monto}\n` +
+        `📅 *Vence:* ${vence}\n` +
+        `⭐ *Tipo:* ${tipo}`
+
+      const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64')
+      await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${credentials}`,
+          },
+          body: new URLSearchParams({
+            From: fromNumber,
+            To: `whatsapp:${coachNumber}`,
+            Body: message,
+          }),
+        }
+      )
+      console.log(`Notificación WhatsApp enviada al coach: ${coachNumber}`)
+    }
+
+    // ── Email al coach via Resend ──
+    if (resendKey) {
+      const subject = `🎉 Nuevo pago recibido - ${displayName}`
+      const html = `
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="utf-8"><title>${subject}</title></head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#fff;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:40px 16px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+
+        <tr><td style="padding-bottom:24px;">
+          <p style="margin:0;font-size:26px;font-weight:900;color:#c1ed00;letter-spacing:-1px;text-transform:uppercase;">R3SET</p>
+          <p style="margin:4px 0 0;font-size:11px;color:#444;text-transform:uppercase;letter-spacing:3px;">PANEL DEL COACH</p>
+        </td></tr>
+
+        <tr><td style="padding-bottom:24px;">
+          <p style="margin:0;font-size:22px;font-weight:800;">🎉 Nuevo pago recibido</p>
+        </td></tr>
+
+        <tr><td style="padding-bottom:24px;">
+          <div style="background:#141414;border:1px solid #2a2a2a;border-left:3px solid #c1ed00;border-radius:0 16px 16px 0;padding:24px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#888;width:40%;">👤 Cliente</td>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#fff;font-weight:600;">${displayName}</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#888;">📧 Email</td>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#fff;">${userEmail}</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#888;">📱 Teléfono</td>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#fff;">${telDisplay}</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#888;">📋 Plan</td>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#c1ed00;font-weight:700;">${planName}</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#888;">💰 Monto</td>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#fff;font-weight:600;">${monto}</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#888;">📅 Vence</td>
+                <td style="padding:10px 0;border-bottom:1px solid #2a2a2a;font-size:13px;color:#fff;">${vence}</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 0;font-size:13px;color:#888;">⭐ Tipo</td>
+                <td style="padding:10px 0;font-size:13px;color:#fff;">${tipo}</td>
+              </tr>
+            </table>
+          </div>
+        </td></tr>
+
+        <tr><td style="border-top:1px solid #1a1a1a;padding-top:20px;">
+          <p style="margin:0;font-size:12px;color:#444;">© R3SET · Notificación automática del sistema</p>
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`
+
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${resendKey}`,
+        },
+        body: JSON.stringify({
+          from: 'R3SET <hola@pesarmenosvivirmas.com>',
+          to: ['alegerezcoach@gmail.com'],
+          subject,
+          html,
+        }),
+      })
+      console.log(`Email de notificación enviado al coach`)
+    }
+  } catch (err) {
+    console.error('Error en notifyCoach (no crítico):', err)
+  }
 }

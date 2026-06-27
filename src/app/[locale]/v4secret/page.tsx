@@ -32,8 +32,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
 
   const handleBuy = () => {
     if (isMentoria) {
-      const el = document.getElementById('contact')
-      if (el) el.scrollIntoView({ behavior: 'smooth' })
+      router.push(`/${locale}/evaluacion`)
     } else {
       router.push(`/${locale}/checkout?plan=${plan.id}`)
     }
@@ -1116,14 +1115,13 @@ export default function V4Page() {
             Sumate a la mentoría 1-1 del método R3SET y empezá a construir resultados que sí puedas sostener.
           </motion.p>
           <motion.div variants={fadeUp} custom={3} className="flex flex-col items-center gap-4">
-            <a
-              href="#contact"
-              onClick={smoothScroll}
+            <Link
+              href={`/${locale}/evaluacion`}
               className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-10 py-5 text-base lg:text-lg tracking-tight hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(193,237,0,0.5)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
               SOLICITAR EVALUACIÓN
               <ArrowRight className="w-5 h-5" />
-            </a>
+            </Link>
             <p className="font-label text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-white/40">
               Cupos limitados <span className="text-[#c1ed00]/60 mx-1">•</span> Acceso online <span className="text-[#c1ed00]/60 mx-1">•</span> Empezá ya
             </p>

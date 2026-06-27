@@ -47,11 +47,35 @@ export default async function CheckoutSuccessPage({
         <div className="max-w-lg mx-auto text-center">
 
         {/* Icon with decorative rings */}
+        <style>{`
+          @keyframes radarPulse {
+            0%   { transform: scale(0.5); opacity: 0.55; }
+            100% { transform: scale(2.4); opacity: 0; }
+          }
+          .radar-ring { animation: radarPulse 2.5s ease-out infinite; }
+          .radar-ring-2 { animation-delay: 0.85s; }
+          .radar-ring-3 { animation-delay: 1.7s; }
+        `}</style>
         <div className="flex justify-center mb-6">
           <div className="relative flex items-center justify-center">
+            {/* Anillos estáticos */}
             <div className="absolute w-36 h-36 rounded-full border border-[#c1ed00]/15" />
             <div className="absolute w-28 h-28 rounded-full border border-[#c1ed00]/25" />
             <div className="absolute w-20 h-20 rounded-full border-2 border-[#c1ed00]/40" />
+            {/* Anillos pulsantes radar */}
+            {isPending ? (
+              <>
+                <div className="radar-ring absolute w-14 h-14 rounded-full border border-yellow-400/50" />
+                <div className="radar-ring radar-ring-2 absolute w-14 h-14 rounded-full border border-yellow-400/50" />
+                <div className="radar-ring radar-ring-3 absolute w-14 h-14 rounded-full border border-yellow-400/50" />
+              </>
+            ) : (
+              <>
+                <div className="radar-ring absolute w-14 h-14 rounded-full border border-[#c1ed00]/50" />
+                <div className="radar-ring radar-ring-2 absolute w-14 h-14 rounded-full border border-[#c1ed00]/50" />
+                <div className="radar-ring radar-ring-3 absolute w-14 h-14 rounded-full border border-[#c1ed00]/50" />
+              </>
+            )}
             {isPending ? (
               <div className="w-14 h-14 rounded-full bg-yellow-400/10 flex items-center justify-center">
                 <Clock className="w-7 h-7 text-yellow-400" />
@@ -160,13 +184,13 @@ export default async function CheckoutSuccessPage({
                 Escribime directamente por WhatsApp<br />y te respondo personalmente.
               </p>
               <a
-                href="https://wa.me/5491170632860"
+                href={`https://wa.me/${process.env.NEXT_PUBLIC_COACH_WHATSAPP}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-[#c1ed00] font-bold text-base hover:underline"
               >
                 <MessageCircle size={16} />
-                +54 9 11 7063-2860
+                {process.env.NEXT_PUBLIC_COACH_PHONE_DISPLAY}
               </a>
             </div>
           </div>

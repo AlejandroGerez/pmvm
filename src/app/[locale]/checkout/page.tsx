@@ -197,6 +197,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
   const locale = (params.locale as Locale) || 'es'
   const t = i18n[locale] ?? i18n.es
+  const cuentaHabilitada = process.env.NEXT_PUBLIC_CUENTA_HABILITADA === 'true'
 
   // Plan from URL or default to monthly
   const planParam = searchParams.get('plan') as PlanId | null
@@ -261,8 +262,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
     if (!user) {
       if (mode === 'register') {
-        if (!fullName.trim() || !email.trim() || !password) { setError(t.error_required); return }
-        if (password.length < 8) { setError(t.error_password); return }
+        if (!fullName.trim() || !email.trim() || (cuentaHabilitada && !password)) { setError(t.error_required); return }
+        if (cuentaHabilitada && password.length < 8) { setError(t.error_password); return }
       } else {
         if (!email.trim() || !password) { setError(t.error_required); return }
       }
@@ -318,7 +319,10 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       const res = await fetch('/api/mp/create-subscription', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId: selectedPlan, locale, email, password, fullName, phone }),
+        body: JSON.stringify({
+          planId: selectedPlan, locale, email, fullName, phone,
+          ...(cuentaHabilitada ? { password } : { skipAccount: true }),
+        }),
       })
       const data = await res.json()
 
@@ -336,7 +340,8 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       }
 
       // New user created — sign them in client-side so session is established
-      if (data.isNewUser) {
+      // (solo cuando cuentaHabilitada=true, porque si no el usuario no conoce su contraseña)
+      if (data.isNewUser && cuentaHabilitada) {
         await supabase.auth.signInWithPassword({ email, password })
       }
 
@@ -428,7 +433,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                     </button>
                   </div>
                 </div>
-              ) : mode === 'register' ? (
+              ) : (mode === 'register' || !cuentaHabilitada) ? (
                 /* ── Registration form ── */
                 <div className="space-y-4 mb-6">
                   <div>
@@ -466,16 +471,20 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                       />
                     </div>
                   </div>
-                  <div>
-                    <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">{t.password_label} *</label>
-                    <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-                      placeholder={t.password_placeholder}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
-                  </div>
-                  <p className="text-white/30 text-[11px]">
-                    {t.have_account}{' '}
-                    <button onClick={() => setMode('login')} className="text-[#c8f73a] hover:underline">{t.sign_in}</button>
-                  </p>
+                  {cuentaHabilitada && (
+                    <div>
+                      <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">{t.password_label} *</label>
+                      <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                        placeholder={t.password_placeholder}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
+                    </div>
+                  )}
+                  {cuentaHabilitada && (
+                    <p className="text-white/30 text-[11px]">
+                      {t.have_account}{' '}
+                      <button onClick={() => setMode('login')} className="text-[#c8f73a] hover:underline">{t.sign_in}</button>
+                    </p>
+                  )}
                 </div>
               ) : (
                 /* ── Login form ── */
@@ -521,7 +530,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                       Solicitá una evaluación para la Mentoría 1 a 1<br />con Ale Gerez.
                     </p>
                     <p className="text-white/30 text-xs mb-4">Cupos limitados.</p>
-                    <Link href={`/${locale}/v4secret#pricing`} className="text-[#c1ed00] text-sm font-bold hover:underline">
+                    <Link href={`/${locale}/evaluacion`} className="text-[#c1ed00] text-sm font-bold hover:underline">
                       Solicitar evaluación →
                     </Link>
                   </div>

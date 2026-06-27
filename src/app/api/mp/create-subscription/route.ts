@@ -25,7 +25,7 @@ const PLANS: Record<string, {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { planId, locale = 'es', email, fullName, phone, password } = body
+    const { planId, locale = 'es', email, fullName, phone, password, skipAccount } = body
 
     const plan = PLANS[planId]
     if (!plan) return NextResponse.json({ error: 'Plan inválido' }, { status: 400 })
@@ -46,13 +46,17 @@ export async function POST(req: NextRequest) {
     if (existingUser) {
       userId = existingUser.id
       userEmail = existingUser.email!
-    } else if (email && password) {
+    } else if (email && (password || skipAccount)) {
       // New user — register via admin API (bypasses email confirmation)
       const adminClient = createAdminClient()
+      // When skipAccount=true, generate a random password (user sets it later via mobile app)
+      const effectivePassword = skipAccount
+        ? Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10)
+        : password
 
       const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
         email,
-        password,
+        password: effectivePassword,
         email_confirm: true,
         user_metadata: { full_name: fullName ?? '' },
       })

@@ -31,11 +31,25 @@ export default function CheckoutFailurePage({
         <div className="max-w-lg mx-auto text-center">
 
           {/* Icon with decorative rings */}
+          <style>{`
+            @keyframes radarPulseRed {
+              0%   { transform: scale(0.5); opacity: 0.45; }
+              100% { transform: scale(2.4); opacity: 0; }
+            }
+            .radar-red { animation: radarPulseRed 2.5s ease-out infinite; }
+            .radar-red-2 { animation-delay: 0.85s; }
+            .radar-red-3 { animation-delay: 1.7s; }
+          `}</style>
           <div className="flex justify-center mb-6">
             <div className="relative flex items-center justify-center">
+              {/* Anillos estáticos */}
               <div className="absolute w-44 h-44 rounded-full border border-red-400/15" />
               <div className="absolute w-36 h-36 rounded-full border border-red-400/25" />
               <div className="absolute w-24 h-24 rounded-full border-2 border-red-400/40" />
+              {/* Anillos pulsantes radar */}
+              <div className="radar-red absolute w-16 h-16 rounded-full border border-red-400/40" />
+              <div className="radar-red radar-red-2 absolute w-16 h-16 rounded-full border border-red-400/40" />
+              <div className="radar-red radar-red-3 absolute w-16 h-16 rounded-full border border-red-400/40" />
               <div className="w-16 h-16 rounded-full bg-red-400/15 flex items-center justify-center">
                 <AlertCircle className="w-9 h-9 text-red-400" />
               </div>
@@ -130,13 +144,13 @@ export default function CheckoutFailurePage({
                 Escribinos por WhatsApp<br />y te respondemos personalmente.
               </p>
               <a
-                href="https://wa.me/5491170632860"
+                href={`https://wa.me/${process.env.NEXT_PUBLIC_COACH_WHATSAPP}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-[#c1ed00] font-bold text-base hover:underline"
               >
                 <MessageCircle size={16} />
-                +54 9 11 7063-2860
+                {process.env.NEXT_PUBLIC_COACH_PHONE_DISPLAY}
               </a>
             </div>
           </div>

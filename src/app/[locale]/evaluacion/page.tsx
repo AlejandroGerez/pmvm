@@ -31,13 +31,13 @@ export default function EvaluacionPage({
 
         {/* Encabezado */}
         <div className="text-center mb-12 max-w-2xl mx-auto">
-          <p className="text-xs font-black uppercase tracking-[0.3em] text-[#c1ed00] mb-4">
+          <p className="text-sm font-black uppercase tracking-[0.3em] text-[#c1ed00] mb-4">
             Método R3SET
           </p>
-          <h1 className="font-headline text-4xl sm:text-5xl font-black tracking-tighter mb-4">
+          <h1 className="font-headline text-4xl sm:text-5xl font-black tracking-tighter uppercase mb-4">
             Contanos sobre vos
           </h1>
-          <p className="text-white/50 text-sm leading-relaxed">
+          <p className="text-white/50 text-base leading-relaxed">
             Esta información me ayudará a evaluar tu caso.
           </p>
         </div>
@@ -75,18 +75,16 @@ export default function EvaluacionPage({
                 </div>
 
                 {/* Peso y Altura */}
-                {!skipMedidas && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className={labelClass}>¿Cuánto pesás? (kg)</label>
-                      <input type="number" value={peso} onChange={e => setPeso(e.target.value)} placeholder="Ej: 75" className={inputClass} />
-                    </div>
-                    <div>
-                      <label className={labelClass}>¿Cuánto medís? (cm)</label>
-                      <input type="number" value={altura} onChange={e => setAltura(e.target.value)} placeholder="Ej: 175" className={inputClass} />
-                    </div>
+                <div className={`grid grid-cols-2 gap-4 transition-opacity ${skipMedidas ? 'opacity-40' : 'opacity-100'}`}>
+                  <div>
+                    <label className={labelClass}>¿Cuánto pesás? (kg)</label>
+                    <input type="number" value={peso} onChange={e => setPeso(e.target.value)} placeholder="Ej: 75" className={inputClass} disabled={skipMedidas} />
                   </div>
-                )}
+                  <div>
+                    <label className={labelClass}>¿Cuánto medís? (cm)</label>
+                    <input type="number" value={altura} onChange={e => setAltura(e.target.value)} placeholder="Ej: 175" className={inputClass} disabled={skipMedidas} />
+                  </div>
+                </div>
 
                 {/* Checkbox */}
                 <label className="flex items-start gap-3 cursor-pointer group">
@@ -94,7 +92,7 @@ export default function EvaluacionPage({
                     <input
                       type="checkbox"
                       checked={skipMedidas}
-                      onChange={e => setSkipMedidas(e.target.checked)}
+                      onChange={e => { setSkipMedidas(e.target.checked); if (e.target.checked) { setPeso(''); setAltura('') } }}
                       className="sr-only"
                     />
                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${skipMedidas ? 'bg-[#c1ed00] border-[#c1ed00]' : 'border-white/20 bg-white/5 group-hover:border-white/40'}`}>
@@ -191,11 +189,11 @@ export default function EvaluacionPage({
 
           {/* Columna derecha — panel lateral (1/3) */}
           <div className="lg:col-span-1">
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sticky top-8">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#c1ed00] mb-6">
+            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 sticky top-8">
+              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#c1ed00] mb-8">
                 ¿Qué pasa después?
               </p>
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-7">
                 {[
                   'Reviso personalmente tu formulario.',
                   'Te contacto por el medio que prefieras.',
@@ -203,12 +201,12 @@ export default function EvaluacionPage({
                   'Voy a explicarte el plan ideal para vos.',
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#c1ed00]/15 border border-[#c1ed00]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3 h-3 text-[#c1ed00]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <div className="w-7 h-7 rounded-full bg-[#c1ed00]/15 border border-[#c1ed00]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-3.5 h-3.5 text-[#c1ed00]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <p className="text-white/60 text-sm leading-snug">{item}</p>
+                    <p className="text-white/60 text-base leading-snug">{item}</p>
                   </div>
                 ))}
               </div>
