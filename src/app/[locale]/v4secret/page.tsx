@@ -909,7 +909,7 @@ export default function V4Page() {
                     className="basis-full md:basis-1/2 lg:basis-1/3 flex-shrink-0"
                   >
                     <div className="flex flex-col h-full">
-                      <div className="grid grid-cols-2 gap-4 mb-6 group overflow-hidden">
+                      <div className="grid grid-cols-2 gap-1 mb-6 group overflow-hidden">
                         <div className="relative overflow-hidden aspect-[4/5] bg-surface-container">
                           <Image
                             alt={`${item.clientName} - Antes`}
@@ -925,7 +925,7 @@ export default function V4Page() {
                         <div className="relative overflow-hidden aspect-[4/5] bg-surface-container">
                           <Image
                             alt={`${item.clientName} - Después`}
-                            className="object-cover group-hover:scale-105 transition-all duration-700"
+                            className="object-cover"
                             src={item.afterImage}
                             fill
                             sizes="(max-width: 768px) 50vw, 33vw"

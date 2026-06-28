@@ -1,15 +1,15 @@
 [
 	{
 		"clientName": "Carla",
-		"beforeImage": "/images/transformations/Carla/cambio1.png",
-		"afterImage": "/images/transformations/Carla/cambio2.png",
+		"beforeImage": "/images/transformations/Carla/cambio2.png",
+		"afterImage": "/images/transformations/Carla/cambio1.png",
 		"clientTestimonial": {
 			"es": "Cambié mi cuerpo y sobre todo mi cabeza. Hoy me siento libre.",
 			"pt": "Mudei meu corpo e principalmente minha cabeça. Hoje me sinto livre.",
 			"en": "I changed my body and above all my mindset. Today I feel free."
 		},
 		"clientDetail": {
-			"es": "Nunca pensé que iba a poder sostenerlo. El método me enseñó a construir hábitos reales, sin extremos ni culpa.",
+			"es": "Nunca pensé que iba a poder sostenerlo. El método me enseñó a armar hábitos reales, sin extremos ni culpa.",
 			"pt": "Nunca pensei que conseguiria manter. O método me ensinou a construir hábitos reais, sem extremos nem culpa.",
 			"en": "I never thought I would be able to sustain it. The method taught me to build real habits, without extremes or guilt."
 		}
@@ -39,7 +39,7 @@
 			"en": "Total transformation. Physically and mentally I am a different person."
 		},
 		"clientDetail": {
-			"es": "Empecé sin saber nada de entrenamiento. Ale me acompañó desde cero y los resultados hablan solos.",
+			"es": "Arranqué sin saber nada de entrenamiento. Ale me acompañó desde cero y los resultados hablan solos.",
 			"pt": "Comecei sem saber nada de treino. Ale me acompanhou do zero e os resultados falam por si.",
 			"en": "I started knowing nothing about training. Ale guided me from scratch and the results speak for themselves."
 		}
@@ -61,8 +61,8 @@
 	},
 	{
 		"clientName": "Maximiliano",
-		"beforeImage": "/images/transformations/Maximiliano/cambio1.png",
-		"afterImage": "/images/transformations/Maximiliano/cambio2.png",
+		"beforeImage": "/images/transformations/Maximiliano/cambio2.png",
+		"afterImage": "/images/transformations/Maximiliano/cambio1.png",
 		"clientTestimonial": {
 			"es": "Nunca había logrado mantenerlo. Con este método sí.",
 			"pt": "Nunca tinha conseguido manter. Com este método sim.",
@@ -84,7 +84,7 @@
 			"en": "At 50, I am in the best shape of my life. It's never too late to start."
 		},
 		"clientDetail": {
-			"es": "Ahora que he perdido peso, me siento libre y con más confianza. Aprendí a quererme y cuidarme.",
+			"es": "Ahora que bajé de peso, me siento libre y con más confianza. Aprendí a quererme y cuidarme.",
 			"pt": "Agora que perdi peso, me sinto livre e mais confiante. Aprendi a amar e cuidar de mim mesma.",
 			"en": "Now that I have lost weight, I feel free and more confident. I have learned to love and take care of myself."
 		}
@@ -114,7 +114,7 @@
 			"en": "I increased my muscle mass and improved my overall health. Highly recommended."
 		},
 		"clientDetail": {
-			"es": "Mi transformación física fue el comienzo. Ahora mi estilo de vida es más activo y saludable.",
+			"es": "Mi transformación física fue el arranque. Ahora mi estilo de vida es mucho más activo y saludable.",
 			"pt": "Minha transformação física foi o começo. Agora meu estilo de vida é mais ativo e saudável.",
 			"en": "My physical transformation was just the beginning. I now have a more active and healthy lifestyle."
 		}
@@ -159,7 +159,7 @@
 			"en": "I became more confident and motivated to achieve my goals."
 		},
 		"clientDetail": {
-			"es": "Al adelgazar, me di cuenta de que el verdadero cambio no era solo físico.",
+			"es": "Al bajar de peso, me di cuenta de que el verdadero cambio no era solo físico.",
 			"pt": "Quando perdi peso, percebi que a verdadeira mudança não era apenas física.",
 			"en": "As I lost weight, I realized that the real change was not just physical."
 		}
@@ -174,7 +174,7 @@
 			"en": "I now have more energy, I feel happier and I am enjoying each day more."
 		},
 		"clientDetail": {
-			"es": "Perder peso me permitió redescubrirme. Ahora vivo cada día con más entusiasmo.",
+			"es": "Perder peso me permitió redescubrirme. Ahora vivo cada día con más ganas.",
 			"pt": "Perder peso me permitiu me redescobrir. Agora vivo cada dia com mais entusiasmo.",
 			"en": "Losing weight allowed me to rediscover myself. I now live each day with more enthusiasm."
 		}
