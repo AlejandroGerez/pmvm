@@ -552,9 +552,19 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               </button>
 
               {/* Secure note */}
-              <div className="flex items-center justify-center gap-2 mt-4">
-                <Lock size={13} className="text-white/20 flex-shrink-0" />
-                <p className="text-white/25 text-[11px]">Tus datos están protegidos. Proceso 100% seguro.</p>
+              <div className="flex flex-col items-center gap-3 mt-5">
+                <div className="flex items-center justify-center gap-1.5">
+                  <Lock size={12} className="text-white/20 flex-shrink-0" />
+                  <p className="text-white/25 text-[11px]">Tus datos están protegidos. Proceso 100% seguro.</p>
+                </div>
+                <div className="flex items-center justify-center gap-2.5">
+                  <span style={{ color: '#666666', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Pagás con</span>
+                  <img
+                    src="/images/mercadopago/SVGs/MP_RGB_HANDSHAKE_pluma_horizontal.svg"
+                    alt="Mercado Pago"
+                    style={{ height: '28px', width: 'auto', opacity: 0.6 }}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -665,14 +675,13 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 <p className="font-headline font-bold text-base uppercase tracking-tight mb-3">
                   <span className="text-[#c1ed00]">3.</span> Método de pago
                 </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#00b1ea] flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-black text-[9px] leading-none text-center">MP</span>
-                  </div>
-                  <div>
-                    <p className="text-white font-bold text-sm">Mercado Pago</p>
-                    <p className="text-white/40 text-xs mt-0.5">Pagar con tarjeta, débito o dinero en cuenta.</p>
-                  </div>
+                <div className="flex flex-col items-center gap-2">
+                  <img
+                    src="/images/mercadopago/SVGs/MP_RGB_HANDSHAKE_pluma_horizontal.svg"
+                    alt="Mercado Pago"
+                    style={{ height: '52px', width: 'auto' }}
+                  />
+                  <p className="text-white/40 text-xs leading-snug text-center">Pagar con tarjeta, débito o dinero en cuenta.</p>
                 </div>
               </div>
 
