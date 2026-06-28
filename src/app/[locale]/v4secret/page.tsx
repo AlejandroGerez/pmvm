@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import V4SplashManager from '@/components/v4/V4SplashScreen'
 import { Menu, X, ChevronDown, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone } from 'lucide-react'
@@ -39,7 +39,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
   }
 
   return (
-    <div className={`relative flex flex-col h-full rounded-none p-6 lg:p-8 border transition-all duration-300 ${
+    <div className={`relative flex flex-col h-full rounded-none p-5 lg:p-8 border transition-all duration-300 ${
       isMentoria
         ? 'mentoria-holographic border-[#ff734a]/40 bg-[#ff734a]/[0.04] hover:border-[#ff734a]/60'
         : 'border-[#c1ed00]/30 bg-[#c1ed00]/[0.03] hover:border-[#c1ed00]/50 hover:-translate-y-1'
@@ -49,89 +49,94 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
 
       {/* Badge */}
       {isCurrent ? (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest font-label uppercase bg-white text-[#0e0e0e]">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[10px] font-black tracking-widest font-label uppercase bg-white text-[#0e0e0e] whitespace-nowrap">
           TU PLAN ACTUAL
         </div>
       ) : plan.badge ? (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-5 py-1.5 text-xs font-black tracking-widest font-label uppercase"
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-5 py-1.5 text-xs font-black tracking-widest font-label uppercase whitespace-nowrap overflow-visible z-10"
           style={{ backgroundColor: plan.color, color: '#0e0e0e' }}>
           {plan.badge}
         </div>
       ) : null}
 
       {/* Label */}
-      <p className="font-label text-xs font-bold tracking-widest uppercase mb-2" style={{ color: plan.color }}>
+      <p className="font-label text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1.5 md:mb-2" style={{ color: plan.color }}>
         {isMentoria ? 'ACOMPAÑAMIENTO PERSONALIZADO' : 'ACCESO INMEDIATO'}
       </p>
-      <h3 className="font-headline text-2xl font-black mb-3">{plan.name}</h3>
+      <h3 className="font-headline text-xl md:text-2xl font-black mb-2 md:mb-3">{plan.name}</h3>
 
       {isMentoria && (
         <div className="flex items-baseline gap-2 mb-1">
-          <span className="font-headline text-4xl font-black text-white leading-none">100%</span>
-          <span className="font-headline text-xl font-black text-white/40 tracking-tight">personalizado</span>
+          <span className="font-headline text-3xl md:text-4xl font-black text-white leading-none">100%</span>
+          <span className="font-headline text-lg md:text-xl font-black text-white/40 tracking-tight">personalizado</span>
         </div>
       )}
 
       {isMentoria && (
-        <p className="text-[11px] text-white/30 font-label uppercase tracking-widest mb-3">
+        <p className="hidden md:block text-[11px] text-white/30 font-label uppercase tracking-widest mb-3">
           Diseñado exclusivamente para vos.
         </p>
       )}
 
       {isMentoria && (
-        <p className="text-on-surface-variant text-sm leading-relaxed mb-6 font-body font-bold">Mi nivel más alto de acompañamiento.</p>
+        <p className="md:block text-xs md:text-sm leading-relaxed mb-4 md:mb-6 font-body font-bold text-on-surface-variant whitespace-nowrap">Mi nivel más alto de acompañamiento.</p>
       )}
 
       {/* Price */}
       {!isMentoria && (
         <div className="flex items-baseline gap-1 mb-1">
-          <span className="text-sm text-white/40 font-label">Desde ARS</span>
-          <span className="font-headline text-4xl font-black">${plan.price.toLocaleString('es-AR')}</span>
-          <span className="text-sm text-white/40 font-label">/mes</span>
+          <span className="text-xs md:text-sm text-white/40 font-label">Desde ARS</span>
+          <span className="font-headline text-3xl md:text-4xl font-black">${plan.price.toLocaleString('es-AR')}</span>
+          <span className="text-xs md:text-sm text-white/40 font-label">/mes</span>
         </div>
       )}
       {plan.priceNote && (
-        <p className="text-[11px] text-white/30 font-label uppercase tracking-widest mb-3">
+        <p className="md:block text-[10px] text-white/30 font-label uppercase tracking-widest mb-3 whitespace-nowrap">
           {plan.priceNote}
         </p>
       )}
 
-      {!isMentoria && <p className="text-on-surface-variant text-sm leading-relaxed mb-6 font-body font-bold">{plan.desc}</p>}
+      {!isMentoria && <p className="hidden md:block text-on-surface-variant text-sm leading-relaxed mb-4 md:mb-6 font-body font-bold">{plan.desc}</p>}
 
-      <div className="min-h-[1.5rem] mb-0">
+      <div className="min-h-[1.5rem] mt-3 md:mt-0 mb-1">
         {isMentoria ? (
-          <p className="text-[11px] font-black font-label uppercase tracking-widest text-[#ff734a]">
+          <p className="text-[10px] md:text-[11px] font-black font-label uppercase tracking-widest text-[#ff734a]">
             Incluye lo del Plan Base y además:
           </p>
         ) : (
-          <p className="text-[11px] font-black font-label uppercase tracking-widest" style={{ color: plan.color }}>
+          <p className="text-[10px] md:text-[11px] font-black font-label uppercase tracking-widest" style={{ color: plan.color }}>
             El Plan Base incluye:
           </p>
         )}
       </div>
 
-      <ul className={`space-y-2.5 mb-8 ${isMentoria ? 'flex-1' : ''}`}>
-        {plan.features.map((f: any, i: number) => (
-          typeof f === 'object' && f.section ? (
-            <li key={i} className="pt-2 pb-0.5">
-              <span className="text-[10px] font-black uppercase tracking-widest text-white/60 font-label">{f.section}</span>
-            </li>
-          ) : (
-            <li key={i} className="flex items-start gap-3 text-sm font-body">
-              <Check className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: plan.color }} />
-              <span className={typeof f === 'object' && f.bold ? 'font-bold text-white' : 'text-on-surface-variant'}>
-                {typeof f === 'object' ? f.text : f}
-                {typeof f === 'object' && f.sub && (
-                  <><br /><span className="whitespace-nowrap">{f.sub}</span></>
-                )}
-              </span>
-            </li>
-          )
-        ))}
+      <ul className={`space-y-2 md:space-y-2.5 mb-5 md:mb-8 ${isMentoria ? 'flex-1' : ''}`}>
+        {(() => {
+          let pastComplementa = false
+          return plan.features.map((f: any, i: number) => {
+            if (typeof f === 'object' && f.section) pastComplementa = true
+            const hide = pastComplementa
+            return typeof f === 'object' && f.section ? (
+              <li key={i} className="pt-1.5 pb-0.5">
+                <span className="text-[10px] font-black uppercase tracking-widest text-white/60 font-label">{f.section}</span>
+              </li>
+            ) : (
+              <li key={i} className="flex items-start gap-2 md:gap-3 text-xs md:text-sm font-body">
+                <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mt-0.5 flex-shrink-0" style={{ color: plan.color }} />
+                <span className={typeof f === 'object' && f.bold ? 'font-bold text-white' : 'text-on-surface-variant'}>
+                  {typeof f === 'object' ? f.text : f}
+                  {typeof f === 'object' && f.sub && (
+                    <><br /><span className="whitespace-nowrap">{f.sub}</span></>
+                  )}
+                </span>
+              </li>
+            )
+          })
+        })()}
       </ul>
 
       {!isMentoria && (
-        <p className="text-[11px] font-black font-label uppercase tracking-widest mb-4 px-3 py-2 bg-[#c1ed00]/15 text-[#c1ed00] border border-[#c1ed00]/40 text-center">
+        <p className="hidden md:block text-[11px] font-black font-label uppercase tracking-widest mb-4 px-3 py-2 bg-[#c1ed00]/15 text-[#c1ed00] border border-[#c1ed00]/40 text-center">
           El primer paso es el más importante.
         </p>
       )}
@@ -143,7 +148,11 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
 
       <button onClick={handleBuy} disabled={loading}
         className={`w-full py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer hover:scale-[1.05] active:scale-[0.98] ${isMentoria ? 'hover:shadow-[0_0_20px_rgba(255,115,74,0.5)]' : 'hover:shadow-[0_0_20px_rgba(193,237,0,0.5)]'}`}
-        style={{ backgroundColor: loading ? '#333' : plan.color, color: '#0e0e0e' }}>
+        style={{
+          backgroundColor: loading ? '#333' : plan.color,
+          color: '#0e0e0e',
+          boxShadow: loading ? 'none' : isMentoria ? '0 0 20px rgba(255,115,74,0.5)' : '0 0 20px rgba(193,237,0,0.5)',
+        }}>
         {loading ? 'PROCESANDO...' : isMentoria ? 'SOLICITAR EVALUACIÓN' : isCurrent ? 'RENOVAR PLAN' : 'EMPEZAR HOY'}
       </button>
     </div>
@@ -230,6 +239,12 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
   )
 }
 
+const COACH_PHOTOS = [
+  { src: '/images/ale/ale-cuerpo.jpg', alt: 'Alejandro Gerez — transformación corporal' },
+  { src: '/images/ale/ale-cara.jpg', alt: 'Alejandro Gerez — antes y después' },
+  { src: '/images/ale/ale-vida.jpg', alt: 'Alejandro Gerez — coach' },
+]
+
 export default function V4Page() {
   const params = useParams()
   const locale = (params?.locale as string) ?? 'es'
@@ -242,8 +257,58 @@ export default function V4Page() {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  // Pillars slider (mobile)
+  const pillarRef = useRef<HTMLDivElement>(null)
+  const [pillarSlide, setPillarSlide] = useState(0)
+  const [pillarRatio, setPillarRatio] = useState(0)
+  const handlePillarScroll = () => {
+    if (!pillarRef.current) return
+    const { scrollLeft, scrollWidth, clientWidth } = pillarRef.current
+    const maxScroll = scrollWidth - clientWidth
+    const ratio = maxScroll > 0 ? scrollLeft / maxScroll : 0
+    setPillarRatio(ratio)
+    setPillarSlide(Math.min(2, Math.max(0, Math.round(ratio * 2))))
+  }
+  const pillarColors = ['#ff734a', '#c1ed00', '#00e3fd']
+
+  // Pricing carousel (mobile)
+  const pricingRef = useRef<HTMLDivElement>(null)
+  const [pricingSlide, setPricingSlide] = useState(0)
+  const handlePricingScroll = () => {
+    if (!pricingRef.current) return
+    const { scrollLeft, scrollWidth, clientWidth } = pricingRef.current
+    const maxScroll = scrollWidth - clientWidth
+    setPricingSlide(maxScroll > 0 && scrollLeft > maxScroll / 2 ? 1 : 0)
+  }
+
+  // Mentoría active state (mobile IntersectionObserver)
+  const mentoriaCardRef = useRef<HTMLDivElement>(null)
+  const [mentoriaActive, setMentoriaActive] = useState(false)
+  useEffect(() => {
+    const el = mentoriaCardRef.current
+    const root = pricingRef.current
+    if (!el || !root) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setMentoriaActive(entry.isIntersecting),
+      { root, threshold: 0.5 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   // Active subscription
   const [activeSub, setActiveSub] = useState<ActiveSub | null>(null)
+
+  // Coach carousel (mobile)
+  const [coachSlide, setCoachSlide] = useState(0)
+  const [coachDir, setCoachDir] = useState(1)
+  useEffect(() => {
+    const t = setInterval(() => {
+      setCoachDir(1)
+      setCoachSlide(prev => (prev + 1) % COACH_PHOTOS.length)
+    }, 3500)
+    return () => clearInterval(t)
+  }, [])
 
   // Scroll
   const { scrollY } = useScroll()
@@ -456,7 +521,7 @@ export default function V4Page() {
       </motion.nav>
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex flex-col justify-end px-6 pb-16 pt-24 md:pt-20 overflow-hidden">
+      <section className="relative min-h-[100dvh] md:min-h-[90vh] flex flex-col justify-center md:justify-end px-6 pb-16 pt-24 md:pt-20 overflow-hidden">
         <motion.div className="absolute inset-0 z-0" style={{ y: heroY }}>
           <div className="absolute inset-0">
             <Image
@@ -473,30 +538,29 @@ export default function V4Page() {
         </motion.div>
 
         <motion.div className="relative z-10 space-y-6 max-w-2xl" style={{ opacity: heroOpacity }}>
-          <motion.span
-            className="font-label text-[#c1ed00] tracking-[0.3em] text-[10px] uppercase block"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Rompe el Ciclo
-          </motion.span>
           <motion.h1
-            className="font-headline font-bold text-5xl md:text-7xl lg:text-8xl leading-[0.9] tracking-tighter uppercase"
+            className="font-headline font-bold text-[13vw] md:text-7xl lg:text-8xl leading-[0.9] tracking-tighter uppercase"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             TRANSFORMA TUS <span className="text-[#c1ed00] italic">HÁBITOS</span>,<br className="hidden md:block" /> NO SOLO<br />TU PESO.
           </motion.h1>
+          <motion.span
+            className="font-label text-[#c1ed00] tracking-[0.3em] text-[10px] uppercase block"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            Rompé el Ciclo
+          </motion.span>
           <motion.p
-            className="font-body text-on-surface-variant text-lg max-w-md leading-relaxed border-l-4 border-[#c1ed00] pl-5"
+            className="font-body text-on-surface-variant text-base md:text-lg max-w-md leading-relaxed border-l-4 border-[#c1ed00] pl-3 md:pl-5"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5 }}
           >
-            Un sistema diseñado para cambiar tu cuerpo<br />y tu mentalidad de forma sostenible.<br />
-            Sin extremos. Sin culpa. Con resultados reales.
+            Un sistema diseñado para cambiar tu cuerpo y tu mentalidad de forma sostenible. Sin extremos. Sin culpa.<br />Con resultados reales.
           </motion.p>
           <motion.div
             className="pt-2"
@@ -509,7 +573,7 @@ export default function V4Page() {
               onClick={smoothScroll}
               className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-8 py-4 text-base lg:text-lg tracking-tight hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(193,237,0,0.5)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
-              ¡VER PLANES!
+              ¡EMPEZÁ AHORA!
               <ArrowRight className="w-5 h-5" />
             </a>
           </motion.div>
@@ -517,7 +581,7 @@ export default function V4Page() {
 
         {/* Scroll indicator */}
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2"
+          className="absolute bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.6 }}
@@ -533,7 +597,7 @@ export default function V4Page() {
       </section>
 
       {/* ── Three Pillars ─────────────────────────────────────────── */}
-      <section id="method" className="px-6 py-20 bg-surface-container-low">
+      <section id="method" className="px-6 py-10 md:py-20 bg-surface-container-low">
         <div className="container mx-auto max-w-6xl">
           <motion.div
             className="mb-12 space-y-2"
@@ -545,14 +609,17 @@ export default function V4Page() {
           >
             <h2 className="font-headline text-3xl lg:text-5xl font-bold tracking-tighter uppercase italic">LOS TRES PILARES</h2>
             <div className="w-12 h-1 bg-[#00e3fd]" />
-            <p className="text-on-surface-variant text-sm max-w-lg mt-3">
-              No se trata de hacer dieta ni entrenar más fuerte.<br />Se trata de construir un sistema que puedas sostener para siempre.
+            <p className="hidden md:block text-on-surface-variant text-sm max-w-lg mt-3">
+              No se trata de hacer dieta ni entrenar más fuerte. Se trata de construir un sistema que puedas sostener para siempre.
             </p>
           </motion.div>
 
           {/* Mobile: stacked; Desktop: bento */}
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-12 gap-4"
+            ref={pillarRef}
+            onScroll={handlePillarScroll}
+            className="flex md:grid md:grid-cols-12 gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-2 md:pb-0 -mx-6 md:mx-0 px-6 md:px-0 scrollbar-hide [&::-webkit-scrollbar]:hidden"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
             variants={staggerContainer}
             initial="hidden"
             whileInView="visible"
@@ -560,13 +627,13 @@ export default function V4Page() {
           >
             {/* Psychology — large card */}
             <motion.div
-              className="md:col-span-12 lg:col-span-8 group relative overflow-hidden bg-surface-container p-8 min-h-[300px] flex flex-col justify-end hover:bg-surface-container-high transition-colors duration-500"
+              className="flex-none w-[68vw] md:w-auto snap-center md:col-span-12 lg:col-span-8 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-end hover:bg-surface-container-high transition-colors duration-500"
               variants={staggerItem}
               whileHover={{ scale: 1.01 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
               {/* Background image */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700">
+              <div className="absolute inset-0 opacity-20 md:opacity-0 md:group-hover:opacity-20 transition-opacity duration-700">
                 <Image
                   src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=60&auto=format&fit=crop"
                   alt=""
@@ -577,26 +644,27 @@ export default function V4Page() {
               </div>
               <div className="relative z-10">
                 <Brain className="w-10 h-10 text-[#ff734a] mb-4" />
-                <h3 className="font-headline text-2xl font-bold uppercase mb-2">Psicología</h3>
+                <h3 className="font-headline text-2xl font-bold uppercase mb-4 md:mb-2">Psicología</h3>
                 <p className="text-on-surface-variant text-sm leading-relaxed max-w-md">
-                  Dejás de autosabotearte y empezás a sostener hábitos&nbsp;reales.<br />Trabajamos tu mentalidad, tu relación con la comida<br />y los patrones que hoy te frenan.
+                  <span className="md:hidden">Trabajamos tu mentalidad y tu relación con la comida. <strong className="font-black text-[#ff734a]">Hábitos reales sin autosabotaje.</strong></span>
+                  <span className="hidden md:inline">Dejás de autosabotearte y empezás a sostener hábitos reales. <strong className="font-black text-[#ff734a]">Trabajamos tu mentalidad, tu relación con la comida</strong> y los patrones que hoy te frenan.</span>
                 </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {['Constancia Real', 'Control de Impulsos', 'Aceptación'].map((tag) => (
-                    <span key={tag} className="px-3 py-1 bg-[#ff5722]/20 text-[#ff9475] font-label text-[10px] uppercase tracking-widest">{tag}</span>
-                  ))}
+                <div className="mt-6 flex flex-row gap-2">
+                  <span className="px-3 py-1 bg-[#ff5722]/20 text-[#ff9475] font-label text-[10px] uppercase tracking-widest">Constancia</span>
+                  <span className="hidden md:inline px-3 py-1 bg-[#ff5722]/20 text-[#ff9475] font-label text-[10px] uppercase tracking-widest">Control de Impulsos</span>
+                  <span className="px-3 py-1 bg-[#ff5722]/20 text-[#ff9475] font-label text-[10px] uppercase tracking-widest">Aceptación</span>
                 </div>
               </div>
             </motion.div>
 
             {/* Training — smaller */}
             <motion.div
-              className="md:col-span-6 lg:col-span-4 group relative overflow-hidden bg-surface-container p-8 min-h-[250px] flex flex-col justify-between hover:bg-surface-container-high transition-colors duration-500"
+              className="flex-none w-[68vw] md:w-auto snap-center md:col-span-6 lg:col-span-4 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-between hover:bg-surface-container-high transition-colors duration-500"
               variants={staggerItem}
               whileHover={{ scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-15 transition-opacity duration-700">
+              <div className="absolute inset-0 opacity-15 md:opacity-0 md:group-hover:opacity-15 transition-opacity duration-700">
                 <Image
                   src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=60&auto=format&fit=crop"
                   alt=""
@@ -606,13 +674,14 @@ export default function V4Page() {
                 />
               </div>
               <div className="relative z-10">
-                <Dumbbell className="w-10 h-10 text-[#c1ed00]" />
-              </div>
-              <div className="relative z-10">
-                <h3 className="font-headline text-xl font-bold uppercase mb-2">Entrenamiento</h3>
-                <p className="text-on-surface-variant text-sm leading-relaxed">Sabés exactamente qué hacer para ver resultados sin perder tiempo.<br />Sesiones adaptadas a tu nivel para mejorar tu cuerpo de forma inteligente y progresiva.</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {['Bajar Grasa', 'Ganar Músculo'].map((tag) => (
+                <Dumbbell className="w-10 h-10 text-[#c1ed00] mb-4" />
+                <h3 className="font-headline text-xl font-bold uppercase mb-4 md:mb-2">Entrenamiento</h3>
+                <p className="text-on-surface-variant text-sm leading-relaxed">
+                  <span className="md:hidden">Sesiones <strong className="font-black text-[#c1ed00]">adaptadas a tu nivel</strong> para mejorar tu cuerpo. Resultados reales sin perder tiempo.</span>
+                  <span className="hidden md:inline">Sabés exactamente qué hacer para ver resultados sin perder tiempo. Sesiones <strong className="font-black text-[#c1ed00]">adaptadas a tu nivel</strong> para mejorar tu cuerpo de forma inteligente y progresiva.</span>
+                </p>
+                <div className="mt-6 flex flex-row gap-2">
+                  {['Fuerza', 'Movilidad'].map((tag) => (
                     <span key={tag} className="px-3 py-1 bg-[#c1ed00]/15 text-[#c1ed00] font-label text-[10px] uppercase tracking-widest">{tag}</span>
                   ))}
                 </div>
@@ -621,12 +690,12 @@ export default function V4Page() {
 
             {/* Nutrition — full width bottom */}
             <motion.div
-              className="md:col-span-6 lg:col-span-12 group relative overflow-hidden bg-surface-container p-8 min-h-[200px] flex flex-col md:flex-row items-start md:items-center gap-6 hover:bg-surface-container-high transition-colors duration-500"
+              className="flex-none w-[68vw] md:w-auto snap-center md:col-span-6 lg:col-span-12 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] md:min-h-[200px] flex flex-col md:flex-row items-start md:items-center gap-6 hover:bg-surface-container-high transition-colors duration-500"
               variants={staggerItem}
               whileHover={{ scale: 1.005 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700">
+              <div className="absolute inset-0 opacity-10 md:opacity-0 md:group-hover:opacity-10 transition-opacity duration-700">
                 <Image
                   src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=60&auto=format&fit=crop"
                   alt=""
@@ -639,23 +708,39 @@ export default function V4Page() {
                 <Utensils className="w-10 h-10 text-[#00e3fd]" />
               </div>
               <div className="relative z-10 flex-1">
-                <h3 className="font-headline text-xl font-bold uppercase mb-2">Nutrición</h3>
+                <h3 className="font-headline text-xl font-bold uppercase mb-4 md:mb-2">Nutrición</h3>
                 <p className="text-on-surface-variant text-sm leading-relaxed max-w-lg">
-                  La diferencia no está en hacer más, sino en hacerlo sostenible.<br />Nuestro enfoque elimina los extremos y prioriza resultados reales a largo plazo.
+                  <span className="md:hidden">Sin dietas extremas ni restricciones. Resultados reales con <strong className="font-black text-[#00e3fd]">hábitos sostenibles a largo plazo.</strong></span>
+                  <span className="hidden md:inline">La diferencia no está en hacer más, sino en <strong className="font-black text-[#00e3fd]">hacerlo sostenible</strong>. Nuestro enfoque elimina los extremos y prioriza resultados reales <strong className="font-black text-[#00e3fd]">a largo plazo</strong>.</span>
                 </p>
+                <div className="flex flex-row gap-2 mt-6 md:hidden">
+                  <span className="px-3 py-1 bg-[#00e3fd]/15 text-[#00e3fd] font-label text-[10px] uppercase tracking-widest">Perder Grasa</span>
+                  <span className="px-3 py-1 bg-[#00e3fd]/15 text-[#00e3fd] font-label text-[10px] uppercase tracking-widest">Ganar Músculo</span>
+                </div>
               </div>
-              <div className="relative z-10 hidden lg:flex gap-12 flex-shrink-0">
+              <div className="relative z-10 hidden md:flex gap-8 flex-shrink-0 mt-4 md:mt-0 lg:gap-12">
                 <div className="text-center">
-                  <span className="font-headline text-3xl font-black text-[#00e3fd] block">0%</span>
-                  <span className="font-label text-[10px] uppercase tracking-widest text-white/40">Dietas Restrictivas</span>
+                  <span className="font-headline text-2xl lg:text-3xl font-black text-[#00e3fd] block">0%</span>
+                  <span className="font-label text-[9px] uppercase tracking-widest text-white/40">Dietas Restrictivas</span>
                 </div>
                 <div className="text-center">
-                  <span className="font-headline text-3xl font-black text-[#00e3fd] block">100%</span>
-                  <span className="font-label text-[10px] uppercase tracking-widest text-white/40">Hábitos Sostenibles</span>
+                  <span className="font-headline text-2xl lg:text-3xl font-black text-[#00e3fd] block">100%</span>
+                  <span className="font-label text-[9px] uppercase tracking-widest text-white/40">Hábitos Sostenibles</span>
                 </div>
               </div>
             </motion.div>
           </motion.div>
+
+          {/* Custom scrollbar — mobile only */}
+          <div className="flex md:hidden mt-4 h-[3px] bg-white/10 rounded-full relative overflow-hidden">
+            <div
+              className="absolute h-full w-1/3 rounded-full transition-colors duration-300"
+              style={{
+                left: `${pillarRatio * 66.67}%`,
+                backgroundColor: pillarColors[pillarSlide],
+              }}
+            />
+          </div>
         </div>
       </section>
 
@@ -665,19 +750,47 @@ export default function V4Page() {
         <div className="container mx-auto max-w-6xl">
           <div className="flex flex-col md:flex-row gap-12 items-stretch">
             <motion.div
-              className="w-full md:w-1/2 flex-shrink-0 relative pb-6 flex flex-col"
+              className="w-full md:w-1/2 flex-shrink-0 relative pb-6 flex flex-col order-2 md:order-1"
               variants={fadeLeft}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
             >
               {/* Etiqueta ANTES → DESPUÉS */}
-              <span className="inline-block mb-2 px-2 py-0.5 bg-[#c1ed00] text-[#1a2400] font-label font-black text-[9px] uppercase tracking-[0.2em]">
+              <span className="self-center mb-2 px-2 py-0.5 bg-[#c1ed00] text-[#1a2400] font-label font-black text-[9px] uppercase tracking-[0.2em]">
                 ANTES → DESPUÉS
               </span>
 
-              {/* Foto principal */}
-              <div className="overflow-hidden mb-1.5 flex-1 min-h-0">
+              {/* Mobile: carrusel auto-play */}
+              <div className="md:hidden relative overflow-hidden h-[340px] mb-3">
+                <AnimatePresence initial={false} custom={coachDir}>
+                  <motion.img
+                    key={coachSlide}
+                    src={COACH_PHOTOS[coachSlide].src}
+                    alt={COACH_PHOTOS[coachSlide].alt}
+                    custom={coachDir}
+                    variants={{
+                      enter: (d: number) => ({ x: d > 0 ? '100%' : '-100%', opacity: 0 }),
+                      center: { x: 0, opacity: 1 },
+                      exit: (d: number) => ({ x: d > 0 ? '-100%' : '100%', opacity: 0 }),
+                    }}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.6, ease: 'easeInOut' }}
+                    className="absolute inset-0 w-full h-full object-contain object-center bg-[#0e0e0e]"
+                  />
+                </AnimatePresence>
+                {/* dots */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                  {COACH_PHOTOS.map((_, i) => (
+                    <span key={i} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === coachSlide ? 'bg-[#c1ed00]' : 'bg-white/30'}`} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Desktop: foto principal */}
+              <div className="hidden md:block overflow-hidden mb-1.5 flex-1 min-h-0">
                 <motion.img
                   src="/images/ale/ale-cuerpo.jpg"
                   alt="Alejandro Gerez — transformación corporal"
@@ -687,8 +800,8 @@ export default function V4Page() {
                 />
               </div>
 
-              {/* 2 stamps */}
-              <div className="grid grid-cols-2 gap-1.5 flex-shrink-0">
+              {/* 2 stamps — solo desktop */}
+              <div className="hidden md:grid grid-cols-2 gap-1.5 flex-shrink-0">
                 <div className="overflow-hidden">
                   <motion.img
                     src="/images/ale/ale-cara.jpg"
@@ -711,38 +824,52 @@ export default function V4Page() {
 
               {/* Badge */}
               <motion.div
-                className="absolute -bottom-1 -right-5 max-w-[220px] bg-[#00e3fd] text-[#003a42] px-5 py-3 font-headline font-black text-xs uppercase tracking-tight leading-tight z-10"
+                className="md:absolute md:-bottom-1 md:-right-5 max-w-full md:max-w-[220px] bg-[#00e3fd] text-[#003a42] px-5 py-4 font-headline font-black text-xs uppercase tracking-tight leading-snug z-10 mt-3 md:mt-0 text-center md:text-left"
                 initial={{ x: 60, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5, duration: 0.5, type: 'spring' }}
               >
-                +12 años ayudando a personas a transformar su cuerpo y su mentalidad
+                +12 años ayudando a transformar<br />cuerpos y mentalidades
               </motion.div>
             </motion.div>
             <motion.div
-              className="w-full md:w-1/2 space-y-6"
+              className="w-full md:w-1/2 space-y-6 order-1 md:order-2"
               variants={fadeRight}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
             >
               <p className="font-label text-[10px] uppercase tracking-[0.25em] text-white/30">Tu Head Coach</p>
-              <h2 className="font-headline text-4xl lg:text-5xl font-bold tracking-tighter leading-none uppercase">
+              <h2 className="font-headline text-2xl md:text-4xl lg:text-5xl font-bold tracking-tighter leading-none uppercase whitespace-nowrap">
                 <span className="text-[#c1ed00] italic">ALEJANDRO GEREZ</span>
               </h2>
-              <div className="font-body text-on-surface-variant leading-relaxed space-y-4">
+              {/* Bio mobile — versión corta */}
+              <div className="md:hidden font-body text-on-surface-variant leading-relaxed space-y-3">
                 <p>
-                  Durante años usé la comida como escape y llegué a pesar 160 kg.
+                  Usé la comida como escape y <strong className="font-black text-[#c1ed00]">llegué a pesar 160 kg</strong>. Probé todo, sin resultados duraderos.
+                </p>
+                <p>
+                  <strong className="font-black text-[#c1ed00]">Bajé 70 kg</strong> en <em className="text-[#00e3fd]">Cuestión de Peso</em>, pero volví al mismo lugar. Porque <strong className="font-black text-[#c1ed00]">el cambio había sido físico, no mental</strong>.
+                </p>
+                <p className="text-white">
+                  Hoy no vivo en lucha. <span className="text-[#c1ed00]">Vivo en equilibrio.</span> Y ese es el método que <strong className="font-black text-[#c1ed00]">hoy enseño y practico</strong>.
+                </p>
+              </div>
+
+              {/* Bio desktop — versión completa */}
+              <div className="hidden md:block font-body text-on-surface-variant leading-relaxed space-y-4">
+                <p>
+                  Durante años usé la comida como escape y <strong className="font-black text-[#c1ed00]">llegué a pesar 160 kg</strong>.
                   Probé dietas, buscando la fórmula perfecta que me hiciera cambiar de una vez.
                 </p>
                 <p>
-                  Bajé 70 kg en total, participando en <em>Cuestión de Peso</em>, pero con el tiempo volví al mismo lugar.
-                  Porque el cambio había sido físico, no mental.
+                  <strong className="font-black text-[#c1ed00]">Bajé 70 kg en total</strong>, participando en el programa televisivo <em className="text-[#00e3fd]">Cuestión de Peso</em>, pero con el tiempo volví al mismo lugar.<br />
+                  Porque <strong className="font-black text-[#c1ed00]">el cambio había sido físico, no mental</strong>.
                 </p>
                 <p>
                   Ahí entendí algo clave: la verdadera transformación no es una foto del antes y después,
-                  es lo que pasa cuando nadie está mirando.
+                  <strong className="font-black text-[#c1ed00]"> es lo que pasa cuando nadie está mirando</strong>.
                 </p>
                 <p>
                   Empecé a trabajar en mi mentalidad, mi relación con la comida y conmigo mismo.
@@ -751,7 +878,7 @@ export default function V4Page() {
                   Hoy no vivo en lucha. <span className="text-[#c1ed00]">Vivo en equilibrio.</span>
                 </p>
                 <p>
-                  Y ese es el método que hoy enseño y practico.
+                  Y ese es el método que <strong className="font-black text-[#c1ed00]">hoy enseño y practico</strong>.
                 </p>
               </div>
               <motion.ul
@@ -802,22 +929,27 @@ export default function V4Page() {
       </section>
 
       {/* ── Pricing ───────────────────────────────────────────────── */}
-      <section id="pricing" className="py-24 px-6 bg-[#0e0e0e] relative overflow-hidden">
+      <section id="pricing" className="py-14 md:py-24 px-6 bg-[#0e0e0e] relative overflow-x-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c1ed00]/[0.03] blur-[160px] rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="container mx-auto max-w-6xl relative z-10">
           {/* Header */}
-          <div className="mb-16">
+          <div className="-mb-3 md:mb-16">
             <p className="font-label text-[10px] uppercase tracking-[0.3em] text-white/30 mb-3">Elegí tu plan</p>
             <h2 className="font-headline text-4xl lg:text-6xl font-black tracking-tighter uppercase mb-4">
               EMPEZÁ TU<br /><span className="text-[#c1ed00] italic">TRANSFORMACIÓN.</span>
             </h2>
-            <p className="text-on-surface-variant max-w-lg text-base leading-relaxed font-body">
+            <p className="hidden md:block text-on-surface-variant max-w-lg text-base leading-relaxed font-body">
               Entrenamiento personalizado, seguimiento real y un coach<br />que te acompaña. Elegí el plan que mejor se adapte a tus objetivos.
             </p>
           </div>
 
           {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-16 items-stretch max-w-4xl mx-auto">
+          <div
+            ref={pricingRef}
+            onScroll={handlePricingScroll}
+            className="flex md:grid md:grid-cols-2 gap-5 lg:gap-8 mb-4 md:mb-16 items-start overflow-x-auto snap-x snap-mandatory -mx-6 md:mx-0 px-6 md:px-0 pb-2 md:pb-0 max-w-4xl md:mx-auto [&::-webkit-scrollbar]:hidden pt-6 md:pt-0"
+            style={{ scrollbarWidth: 'none' } as React.CSSProperties}
+          >
             {[
               {
                 id: 'monthly', name: 'PLAN BASE', price: 44999, days: 30, badge: null, color: '#c1ed00',
@@ -855,7 +987,24 @@ export default function V4Page() {
                 ],
               },
             ].map((plan) => (
-              <PricingCard key={plan.id} plan={plan} locale={locale} activeSub={activeSub} />
+              <div
+                key={plan.id}
+                ref={plan.id === 'mentoria' ? mentoriaCardRef : undefined}
+                className={`w-[76vw] flex-shrink-0 snap-center md:w-auto md:flex-shrink-0 overflow-visible${plan.id === 'mentoria' && mentoriaActive ? ' mentoria-active' : ''}`}
+              >
+                <PricingCard plan={plan} locale={locale} activeSub={activeSub} />
+              </div>
+            ))}
+          </div>
+
+          {/* Dots mobile */}
+          <div className="flex md:hidden justify-center gap-2 mb-10">
+            {[0, 1].map(i => (
+              <span key={i} className={`h-2 rounded-full transition-all duration-300 ${
+                i === pricingSlide
+                  ? (i === 0 ? 'w-4 bg-[#c1ed00]' : 'w-4 bg-[#ff734a]')
+                  : 'w-2 bg-white/20'
+              }`} />
             ))}
           </div>
 
@@ -993,36 +1142,36 @@ export default function V4Page() {
           <div className="space-y-0 divide-y divide-white/8">
             {[
               {
-                q: '¿Necesito experiencia previa?',
-                a: 'No. Adaptamos el entrenamiento a tu nivel, sea cual sea tu punto de partida. El Método R3SET está diseñado para acompañarte desde donde estés.',
+                q: '¿Necesito experiencia previa para empezar?',
+                a: 'No. Nuestros programas están diseñados tanto para personas que recién comienzan como para quienes ya tienen experiencia entrenando. Adaptamos el entrenamiento a tu nivel actual y progresamos paso a paso.',
               },
               {
                 q: '¿Cómo funciona el seguimiento?',
-                a: 'A través de la app registrás tus entrenamientos, tu progreso y tus comidas. Cada semana revisamos cómo vas y ajustamos lo que sea necesario para que el proceso no se detenga.',
+                a: 'A través de nuestra aplicación registrás tus entrenamientos, progreso y hábitos. Además, realizamos seguimientos periódicos para ajustar el plan según tu evolución.',
               },
               {
                 q: '¿Qué incluye el acompañamiento nutricional y psicológico?',
-                a: 'Contamos con profesionales especializados que te acompañan en los tres pilares del Método: mente, cuerpo y alimentación. No es solo entrenamiento; es un proceso integral.',
+                a: 'Contarás con la posibilidad de ser atendido por profesionales especializados que te ayudarán a mejorar tu alimentación, fortalecer hábitos y trabajar los aspectos emocionales que muchas veces dificultan sostener el cambio.',
               },
               {
                 q: '¿Cuál es la diferencia entre el Plan Base y la Mentoría 1 a 1?',
-                a: 'El Plan Base incluye entrenamiento personalizado, seguimiento semanal, app exclusiva y soporte en plataforma. La Mentoría 1 a 1 incluye todo eso más comunicación directa diaria con Ale Gerez, un programa 100% a medida y ajustes permanentes.',
+                a: 'El Plan Base incluye entrenamiento personalizado, aplicación, seguimiento y acompañamiento profesional. La Mentoría 1 a 1 incluye todo lo anterior, más comunicación directa con Ale Gerez, seguimiento personalizado de alimentación y hábitos, sesiones individuales y ajustes permanentes según tu evolución.',
               },
               {
-                q: '¿Cuándo obtengo acceso?',
-                a: 'Con el Plan Base, el acceso es inmediato al confirmar el pago. Con la Mentoría 1 a 1, primero completás una solicitud de evaluación y dentro de las 24 hs hábiles te contactamos para coordinar el inicio.',
+                q: '¿Cuándo obtengo acceso después de inscribirme?',
+                a: 'Los alumnos del Plan Base reciben acceso a la plataforma una vez confirmado el pago. En el caso de la Mentoría 1 a 1, primero deberás completar una solicitud de evaluación. Revisará personalmente tu caso y, si considera que puede ayudarte, se pondrá en contacto dentro de las próximas 24 horas hábiles para coordinar una videollamada.',
               },
               {
-                q: '¿Puedo cancelar cuando quiero?',
-                a: 'Sí. No hay permanencias ni penalizaciones. Podés cancelar cuando quieras.',
+                q: '¿Puedo cancelar mi suscripción en cualquier momento?',
+                a: 'Sí. Podés cancelar tu suscripción cuando lo desees y seguirás teniendo acceso hasta finalizar el período ya abonado. No existen permanencias ni penalizaciones.',
               },
               {
-                q: '¿Por qué el Método R3SET es diferente?',
-                a: 'Ale Gerez llegó a pesar más de 160 kg y atravesó personalmente el proceso de transformación. No enseña desde la teoría, sino desde la experiencia real. Eso cambia todo.',
+                q: '¿Por qué este programa es diferente?',
+                a: 'Porque fue creado desde la experiencia real. Ale Gerez llegó a pesar más de 160 kg y atravesó personalmente el proceso de transformación que hoy ayuda a recorrer a otras personas. El programa combina entrenamiento, nutrición y trabajo de hábitos para lograr cambios sostenibles en el tiempo.',
               },
               {
                 q: '¿Cómo sé qué plan es el adecuado para mí?',
-                a: 'Si querés empezar a trabajar de manera estructurada con seguimiento y soporte, el Plan Base es el camino. Si buscás algo más personalizado con acompañamiento directo, la Mentoría 1 a 1 es para vos.',
+                a: 'Si estás comenzando o buscás una guía estructurada, el Plan Base suele ser la mejor opción. Si necesitás un acompañamiento más cercano y personalizado, podés solicitar una evaluación para la Mentoría 1 a 1.',
               },
             ].map(({ q, a }, i) => (
               <FAQItem key={i} question={q} answer={a} />
