@@ -98,6 +98,13 @@ html {
   100% { left: 130%; }
 }
 
+/* Pricing carousel — igualar altura de cards en mobile */
+@media (max-width: 767px) {
+  .pricing-card-inner {
+    flex: 1;
+  }
+}
+
 /* Mentoría — efecto activo en mobile (card centrada en carrusel) */
 @media (max-width: 767px) {
   .mentoria-active .mentoria-holographic {

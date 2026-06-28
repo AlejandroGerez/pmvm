@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import V4SplashManager from '@/components/v4/V4SplashScreen'
-import { Menu, X, ChevronDown, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone } from 'lucide-react'
+import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone } from 'lucide-react'
 import { PHONE_NUMBER } from '@/lib/data'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -17,6 +17,7 @@ import {
   CarouselContent,
   CarouselPrevious,
   CarouselNext,
+  useCarousel,
 } from '@/components/ui/carousel'
 
 interface ActiveSub { plan_id: string }
@@ -39,7 +40,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
   }
 
   return (
-    <div className={`relative flex flex-col h-full rounded-none p-5 lg:p-8 border transition-all duration-300 ${
+    <div className={`pricing-card-inner relative flex flex-col h-full rounded-none p-5 lg:p-8 border transition-all duration-300 ${
       isMentoria
         ? 'mentoria-holographic border-[#ff734a]/40 bg-[#ff734a]/[0.04] hover:border-[#ff734a]/60'
         : 'border-[#c1ed00]/30 bg-[#c1ed00]/[0.03] hover:border-[#c1ed00]/50 hover:-translate-y-1'
@@ -60,10 +61,10 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
       ) : null}
 
       {/* Label */}
-      <p className="font-label text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1.5 md:mb-2" style={{ color: plan.color }}>
+      <p className="font-label text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1 md:mb-2" style={{ color: plan.color }}>
         {isMentoria ? 'ACOMPAÑAMIENTO PERSONALIZADO' : 'ACCESO INMEDIATO'}
       </p>
-      <h3 className="font-headline text-xl md:text-2xl font-black mb-2 md:mb-3">{plan.name}</h3>
+      <h3 className="font-headline text-xl md:text-2xl font-black mb-1 md:mb-3">{plan.name}</h3>
 
       {isMentoria && (
         <div className="flex items-baseline gap-2 mb-1">
@@ -79,7 +80,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
       )}
 
       {isMentoria && (
-        <p className="md:block text-xs md:text-sm leading-relaxed mb-4 md:mb-6 font-body font-bold text-on-surface-variant whitespace-nowrap">Mi nivel más alto de acompañamiento.</p>
+        <p className="md:block text-xs md:text-sm leading-relaxed mb-0 md:mb-6 font-body font-bold text-on-surface-variant whitespace-nowrap">Mi nivel más alto de acompañamiento.</p>
       )}
 
       {/* Price */}
@@ -91,14 +92,14 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
         </div>
       )}
       {plan.priceNote && (
-        <p className="md:block text-[10px] text-white/30 font-label uppercase tracking-widest mb-3 whitespace-nowrap">
+        <p className="md:block text-[10px] text-white/30 font-label uppercase tracking-widest mb-1 md:mb-3 whitespace-nowrap">
           {plan.priceNote}
         </p>
       )}
 
       {!isMentoria && <p className="hidden md:block text-on-surface-variant text-sm leading-relaxed mb-4 md:mb-6 font-body font-bold">{plan.desc}</p>}
 
-      <div className="min-h-[1.5rem] mt-3 md:mt-0 mb-1">
+      <div className="min-h-[1.5rem] mt-1.5 md:mt-0 mb-1">
         {isMentoria ? (
           <p className="text-[10px] md:text-[11px] font-black font-label uppercase tracking-widest text-[#ff734a]">
             Incluye lo del Plan Base y además:
@@ -110,7 +111,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
         )}
       </div>
 
-      <ul className={`space-y-2 md:space-y-2.5 mb-5 md:mb-8 ${isMentoria ? 'flex-1' : ''}`}>
+      <ul className={`space-y-1.5 md:space-y-2.5 mb-3 md:mb-8 ${isMentoria ? 'flex-1' : ''}`}>
         {(() => {
           let pastComplementa = false
           return plan.features.map((f: any, i: number) => {
@@ -147,7 +148,7 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
       {error && <p className="text-red-400 text-xs mb-3 text-center bg-red-400/10 rounded py-2 px-3 font-label">{error}</p>}
 
       <button onClick={handleBuy} disabled={loading}
-        className={`w-full py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer hover:scale-[1.05] active:scale-[0.98] ${isMentoria ? 'hover:shadow-[0_0_20px_rgba(255,115,74,0.5)]' : 'hover:shadow-[0_0_20px_rgba(193,237,0,0.5)]'}`}
+        className={`w-full py-2.5 md:py-3.5 font-headline font-black text-sm tracking-widest uppercase transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer hover:scale-[1.05] active:scale-[0.98] ${isMentoria ? 'hover:shadow-[0_0_20px_rgba(255,115,74,0.5)]' : 'hover:shadow-[0_0_20px_rgba(193,237,0,0.5)]'}`}
         style={{
           backgroundColor: loading ? '#333' : plan.color,
           color: '#0e0e0e',
@@ -156,6 +157,159 @@ function PricingCard({ plan, locale, activeSub }: { plan: any; locale: string; a
         {loading ? 'PROCESANDO...' : isMentoria ? 'SOLICITAR EVALUACIÓN' : isCurrent ? 'RENOVAR PLAN' : 'EMPEZAR HOY'}
       </button>
     </div>
+  )
+}
+
+/* ── Transformations Carousel Inner (mobile dim + dots + modal) ── */
+function TransformationCarouselContent({ locale }: { locale: string }) {
+  const { api } = useCarousel()
+  const [current, setCurrent] = useState(0)
+  const [modalItem, setModalItem] = useState<typeof transformations[0] | null>(null)
+
+  useEffect(() => {
+    if (!api) return
+    if (window.innerWidth < 768) {
+      const rominaIndex = transformations.findIndex(t => t.clientName === 'Romina')
+      if (rominaIndex > 0) api.scrollTo(rominaIndex, true)
+    }
+    setCurrent(api.selectedScrollSnap())
+    api.on('select', () => setCurrent(api.selectedScrollSnap()))
+  }, [api])
+
+  return (
+    <>
+      <CarouselContent className="flex gap-6">
+        {transformations.map((item, index) => {
+          const quote = item.clientDetail?.[locale as 'es' | 'en' | 'pt'] ?? item.clientDetail?.es ?? ''
+          const isActive = index === current
+          return (
+            <CarouselItem
+              key={item.clientName}
+              className={`basis-[80%] md:basis-1/2 lg:basis-1/3 flex-shrink-0 transition-opacity duration-300 ${
+                !isActive ? 'opacity-35 md:opacity-100' : 'opacity-100'
+              }`}
+            >
+              <div className="flex flex-col h-full">
+                <div className="grid grid-cols-2 gap-1 mb-3 md:mb-6 group overflow-hidden md:cursor-default cursor-pointer" onClick={() => setModalItem(item)}>
+                  <div className="relative overflow-hidden aspect-[3/4] md:aspect-[4/5] bg-surface-container">
+                    <Image
+                      alt={`${item.clientName} - Antes`}
+                      className="object-cover opacity-90 group-hover:opacity-100 transition-all duration-700"
+                      src={item.beforeImage}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                    />
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#0e0e0e]/85 px-3 py-0.5 text-[8px] font-bold uppercase tracking-widest border-t border-white/10 font-label whitespace-nowrap">
+                      Antes
+                    </div>
+                  </div>
+                  <div className="relative overflow-hidden aspect-[3/4] md:aspect-[4/5] bg-surface-container">
+                    <Image
+                      alt={`${item.clientName} - Después`}
+                      className="object-cover"
+                      src={item.afterImage}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                    />
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#c1ed00] text-[#0e0e0e] px-3 py-0.5 text-[8px] font-bold uppercase tracking-widest font-label whitespace-nowrap">
+                      Después
+                    </div>
+                  </div>
+                </div>
+                <div className="border-l-2 border-[#c1ed00] pl-4 md:pl-6 py-1 md:py-2 flex-1">
+                  <h4 className="font-headline text-lg md:text-2xl font-bold uppercase tracking-tight text-white mb-1 md:mb-2 md:cursor-default cursor-pointer" onClick={() => setModalItem(item)}>
+                    {item.clientName}
+                  </h4>
+                  <blockquote className="font-body text-on-surface-variant italic text-xs md:text-sm leading-relaxed line-clamp-2 md:line-clamp-none md:cursor-default cursor-pointer" onClick={() => setModalItem(item)}>
+                    {quote}
+                  </blockquote>
+                  <button
+                    onClick={() => setModalItem(item)}
+                    className="md:hidden mt-1 text-[#c1ed00] text-[8px] font-label font-bold uppercase tracking-widest"
+                  >
+                    Ver más →
+                  </button>
+                </div>
+              </div>
+            </CarouselItem>
+          )
+        })}
+      </CarouselContent>
+
+      <div className="hidden md:flex justify-between items-center mt-8">
+        <CarouselPrevious className="static translate-x-0 translate-y-0" />
+        <CarouselNext className="static translate-x-0 translate-y-0" />
+      </div>
+      <div className="flex md:hidden justify-center items-center gap-3 mt-5">
+        <button onClick={() => api?.scrollPrev()} className="text-white/30 hover:text-white/60 transition-colors">
+          <ChevronLeft className="w-3.5 h-3.5" />
+        </button>
+        <div className="flex items-center gap-1.5">
+          {transformations.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => api?.scrollTo(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === current ? 'w-6 bg-[#c1ed00]' : 'w-1.5 bg-white/20'
+              }`}
+            />
+          ))}
+        </div>
+        <button onClick={() => api?.scrollNext()} className="text-white/30 hover:text-white/60 transition-colors">
+          <ChevronRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {/* Modal — solo mobile */}
+      <AnimatePresence>
+        {modalItem && (
+          <motion.div
+            className="md:hidden fixed inset-0 z-50 flex items-center justify-center bg-black/85 px-5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setModalItem(null)}
+          >
+            <motion.div
+              className="relative bg-[#0e0e0e] border border-white/10 w-full max-w-sm max-h-[88vh] overflow-y-auto"
+              initial={{ scale: 0.82, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.82, opacity: 0 }}
+              transition={{ type: 'spring', damping: 22, stiffness: 320 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Fotos */}
+              <div className="grid grid-cols-2 gap-1">
+                <div className="relative aspect-[3/4]">
+                  <Image src={modalItem.beforeImage} alt="Antes" fill className="object-cover" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#0e0e0e]/85 px-3 py-0.5 text-[8px] font-bold uppercase tracking-widest border-t border-white/10 font-label whitespace-nowrap">Antes</div>
+                </div>
+                <div className="relative aspect-[3/4]">
+                  <Image src={modalItem.afterImage} alt="Después" fill className="object-cover" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#c1ed00] text-[#0e0e0e] px-3 py-0.5 text-[8px] font-bold uppercase tracking-widest font-label whitespace-nowrap">Después</div>
+                </div>
+              </div>
+              {/* Texto */}
+              <div className="p-5 border-l-2 border-[#c1ed00] ml-5 my-5">
+                <h4 className="font-headline text-xl font-bold uppercase tracking-tight text-white mb-2">
+                  {modalItem.clientName}
+                </h4>
+                <blockquote className="font-body text-on-surface-variant italic text-sm leading-relaxed">
+                  {modalItem.clientDetail?.[locale as 'es' | 'en' | 'pt'] ?? modalItem.clientDetail?.es}
+                </blockquote>
+              </div>
+              {/* Cerrar */}
+              <button
+                onClick={() => setModalItem(null)}
+                className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center bg-black/60 text-white/70 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
@@ -208,16 +362,16 @@ const PLAN_NAMES: Record<string, string> = {
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="py-5">
+    <div className="py-2.5 md:py-5">
       <button
         className="w-full flex items-start justify-between gap-4 text-left group"
         onClick={() => setOpen(!open)}
         aria-expanded={open}
       >
-        <span className="font-headline font-bold text-base lg:text-lg uppercase tracking-tight group-hover:text-[#c1ed00] transition-colors duration-200">
+        <span className="font-headline font-bold text-[11px] md:text-base lg:text-lg uppercase tracking-tight group-hover:text-[#c1ed00] transition-colors duration-200">
           {question}
         </span>
-        <Plus className={`w-5 h-5 flex-shrink-0 text-white/30 transition-transform duration-300 mt-0.5 ${open ? 'rotate-45' : ''}`} />
+        <Plus className={`w-3.5 h-3.5 md:w-5 md:h-5 flex-shrink-0 text-white/30 transition-transform duration-300 mt-0.5 ${open ? 'rotate-45' : ''}`} />
       </button>
       <AnimatePresence initial={false}>
         {open && (
@@ -229,7 +383,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className="overflow-hidden"
           >
-            <p className="font-body text-on-surface-variant text-sm leading-relaxed pt-4 max-w-2xl">
+            <p className="font-body text-on-surface-variant text-[10px] md:text-sm leading-relaxed pt-2 md:pt-4 max-w-2xl">
               {answer}
             </p>
           </motion.div>
@@ -947,7 +1101,7 @@ export default function V4Page() {
           <div
             ref={pricingRef}
             onScroll={handlePricingScroll}
-            className="flex md:grid md:grid-cols-2 gap-5 lg:gap-8 mb-4 md:mb-16 items-start overflow-x-auto snap-x snap-mandatory -mx-6 md:mx-0 px-6 md:px-0 pb-2 md:pb-0 max-w-4xl md:mx-auto [&::-webkit-scrollbar]:hidden pt-6 md:pt-0"
+            className="flex md:grid md:grid-cols-2 gap-5 lg:gap-8 mb-4 md:mb-16 items-stretch overflow-x-auto snap-x snap-mandatory -mx-6 md:mx-0 px-6 md:px-0 pb-2 md:pb-0 max-w-4xl md:mx-auto [&::-webkit-scrollbar]:hidden pt-6 md:pt-0"
             style={{ scrollbarWidth: 'none' } as React.CSSProperties}
           >
             {[
@@ -990,7 +1144,7 @@ export default function V4Page() {
               <div
                 key={plan.id}
                 ref={plan.id === 'mentoria' ? mentoriaCardRef : undefined}
-                className={`w-[76vw] flex-shrink-0 snap-center md:w-auto md:flex-shrink-0 overflow-visible${plan.id === 'mentoria' && mentoriaActive ? ' mentoria-active' : ''}`}
+                className={`w-[76vw] flex-shrink-0 snap-center md:w-auto md:flex-shrink-0 overflow-visible flex flex-col${plan.id === 'mentoria' && mentoriaActive ? ' mentoria-active' : ''}`}
               >
                 <PricingCard plan={plan} locale={locale} activeSub={activeSub} />
               </div>
@@ -1009,18 +1163,21 @@ export default function V4Page() {
           </div>
 
           {/* Trust */}
-          <div className="flex flex-wrap justify-center gap-8 text-white/30 text-xs font-label uppercase tracking-widest">
-            <span className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#c1ed00]" />
-              Acceso inmediato al pagar
+          <div className="flex flex-nowrap justify-center gap-4 md:gap-8 text-white/30 text-[10px] md:text-xs font-label uppercase tracking-widest">
+            <span className="flex items-center gap-1.5 md:gap-2">
+              <Zap className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0 text-[#c1ed00]" />
+              <span className="hidden md:inline">Acceso inmediato al pagar</span>
+              <span className="md:hidden">Acceso inmediato</span>
             </span>
-            <span className="flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[#00e3fd]" />
-              Pago seguro con Mercado Pago
+            <span className="flex items-center gap-1.5 md:gap-2">
+              <Shield className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0 text-[#00e3fd]" />
+              <span className="hidden md:inline">Pago seguro con Mercado Pago</span>
+              <span className="md:hidden">Pago seguro</span>
             </span>
-            <span className="flex items-center gap-2">
-              <MessageCircle className="w-4 h-4 text-[#ff734a]" />
-              Soporte por WhatsApp incluido
+            <span className="flex items-center gap-1.5 md:gap-2">
+              <MessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4 flex-shrink-0 text-[#ff734a]" />
+              <span className="hidden md:inline">Soporte por WhatsApp incluido</span>
+              <span className="md:hidden">Soporte WhatsApp</span>
             </span>
           </div>
         </div>
@@ -1043,64 +1200,13 @@ export default function V4Page() {
               </h2>
               <div className="w-12 h-1 bg-[#c1ed00]" />
             </div>
-            <p className="font-body text-on-surface-variant text-sm leading-relaxed italic md:text-right max-w-xs">
+            <p className="hidden md:block font-body text-on-surface-variant text-sm leading-relaxed italic md:text-right max-w-xs">
               Esto no es teoría. Son personas que ya hicieron el proceso y hoy viven distinto.
             </p>
           </motion.div>
 
           <Carousel opts={{ align: 'start', loop: true }} className="w-full">
-            <CarouselContent className="flex gap-6">
-              {transformations.map((item) => {
-                const quote = item.clientDetail?.[locale as 'es' | 'en' | 'pt'] ?? item.clientDetail?.es ?? ''
-                return (
-                  <CarouselItem
-                    key={item.clientName}
-                    className="basis-full md:basis-1/2 lg:basis-1/3 flex-shrink-0"
-                  >
-                    <div className="flex flex-col h-full">
-                      <div className="grid grid-cols-2 gap-1 mb-6 group overflow-hidden">
-                        <div className="relative overflow-hidden aspect-[4/5] bg-surface-container">
-                          <Image
-                            alt={`${item.clientName} - Antes`}
-                            className="object-cover opacity-90 group-hover:opacity-100 transition-all duration-700"
-                            src={item.beforeImage}
-                            fill
-                            sizes="(max-width: 768px) 50vw, 33vw"
-                          />
-                          <div className="absolute bottom-3 left-3 bg-[#0e0e0e]/85 px-3 py-1 text-[10px] font-bold uppercase tracking-widest border border-white/10 font-label">
-                            Antes
-                          </div>
-                        </div>
-                        <div className="relative overflow-hidden aspect-[4/5] bg-surface-container">
-                          <Image
-                            alt={`${item.clientName} - Después`}
-                            className="object-cover"
-                            src={item.afterImage}
-                            fill
-                            sizes="(max-width: 768px) 50vw, 33vw"
-                          />
-                          <div className="absolute bottom-3 right-3 bg-[#c1ed00] text-[#0e0e0e] px-3 py-1 text-[10px] font-bold uppercase tracking-widest font-label">
-                            Después
-                          </div>
-                        </div>
-                      </div>
-                      <div className="border-l-2 border-[#c1ed00] pl-6 py-2 flex-1">
-                        <h4 className="font-headline text-2xl font-bold uppercase tracking-tight text-white mb-2">
-                          {item.clientName}
-                        </h4>
-                        <blockquote className="font-body text-on-surface-variant italic text-sm leading-relaxed">
-                          {quote}
-                        </blockquote>
-                      </div>
-                    </div>
-                  </CarouselItem>
-                )
-              })}
-            </CarouselContent>
-            <div className="flex justify-between items-center mt-8">
-              <CarouselPrevious className="static translate-x-0 translate-y-0" />
-              <CarouselNext className="static translate-x-0 translate-y-0" />
-            </div>
+            <TransformationCarouselContent locale={locale} />
           </Carousel>
 
           {/* CTA */}
@@ -1127,16 +1233,16 @@ export default function V4Page() {
       </section>
 
       {/* ── FAQ ───────────────────────────────────────────────────── */}
-      <section className="py-24 px-6 bg-surface-container-low">
+      <section className="py-6 md:py-24 px-6 bg-surface-container-low">
         <div className="container mx-auto max-w-3xl">
           <motion.div
-            className="mb-14 space-y-2"
+            className="mb-4 md:mb-14 space-y-1 md:space-y-2"
             initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
             variants={fadeUp} custom={0}
           >
             <p className="font-label text-[10px] uppercase tracking-[0.3em] text-white/30">Preguntas frecuentes</p>
-            <h2 className="font-headline text-3xl lg:text-4xl font-bold tracking-tighter uppercase italic">FAQ</h2>
-            <div className="w-12 h-1 bg-[#00e3fd]" />
+            <h2 className="font-headline text-xl md:text-3xl lg:text-4xl font-bold tracking-tighter uppercase italic">FAQ</h2>
+            <div className="w-8 md:w-12 h-1 bg-[#00e3fd]" />
           </motion.div>
 
           <div className="space-y-0 divide-y divide-white/8">
