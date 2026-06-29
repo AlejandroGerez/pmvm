@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import V4SplashManager from '@/components/v4/V4SplashScreen'
-import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone } from 'lucide-react'
+import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone, Award } from 'lucide-react'
 import { PHONE_NUMBER } from '@/lib/data'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -781,7 +781,7 @@ export default function V4Page() {
           <motion.div
             ref={pillarRef}
             onScroll={handlePillarScroll}
-            className="flex md:grid md:grid-cols-12 gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-2 md:pb-0 -mx-6 md:mx-0 px-6 md:px-0 scrollbar-hide [&::-webkit-scrollbar]:hidden"
+            className="flex md:grid md:grid-cols-12 gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-2 md:pb-0 -mx-6 md:mx-0 pl-6 md:px-0 scrollbar-hide [&::-webkit-scrollbar]:hidden"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
             variants={staggerContainer}
             initial="hidden"
@@ -790,7 +790,7 @@ export default function V4Page() {
           >
             {/* Psychology — large card */}
             <motion.div
-              className="flex-none w-[82vw] md:w-auto snap-center md:col-span-12 lg:col-span-8 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-end hover:bg-surface-container-high transition-colors duration-500"
+              className="flex-none w-[75vw] md:w-auto snap-start md:col-span-12 lg:col-span-8 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-end hover:bg-surface-container-high transition-colors duration-500"
               variants={staggerItem}
               whileHover={{ scale: 1.01 }}
               transition={{ type: 'spring', stiffness: 300 }}
@@ -822,7 +822,7 @@ export default function V4Page() {
 
             {/* Training — smaller */}
             <motion.div
-              className="flex-none w-[82vw] md:w-auto snap-center md:col-span-6 lg:col-span-4 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-between hover:bg-surface-container-high transition-colors duration-500"
+              className="flex-none w-[75vw] md:w-auto snap-start md:col-span-6 lg:col-span-4 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-between hover:bg-surface-container-high transition-colors duration-500"
               variants={staggerItem}
               whileHover={{ scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 300 }}
@@ -853,7 +853,7 @@ export default function V4Page() {
 
             {/* Nutrition — full width bottom */}
             <motion.div
-              className="flex-none w-[82vw] md:w-auto snap-center md:col-span-6 lg:col-span-12 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] md:min-h-[200px] flex flex-col md:flex-row items-start md:items-center gap-6 hover:bg-surface-container-high transition-colors duration-500"
+              className="flex-none w-[75vw] md:w-auto snap-start md:col-span-6 lg:col-span-12 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] md:min-h-[200px] flex flex-col md:flex-row items-start md:items-center gap-6 hover:bg-surface-container-high transition-colors duration-500"
               variants={staggerItem}
               whileHover={{ scale: 1.005 }}
               transition={{ type: 'spring', stiffness: 300 }}
@@ -1062,6 +1062,28 @@ export default function V4Page() {
                   </motion.li>
                 ))}
               </motion.ul>
+
+              {/* Certificaciones */}
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-[#c1ed00] font-label font-bold mt-6 mb-3">Certificaciones</p>
+                <div className="flex flex-col gap-3">
+                  <div className="border border-white/10 bg-white/5 px-4 py-3 rounded-sm flex items-start gap-3">
+                    <Award className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#c1ed00]" />
+                    <div>
+                      <p className="uppercase text-[11px] font-bold text-white font-label tracking-wide">Personal Fitness Trainer</p>
+                      <p className="text-[10px] text-white/50 font-body mt-0.5">IFBB Federation</p>
+                      <p className="text-[10px] text-[#c1ed00] font-body mt-0.5">IFBB-C/64123</p>
+                    </div>
+                  </div>
+                  <div className="border border-white/10 bg-white/5 px-4 py-3 rounded-sm flex items-start gap-3">
+                    <Award className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#c1ed00]" />
+                    <div>
+                      <p className="uppercase text-[11px] font-bold text-white font-label tracking-wide">Obesidad y Recomposición Corporal</p>
+                      <p className="text-[10px] text-white/50 font-body mt-0.5">IFBB Federation</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </div>
