@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import V4SplashManager from '@/components/v4/V4SplashScreen'
-import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone } from 'lucide-react'
+import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, LayoutDashboard, Brain, Dumbbell, Sparkles, Zap, UserPlus, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone } from 'lucide-react'
 import { PHONE_NUMBER } from '@/lib/data'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -179,22 +179,25 @@ function TransformationCarouselContent({ locale }: { locale: string }) {
   return (
     <>
       <CarouselContent className="flex gap-6">
-        {transformations.map((item, index) => {
+        {(() => {
+          const NEEDS_ZOOM = ['Romina', 'Joha', 'Laura', 'Ana', 'Manu', 'Jose', 'Victor']
+          return transformations.map((item, index) => {
           const quote = item.clientDetail?.[locale as 'es' | 'en' | 'pt'] ?? item.clientDetail?.es ?? ''
           const isActive = index === current
+          const needsZoom = NEEDS_ZOOM.includes(item.clientName)
           return (
             <CarouselItem
               key={item.clientName}
-              className={`basis-[80%] md:basis-1/2 lg:basis-1/3 flex-shrink-0 transition-opacity duration-300 ${
+              className={`basis-[90%] md:basis-1/2 lg:basis-1/3 flex-shrink-0 transition-opacity duration-300 ${
                 !isActive ? 'opacity-35 md:opacity-100' : 'opacity-100'
               }`}
             >
               <div className="flex flex-col h-full">
                 <div className="grid grid-cols-2 gap-1 mb-3 md:mb-6 group overflow-hidden md:cursor-default cursor-pointer" onClick={() => setModalItem(item)}>
-                  <div className="relative overflow-hidden aspect-[3/4] md:aspect-[4/5] bg-surface-container">
+                  <div className="relative overflow-hidden aspect-[2/3] md:aspect-[4/5] bg-surface-container">
                     <Image
                       alt={`${item.clientName} - Antes`}
-                      className="object-cover opacity-90 group-hover:opacity-100 transition-all duration-700"
+                      className={`object-cover opacity-90 group-hover:opacity-100 transition-all duration-700 ${needsZoom ? 'scale-125' : ''}`}
                       src={item.beforeImage}
                       fill
                       sizes="(max-width: 768px) 50vw, 33vw"
@@ -203,10 +206,10 @@ function TransformationCarouselContent({ locale }: { locale: string }) {
                       Antes
                     </div>
                   </div>
-                  <div className="relative overflow-hidden aspect-[3/4] md:aspect-[4/5] bg-surface-container">
+                  <div className="relative overflow-hidden aspect-[2/3] md:aspect-[4/5] bg-surface-container">
                     <Image
                       alt={`${item.clientName} - Después`}
-                      className="object-cover"
+                      className={`object-cover ${needsZoom ? 'scale-125' : ''}`}
                       src={item.afterImage}
                       fill
                       sizes="(max-width: 768px) 50vw, 33vw"
@@ -233,7 +236,7 @@ function TransformationCarouselContent({ locale }: { locale: string }) {
               </div>
             </CarouselItem>
           )
-        })}
+        })})()}
       </CarouselContent>
 
       <div className="hidden md:flex justify-between items-center mt-8">
@@ -281,11 +284,11 @@ function TransformationCarouselContent({ locale }: { locale: string }) {
               {/* Fotos */}
               <div className="grid grid-cols-2 gap-1">
                 <div className="relative aspect-[3/4]">
-                  <Image src={modalItem.beforeImage} alt="Antes" fill className="object-cover" />
+                  <Image src={modalItem.beforeImage} alt="Antes" fill className={`object-cover ${['Romina','Joha','Laura','Ana','Manu','Jose','Victor'].includes(modalItem.clientName) ? 'scale-125' : ''}`} />
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#0e0e0e]/85 px-3 py-0.5 text-[8px] font-bold uppercase tracking-widest border-t border-white/10 font-label whitespace-nowrap">Antes</div>
                 </div>
                 <div className="relative aspect-[3/4]">
-                  <Image src={modalItem.afterImage} alt="Después" fill className="object-cover" />
+                  <Image src={modalItem.afterImage} alt="Después" fill className={`object-cover ${['Romina','Joha','Laura','Ana','Manu','Jose','Victor'].includes(modalItem.clientName) ? 'scale-125' : ''}`} />
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-[#c1ed00] text-[#0e0e0e] px-3 py-0.5 text-[8px] font-bold uppercase tracking-widest font-label whitespace-nowrap">Después</div>
                 </div>
               </div>
@@ -428,6 +431,12 @@ export default function V4Page() {
   // Pricing carousel (mobile)
   const pricingRef = useRef<HTMLDivElement>(null)
   const [pricingSlide, setPricingSlide] = useState(0)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 300)
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
   const handlePricingScroll = () => {
     if (!pricingRef.current) return
     const { scrollLeft, scrollWidth, clientWidth } = pricingRef.current
@@ -616,13 +625,13 @@ export default function V4Page() {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              className="md:hidden absolute top-full left-0 right-0 bg-[#0e0e0e]/98 backdrop-blur-xl border-t border-white/8"
+              className="md:hidden absolute top-full left-0 right-0 bg-[#0e0e0e] border-t border-white/8 overflow-y-auto"
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="px-6 py-6 flex flex-col gap-5">
+              <div className="px-6 py-4 flex flex-col gap-3">
                 {/* Nav links */}
                 {[
                   { href: '#method', label: 'Método' },
@@ -631,38 +640,38 @@ export default function V4Page() {
                   { href: '#pricing', label: 'Programas' },
                 ].map(({ href, label }) => (
                   <a key={href} href={href} onClick={smoothScroll}
-                    className="text-sm font-bold tracking-[0.2em] uppercase text-white/60 hover:text-[#c1ed00] transition-colors">
+                    className="text-xs font-bold tracking-[0.2em] uppercase text-white/60 hover:text-[#c1ed00] transition-colors py-1">
                     {label}
                   </a>
                 ))}
 
-                <div className="border-t border-white/8 pt-4">
+                <div className="border-t border-white/8 pt-3">
                   {!authLoading && (
                     user ? (
                       <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-9 h-9 rounded-full bg-[#c1ed00] flex items-center justify-center text-[#0e0e0e] font-black text-sm">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="w-7 h-7 rounded-full bg-[#c1ed00] flex items-center justify-center text-[#0e0e0e] font-black text-xs">
                             {initial}
                           </div>
                           <div>
-                            <p className="text-white text-sm font-bold truncate max-w-[180px]">{displayName}</p>
+                            <p className="text-white text-xs font-bold truncate max-w-[180px]">{displayName}</p>
                             {activeSub && (
-                              <p className="text-[10px] text-[#c1ed00]/70 uppercase tracking-widest">{PLAN_NAMES[activeSub.plan_id] ?? activeSub.plan_id} activo</p>
+                              <p className="text-[9px] text-[#c1ed00]/70 uppercase tracking-widest">{PLAN_NAMES[activeSub.plan_id] ?? activeSub.plan_id} activo</p>
                             )}
                           </div>
                         </div>
                         <Link href={`/${locale}/dashboard`} onClick={() => setMobileMenuOpen(false)}
-                          className="flex items-center justify-center gap-2 py-3 border border-white/15 text-sm font-bold tracking-widest uppercase text-white/70 hover:text-white rounded">
-                          <LayoutDashboard className="w-4 h-4" /> Mi Dashboard
+                          className="flex items-center justify-center gap-2 py-2 border border-white/15 text-xs font-bold tracking-widest uppercase text-white/70 hover:text-white rounded">
+                          <LayoutDashboard className="w-3.5 h-3.5" /> Mi Dashboard
                         </Link>
                         <button onClick={handleLogout}
-                          className="flex items-center justify-center gap-2 py-3 border border-red-400/20 text-sm font-bold tracking-widest uppercase text-red-400/60 hover:text-red-400 rounded">
-                          <LogOut className="w-4 h-4" /> Cerrar sesión
+                          className="flex items-center justify-center gap-2 py-2 border border-red-400/20 text-xs font-bold tracking-widest uppercase text-red-400/60 hover:text-red-400 rounded">
+                          <LogOut className="w-3.5 h-3.5" /> Cerrar sesión
                         </button>
                       </div>
                     ) : (
                       <a href="#pricing" onClick={smoothScroll}
-                        className="block text-center py-3.5 bg-[#c1ed00] text-[#0e0e0e] text-sm font-black tracking-widest uppercase rounded">
+                        className="block text-center py-2.5 bg-[#c1ed00] text-[#0e0e0e] text-xs font-black tracking-widest uppercase">
                         Ver planes
                       </a>
                     )
@@ -714,7 +723,7 @@ export default function V4Page() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5 }}
           >
-            Un sistema diseñado para cambiar tu cuerpo y tu mentalidad de forma sostenible. Sin extremos. Sin culpa.<br />Con resultados reales.
+            Un sistema diseñado para cambiar tu cuerpo y tu mentalidad de forma sostenible. Sin extremos.<br />Sin culpa. Con resultados reales.
           </motion.p>
           <motion.div
             className="pt-2"
@@ -754,7 +763,7 @@ export default function V4Page() {
       <section id="method" className="px-6 py-10 md:py-20 bg-surface-container-low">
         <div className="container mx-auto max-w-6xl">
           <motion.div
-            className="mb-12 space-y-2"
+            className="mb-6 md:mb-12 space-y-2"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
@@ -781,7 +790,7 @@ export default function V4Page() {
           >
             {/* Psychology — large card */}
             <motion.div
-              className="flex-none w-[68vw] md:w-auto snap-center md:col-span-12 lg:col-span-8 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-end hover:bg-surface-container-high transition-colors duration-500"
+              className="flex-none w-[82vw] md:w-auto snap-center md:col-span-12 lg:col-span-8 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-end hover:bg-surface-container-high transition-colors duration-500"
               variants={staggerItem}
               whileHover={{ scale: 1.01 }}
               transition={{ type: 'spring', stiffness: 300 }}
@@ -813,7 +822,7 @@ export default function V4Page() {
 
             {/* Training — smaller */}
             <motion.div
-              className="flex-none w-[68vw] md:w-auto snap-center md:col-span-6 lg:col-span-4 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-between hover:bg-surface-container-high transition-colors duration-500"
+              className="flex-none w-[82vw] md:w-auto snap-center md:col-span-6 lg:col-span-4 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] flex flex-col justify-start md:justify-between hover:bg-surface-container-high transition-colors duration-500"
               variants={staggerItem}
               whileHover={{ scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 300 }}
@@ -844,7 +853,7 @@ export default function V4Page() {
 
             {/* Nutrition — full width bottom */}
             <motion.div
-              className="flex-none w-[68vw] md:w-auto snap-center md:col-span-6 lg:col-span-12 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] md:min-h-[200px] flex flex-col md:flex-row items-start md:items-center gap-6 hover:bg-surface-container-high transition-colors duration-500"
+              className="flex-none w-[82vw] md:w-auto snap-center md:col-span-6 lg:col-span-12 group relative overflow-hidden bg-surface-container p-8 min-h-[360px] md:min-h-[200px] flex flex-col md:flex-row items-start md:items-center gap-6 hover:bg-surface-container-high transition-colors duration-500"
               variants={staggerItem}
               whileHover={{ scale: 1.005 }}
               transition={{ type: 'spring', stiffness: 300 }}
@@ -900,9 +909,9 @@ export default function V4Page() {
 
 
       {/* ── Coach Section ─────────────────────────────────────────── */}
-      <section id="coach" className="px-6 py-24 bg-[#0e0e0e]">
+      <section id="coach" className="px-6 py-10 md:py-24 bg-[#0e0e0e]">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row gap-12 items-stretch">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-12 items-stretch">
             <motion.div
               className="w-full md:w-1/2 flex-shrink-0 relative pb-6 flex flex-col order-2 md:order-1"
               variants={fadeLeft}
@@ -911,12 +920,12 @@ export default function V4Page() {
               viewport={{ once: true, amount: 0.2 }}
             >
               {/* Etiqueta ANTES → DESPUÉS */}
-              <span className="self-center mb-2 px-2 py-0.5 bg-[#c1ed00] text-[#1a2400] font-label font-black text-[9px] uppercase tracking-[0.2em]">
+              <span className="self-center mb-0.5 px-2 py-0.5 bg-[#c1ed00] text-[#1a2400] font-label font-black text-[9px] uppercase tracking-[0.2em]">
                 ANTES → DESPUÉS
               </span>
 
               {/* Mobile: carrusel auto-play */}
-              <div className="md:hidden relative overflow-hidden h-[340px] mb-3">
+              <div className="md:hidden relative overflow-hidden h-[320px] mb-0.5">
                 <AnimatePresence initial={false} custom={coachDir}>
                   <motion.img
                     key={coachSlide}
@@ -969,7 +978,7 @@ export default function V4Page() {
                   <motion.img
                     src="/images/ale/ale-vida.jpg"
                     alt="Alejandro Gerez — coach"
-                    className="w-full h-48 object-cover object-top"
+                    className="w-full h-48 object-cover object-center"
                     whileHover={{ scale: 1.03 }}
                     transition={{ duration: 0.6 }}
                   />
@@ -978,7 +987,7 @@ export default function V4Page() {
 
               {/* Badge */}
               <motion.div
-                className="md:absolute md:-bottom-1 md:-right-5 max-w-full md:max-w-[220px] bg-[#00e3fd] text-[#003a42] px-5 py-4 font-headline font-black text-xs uppercase tracking-tight leading-snug z-10 mt-3 md:mt-0 text-center md:text-left"
+                className="md:absolute md:-bottom-1 md:-right-5 max-w-full md:max-w-[220px] bg-[#00e3fd] text-[#003a42] px-4 py-2 font-headline font-black text-xs uppercase tracking-tight leading-snug z-10 mt-0.5 md:mt-0 text-center md:text-left"
                 initial={{ x: 60, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
                 viewport={{ once: true }}
@@ -988,42 +997,42 @@ export default function V4Page() {
               </motion.div>
             </motion.div>
             <motion.div
-              className="w-full md:w-1/2 space-y-6 order-1 md:order-2"
+              className="w-full md:w-1/2 space-y-3 md:space-y-6 order-1 md:order-2"
               variants={fadeRight}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
             >
               <p className="font-label text-[10px] uppercase tracking-[0.25em] text-white/30">Tu Head Coach</p>
-              <h2 className="font-headline text-2xl md:text-4xl lg:text-5xl font-bold tracking-tighter leading-none uppercase whitespace-nowrap">
+              <h2 className="font-headline text-[8vw] md:text-4xl lg:text-5xl font-bold tracking-tighter leading-none uppercase">
                 <span className="text-[#c1ed00] italic">ALEJANDRO GEREZ</span>
               </h2>
               {/* Bio mobile — versión corta */}
-              <div className="md:hidden font-body text-on-surface-variant leading-relaxed space-y-3">
+              <div className="md:hidden font-body text-on-surface-variant text-sm leading-relaxed space-y-3 hyphens-none [word-break:normal]">
                 <p>
-                  Usé la comida como escape y <strong className="font-black text-[#c1ed00]">llegué a pesar 160 kg</strong>. Probé todo, sin resultados duraderos.
+                  Usé la comida como escape y llegué a pesar <strong className="font-black text-[#c1ed00]">160 kg</strong>. Probé todo, sin resultados duraderos.
                 </p>
                 <p>
-                  <strong className="font-black text-[#c1ed00]">Bajé 70 kg</strong> en <em className="text-[#00e3fd]">Cuestión de Peso</em>, pero volví al mismo lugar. Porque <strong className="font-black text-[#c1ed00]">el cambio había sido físico, no mental</strong>.
+                  <strong className="font-black text-[#c1ed00]">Bajé 70 kg</strong>. Participé del reality show <strong className="font-black text-[#00e3fd]">Cuestión de Peso</strong>, pero recuperé varios kilos, porque el cambio había sido físico, <strong className="font-black text-[#c1ed00] whitespace-nowrap uppercase">NO MENTAL</strong>.
                 </p>
                 <p className="text-white">
-                  Hoy no vivo en lucha. <span className="text-[#c1ed00]">Vivo en equilibrio.</span> Y ese es el método que <strong className="font-black text-[#c1ed00]">hoy enseño y practico</strong>.
+                  Hoy no vivo en lucha. <span className="text-[#c1ed00]">Vivo en equilibrio.</span><br />Ese es el método que hoy<br /><strong className="font-black text-[#ff734a]">enseño y practico.</strong>
                 </p>
               </div>
 
               {/* Bio desktop — versión completa */}
               <div className="hidden md:block font-body text-on-surface-variant leading-relaxed space-y-4">
                 <p>
-                  Durante años usé la comida como escape y <strong className="font-black text-[#c1ed00]">llegué a pesar 160 kg</strong>.
+                  Durante años usé la comida como escape y llegué a pesar <strong className="font-black text-[#c1ed00]">160 kg</strong>.
                   Probé dietas, buscando la fórmula perfecta que me hiciera cambiar de una vez.
                 </p>
                 <p>
-                  <strong className="font-black text-[#c1ed00]">Bajé 70 kg en total</strong>, participando en el programa televisivo <em className="text-[#00e3fd]">Cuestión de Peso</em>, pero con el tiempo volví al mismo lugar.<br />
-                  Porque <strong className="font-black text-[#c1ed00]">el cambio había sido físico, no mental</strong>.
+                  <strong className="font-black text-[#c1ed00]">Bajé 70 kg</strong> en total, participando en el programa televisivo <em className="font-black text-[#00e3fd]">Cuestión de Peso</em>, pero con el tiempo volví al mismo lugar.<br />
+                  Porque el cambio había sido físico, <strong className="font-black text-[#c1ed00] uppercase">NO MENTAL.</strong>
                 </p>
                 <p>
                   Ahí entendí algo clave: la verdadera transformación no es una foto del antes y después,
-                  <strong className="font-black text-[#c1ed00]"> es lo que pasa cuando nadie está mirando</strong>.
+                  es lo que pasa <strong className="font-black text-[#ff734a]">cuando nadie está mirando.</strong>
                 </p>
                 <p>
                   Empecé a trabajar en mi mentalidad, mi relación con la comida y conmigo mismo.
@@ -1032,11 +1041,11 @@ export default function V4Page() {
                   Hoy no vivo en lucha. <span className="text-[#c1ed00]">Vivo en equilibrio.</span>
                 </p>
                 <p>
-                  Y ese es el método que <strong className="font-black text-[#c1ed00]">hoy enseño y practico</strong>.
+                  Y ese es el método que <span className="text-[#ff734a]">hoy enseño y practico.</span>
                 </p>
               </div>
               <motion.ul
-                className="space-y-3 font-body text-sm text-white/70"
+                className="space-y-2 md:space-y-3 font-body text-sm text-white/70 hyphens-none [word-break:normal]"
                 variants={staggerContainer}
                 initial="hidden"
                 whileInView="visible"
@@ -1084,7 +1093,7 @@ export default function V4Page() {
 
       {/* ── Pricing ───────────────────────────────────────────────── */}
       <section id="pricing" className="py-14 md:py-24 px-6 bg-[#0e0e0e] relative overflow-x-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c1ed00]/[0.03] blur-[160px] rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c1ed00]/[0.03] blur-[160px] rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none overflow-hidden" />
         <div className="container mx-auto max-w-6xl relative z-10">
           {/* Header */}
           <div className="-mb-3 md:mb-16">
@@ -1101,7 +1110,7 @@ export default function V4Page() {
           <div
             ref={pricingRef}
             onScroll={handlePricingScroll}
-            className="flex md:grid md:grid-cols-2 gap-5 lg:gap-8 mb-4 md:mb-16 items-stretch overflow-x-auto snap-x snap-mandatory -mx-6 md:mx-0 px-6 md:px-0 pb-2 md:pb-0 max-w-4xl md:mx-auto [&::-webkit-scrollbar]:hidden pt-6 md:pt-0"
+            className="flex md:grid md:grid-cols-2 gap-5 lg:gap-8 mb-4 md:mb-16 items-stretch overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 md:mx-0 px-6 md:px-0 pb-2 md:pb-0 max-w-4xl md:mx-auto [&::-webkit-scrollbar]:hidden pt-6 md:pt-8"
             style={{ scrollbarWidth: 'none' } as React.CSSProperties}
           >
             {[
@@ -1184,10 +1193,10 @@ export default function V4Page() {
       </section>
 
       {/* ── Transformaciones ──────────────────────────────────────── */}
-      <section id="transformations" className="py-24 px-6 bg-[#000000] relative overflow-hidden scroll-mt-24">
+      <section id="transformations" className="py-10 md:py-24 px-3 md:px-6 bg-[#000000] relative overflow-hidden scroll-mt-24">
         <div className="container mx-auto max-w-6xl">
           <motion.div
-            className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6"
+            className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-12 gap-6"
             initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
             variants={fadeUp} custom={0}
           >
@@ -1205,7 +1214,7 @@ export default function V4Page() {
             </p>
           </motion.div>
 
-          <Carousel opts={{ align: 'start', loop: true }} className="w-full">
+          <Carousel opts={{ align: 'start', loop: true }} className="w-full select-none">
             <TransformationCarouselContent locale={locale} />
           </Carousel>
 
@@ -1225,7 +1234,7 @@ export default function V4Page() {
               onClick={smoothScroll}
               className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-8 py-4 text-base lg:text-lg tracking-tight hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(193,237,0,0.5)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
-              ¡VER PLANES!
+              ¡EMPEZÁ AHORA!
               <ArrowRight className="w-5 h-5" />
             </a>
           </motion.div>
@@ -1287,16 +1296,16 @@ export default function V4Page() {
       </section>
 
       {/* ── Contacto ──────────────────────────────────────────────── */}
-      <section id="contact" className="py-24 px-6 bg-[#0e0e0e]">
+      <section id="contact" className="py-10 md:py-24 px-6 bg-[#0e0e0e]">
         <div className="container mx-auto max-w-4xl">
           <motion.div
-            className="text-center mb-14 space-y-2"
+            className="text-center mb-6 md:mb-14 space-y-2"
             initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }}
             variants={fadeUp} custom={0}
           >
             <p className="font-label text-[10px] uppercase tracking-[0.3em] text-white/30">¿Tenés dudas?</p>
             <h2 className="font-headline text-3xl lg:text-4xl font-bold tracking-tighter uppercase italic">HABLEMOS.</h2>
-            <div className="w-12 h-1 bg-[#ff734a] mx-auto" />
+            <div className="w-12 h-1 bg-[#00e3fd] mx-auto" />
           </motion.div>
 
           <motion.div
@@ -1327,7 +1336,7 @@ export default function V4Page() {
           </motion.div>
 
           <motion.p
-            className="text-center font-label text-[10px] text-white/25 uppercase tracking-widest mt-8"
+            className="text-center font-label text-[8px] md:text-[10px] text-white/25 uppercase tracking-widest mt-8 whitespace-nowrap"
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
             transition={{ delay: 0.4 }}
           >
@@ -1337,7 +1346,7 @@ export default function V4Page() {
       </section>
 
       {/* ── CTA ───────────────────────────────────────────────────── */}
-      <section id="cta" className="py-24 px-6 text-center bg-surface-container-low border-y border-[#484847]/10 relative overflow-hidden">
+      <section id="cta" className="py-10 md:py-24 px-6 text-center bg-surface-container-low border-y border-[#484847]/10 relative overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#c1ed00]/5 rounded-full blur-[120px]" />
@@ -1356,14 +1365,14 @@ export default function V4Page() {
             ¿LISTO PARA <span className="text-[#c1ed00]" style={{ textShadow: '0 0 30px rgba(193,237,0,0.4)' }}>TRANSFORMAR</span><br className="hidden sm:block" /> TU CUERPO Y MENTE?
           </motion.h2>
           <motion.p
-            className="font-headline text-lg lg:text-2xl font-bold uppercase tracking-tight text-white/80 mb-6"
+            className="font-headline text-sm md:text-lg lg:text-2xl font-bold uppercase tracking-tight text-white/80 mb-6 whitespace-nowrap"
             variants={fadeUp}
             custom={1}
           >
-            Es momento de <span className="text-[#c1ed00] italic">recodificar</span> tus hábitos.
+            Es momento de <span className="text-[#00e3fd] italic">recodificar</span> tus hábitos.
           </motion.p>
           <motion.p
-            className="text-on-surface-variant mb-10 max-w-md mx-auto font-body leading-relaxed"
+            className="hidden md:block text-on-surface-variant mb-10 max-w-md mx-auto font-body leading-relaxed"
             variants={fadeUp}
             custom={2}
           >
@@ -1372,13 +1381,13 @@ export default function V4Page() {
           <motion.div variants={fadeUp} custom={3} className="flex flex-col items-center gap-4">
             <Link
               href={`/${locale}/evaluacion`}
-              className="inline-flex items-center gap-3 bg-[#cefc22] text-[#3b4a00] font-headline font-extrabold px-10 py-5 text-base lg:text-lg tracking-tight hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(193,237,0,0.5)] active:scale-[0.98] transition-all duration-300 uppercase"
+              className="inline-flex items-center gap-3 bg-[#ff734a] text-[#0e0e0e] font-headline font-extrabold px-10 py-5 text-base lg:text-lg tracking-tight hover:scale-[1.05] hover:shadow-[0_0_30px_rgba(255,115,74,0.5)] active:scale-[0.98] transition-all duration-300 uppercase"
             >
               SOLICITAR EVALUACIÓN
               <ArrowRight className="w-5 h-5" />
             </Link>
             <p className="font-label text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-white/40">
-              Cupos limitados <span className="text-[#c1ed00]/60 mx-1">•</span> Acceso online <span className="text-[#c1ed00]/60 mx-1">•</span> Empezá ya
+              Cupos limitados <span className="text-[#c1ed00]/60 mx-1">•</span> Acceso online<span className="md:hidden"> </span><span className="hidden md:inline"> <span className="text-[#c1ed00]/60 mx-1">•</span> Empezá ya</span>
             </p>
           </motion.div>
         </motion.div>
@@ -1386,7 +1395,7 @@ export default function V4Page() {
 
       {/* ── Footer ────────────────────────────────────────────────── */}
       <motion.footer
-        className="w-full py-12 px-6 border-t border-[#484847]/15 bg-[#000000] flex flex-col md:flex-row justify-between items-center gap-6 pb-20 md:pb-12"
+        className="w-full py-6 md:py-12 px-6 border-t border-[#484847]/15 bg-[#000000] flex flex-col md:flex-row justify-between items-center gap-3 md:gap-6 pb-20 md:pb-12"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
@@ -1394,21 +1403,21 @@ export default function V4Page() {
       >
         <div className="flex flex-col items-center md:items-start gap-2">
           <Image src="/images/icon-r3set.png" alt="MÉTODO R3SET" width={36} height={36} className="rounded-xl" />
-          <p className="font-label text-xs uppercase text-white/30 tracking-widest">© {new Date().getFullYear()} MÉTODO R3SET. TODOS LOS DERECHOS RESERVADOS.</p>
+          <p className="font-label text-[8px] md:text-xs uppercase text-white/30 tracking-widest whitespace-nowrap">© {new Date().getFullYear()} MÉTODO R3SET. TODOS LOS DERECHOS RESERVADOS.</p>
         </div>
-        <div className="flex gap-8">
-          <a href="#" className="font-label text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">Privacidad</a>
-          <a href="#" className="font-label text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">Términos</a>
-          <a href="#" className="font-label text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">Contacto</a>
+        <div className="flex gap-4 md:gap-8">
+          <a href="#" className="font-label text-[9px] md:text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">Privacidad</a>
+          <a href="#" className="font-label text-[9px] md:text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">Términos</a>
+          <a href="#" className="font-label text-[9px] md:text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">Contacto</a>
         </div>
-        <div className="flex gap-4">
+        <div className="hidden md:flex gap-4">
           <Share2 className="w-5 h-5 text-white/30 hover:text-[#00e3fd] transition-colors duration-300 cursor-pointer" />
           <Megaphone className="w-5 h-5 text-white/30 hover:text-[#00e3fd] transition-colors duration-300 cursor-pointer" />
         </div>
       </motion.footer>
 
       {/* ── Mobile Bottom Nav ─────────────────────────────────────── */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full grid grid-cols-5 items-center h-16 bg-[#0e0e0e]/95 backdrop-blur-xl z-40 border-t border-white/5">
+      <nav className="hidden fixed bottom-0 left-0 w-full grid grid-cols-5 items-center h-16 bg-[#0e0e0e]/95 backdrop-blur-xl z-40 border-t border-white/5">
         <a href="#method" onClick={smoothScroll} className="flex flex-col items-center justify-center gap-1 text-[#D1FF26] active:scale-90 transition-all">
           <Brain className="w-5 h-5" />
           <span className="font-label text-[9px] uppercase tracking-widest">Método</span>
@@ -1437,6 +1446,13 @@ export default function V4Page() {
           </Link>
         )}
       </nav>
+      {/* ── Scroll to top ─────────────────────────────────────────── */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={`fixed bottom-6 right-6 z-50 w-11 h-11 md:w-12 md:h-12 rounded-full bg-[#c1ed00] flex items-center justify-center shadow-lg shadow-black/30 transition-opacity duration-300 ${showScrollTop ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      >
+        <ChevronUp className="w-5 h-5 text-[#0e0e0e]" />
+      </button>
     </V4SplashManager>
   )
 }
