@@ -114,6 +114,13 @@ html {
   }
 }
 
+/* iOS Safari — evitar zoom automático al enfocar inputs */
+@media (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
 /* Hero — deshabilitar parallax en mobile */
 @media (max-width: 767px) {
   .hero-no-parallax {

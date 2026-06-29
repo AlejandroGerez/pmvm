@@ -7,7 +7,7 @@ export default function EvaluacionGraciasPage({
   params: { locale: string }
 }) {
   return (
-    <div className="bg-[#0e0e0e] min-h-screen text-white px-4 py-12 flex items-center justify-center">
+    <div className="bg-[#0e0e0e] min-h-screen text-white px-4 flex flex-col lg:block lg:py-12">
       <style>{`
         @keyframes particleBurst {
           0%   { opacity: 0; transform: translate(-50%, -50%) translate(0, 0) scale(0); }
@@ -25,10 +25,10 @@ export default function EvaluacionGraciasPage({
       {/* Ambient */}
       <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-[#c1ed00]/5 blur-[160px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-      <div className="relative z-10 max-w-lg w-full text-center">
+      <div className="relative z-10 max-w-lg w-full text-center flex-1 flex flex-col justify-center pt-24 pb-10 lg:py-0 lg:block mx-auto">
 
         {/* Ícono con partículas */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-4 lg:mb-8">
           <div className="relative flex items-center justify-center">
 
             {/* Partículas de confeti animadas */}
@@ -75,60 +75,59 @@ export default function EvaluacionGraciasPage({
         </div>
 
         {/* Título */}
-        <h1 className="font-headline text-5xl font-black tracking-tighter mb-4">
+        <h1 className="font-headline text-4xl lg:text-5xl font-black tracking-tighter mb-3 lg:mb-4">
           ¡SOLICITUD ENVIADA!
         </h1>
 
         {/* Subtítulo en lima */}
-        <p className="text-[#c1ed00] font-bold text-lg mb-5">
+        <p className="text-[#c1ed00] font-bold text-base lg:text-lg mb-3 lg:mb-5">
           Gracias por confiar en mí. 💚
         </p>
 
         {/* Texto descriptivo */}
-        <p className="text-white/50 text-base leading-relaxed mb-10">
-          Recibí tu solicitud de evaluación correctamente.<br />
-          Estoy muy contento de que hayas dado este paso<br />
-          tan importante hacia tu transformación.
+        <p className="text-white/50 text-xs lg:text-base leading-relaxed mb-5 lg:mb-10">
+          Recibí tu solicitud correctamente.<br className="hidden lg:block" />
+          <span className="hidden lg:inline">Estoy muy contento de que hayas dado este paso<br />tan importante hacia tu transformación.</span>
+          <span className="lg:hidden">Estoy muy contento de que hayas dado este paso.</span>
         </p>
 
         {/* Recuadro ¿Cómo es el proceso? */}
         <div className="bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden">
-          <p className="text-sm font-black uppercase tracking-[0.25em] text-[#c1ed00] text-center py-5 px-6">
+          <p className="text-xs lg:text-sm font-black uppercase tracking-[0.25em] text-[#c1ed00] text-center py-3 lg:py-5 px-6">
             ¿Cómo es el proceso?
           </p>
           <div className="relative">
-            {/* Línea continua — los círculos con bg sólido y z-10 la tapan en cada nodo */}
-            <div className="absolute left-[56px] top-0 bottom-[52px] w-px bg-gradient-to-b from-[#c1ed00]/15 via-[#c1ed00]/50 to-[#c1ed00]/15" />
+            <div className="absolute left-[44px] lg:left-[56px] top-0 bottom-[40px] lg:bottom-[52px] w-px bg-gradient-to-b from-[#c1ed00]/15 via-[#c1ed00]/50 to-[#c1ed00]/15" />
 
             {[
               {
-                icon: <MessageCircle size={28} />,
+                icon: <MessageCircle size={20} />,
                 title: '1. Reviso tu solicitud',
                 text: 'Analizo tu información para entender tu situación actual, objetivos y necesidades.',
               },
               {
-                icon: <Calendar size={28} />,
+                icon: <Calendar size={20} />,
                 title: '2. Me pongo en contacto',
                 text: 'En las próximas 24 a 48 hs te escribiré por WhatsApp para agendar nuestra charla.',
               },
               {
-                icon: <MessageSquare size={28} />,
+                icon: <MessageSquare size={20} />,
                 title: '3. Charla personalizada',
-                text: 'Hablamos sobre tu caso, resolvemos tus dudas y te muestro el plan ideal para vos.',
+                text: 'Hablamos sobre tu caso y te muestro el plan ideal para vos.',
               },
               {
-                icon: <Rocket size={28} />,
-                title: '4. Comenzamos tu transformación',
-                text: 'Si decidís avanzar, te acompaño paso a paso para que logres resultados reales y sostenibles.',
+                icon: <Rocket size={20} />,
+                title: '4. Comenzamos',
+                text: 'Te acompaño paso a paso para que logres resultados reales y sostenibles.',
               },
             ].map((step, i) => (
-              <div key={i} className="flex items-center gap-4 px-6 py-5 text-left">
-                <div className={`relative z-10 w-16 h-16 rounded-full bg-[#111111] border border-[#c1ed00]/25 flex items-center justify-center text-[#c1ed00] flex-shrink-0 ${i === 0 ? 'shadow-[0_0_24px_rgba(193,237,0,0.5)]' : ''}`}>
+              <div key={i} className="flex items-center gap-3 lg:gap-4 px-4 lg:px-6 py-3 lg:py-5 text-left">
+                <div className={`relative z-10 w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-[#111111] border border-[#c1ed00]/25 flex items-center justify-center text-[#c1ed00] flex-shrink-0 ${i === 0 ? 'shadow-[0_0_24px_rgba(193,237,0,0.5)]' : ''}`}>
                   {step.icon}
                 </div>
                 <div>
-                  <p className="text-white font-bold text-base mb-1">{step.title}</p>
-                  <p className="text-white/50 text-base leading-relaxed">{step.text}</p>
+                  <p className="text-white font-bold text-sm lg:text-base mb-0.5 lg:mb-1">{step.title}</p>
+                  <p className="text-white/50 text-xs lg:text-base leading-relaxed">{step.text}</p>
                 </div>
               </div>
             ))}
@@ -136,27 +135,29 @@ export default function EvaluacionGraciasPage({
         </div>
 
         {/* Frase final */}
-        <div className="text-center pt-8 pb-6">
-          <Heart size={36} className="text-[#c1ed00] mx-auto mb-5" />
-          <p className="text-white font-bold text-base mb-2">
+        <div className="text-center pt-4 pb-3 lg:pt-8 lg:pb-6">
+          <Heart size={22} className="text-[#c1ed00] mx-auto mb-2 lg:mb-5 lg:w-9 lg:h-9" />
+          <p className="text-white font-bold text-sm lg:text-base mb-1 lg:mb-2">
             Este es el comienzo de algo grande.
           </p>
-          <p className="text-white/50 text-base mb-2">
+          <p className="hidden lg:block text-white/50 text-base mb-2">
             Estoy acá para acompañarte en cada paso del camino.
           </p>
-          <p className="text-[#c1ed00] font-bold text-base">
+          <p className="text-[#c1ed00] font-bold text-sm lg:text-base">
             ¡Vamos por tu mejor versión! 💪
           </p>
         </div>
 
         {/* Botón */}
-        <Link
-          href={`/${params.locale}`}
-          className="flex items-center justify-center gap-2 w-full py-4 rounded-xl font-headline font-black text-sm bg-[#c1ed00] text-[#0e0e0e] hover:bg-[#d4ff00] transition-colors uppercase tracking-wider"
-        >
-          <Home size={16} />
-          Volver al inicio
-        </Link>
+        <div className="flex justify-center">
+          <Link
+            href={`/${params.locale}`}
+            className="flex items-center justify-center gap-2 lg:w-full px-8 py-2.5 lg:py-4 rounded-xl font-headline font-black text-sm lg:bg-[#c1ed00] lg:text-[#0e0e0e] border border-[#c1ed00]/50 text-[#c1ed00]/70 lg:border-0 hover:border-[#c1ed00] hover:text-[#c1ed00] lg:hover:bg-[#d4ff00] transition-colors uppercase tracking-wider"
+          >
+            <Home size={14} />
+            Volver al inicio
+          </Link>
+        </div>
 
       </div>
     </div>

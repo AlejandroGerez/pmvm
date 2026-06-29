@@ -16,6 +16,8 @@ export default function EvaluacionPage({
   const [ciudad, setCiudad] = useState('')
   const [peso, setPeso] = useState('')
   const [altura, setAltura] = useState('')
+  const [sexo, setSexo] = useState('')
+  const [sexoOtro, setSexoOtro] = useState('')
   const [skipMedidas, setSkipMedidas] = useState(false)
   const [objetivo, setObjetivo] = useState('')
   const [situacion, setSituacion] = useState('')
@@ -24,25 +26,25 @@ export default function EvaluacionPage({
   const [error, setError] = useState<string | null>(null)
 
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/25 text-sm focus:outline-none focus:border-[#c1ed00]/50 transition-colors"
-  const labelClass = "block text-xs font-black uppercase tracking-wider text-white/50 mb-1.5"
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 lg:px-4 lg:py-3 lg:rounded-xl text-white placeholder-white/25 text-sm focus:outline-none focus:border-[#c1ed00]/50 transition-colors"
+  const labelClass = "block text-[10px] lg:text-xs font-black uppercase tracking-wider text-white/40 mb-0.5 lg:mb-1"
 
   return (
-    <div className="bg-[#0e0e0e] min-h-screen text-white px-4 py-12">
+    <div className="bg-[#0e0e0e] min-h-screen text-white px-4 py-4 lg:py-12 flex flex-col justify-center lg:block">
       {/* Ambient */}
       <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-[#c1ed00]/5 blur-[160px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
       <div className="relative z-10 max-w-5xl mx-auto">
 
         {/* Encabezado */}
-        <div className="text-center mb-12 max-w-2xl mx-auto">
-          <p className="text-sm font-black uppercase tracking-[0.3em] text-[#c1ed00] mb-4">
+        <div className="text-center mb-5 lg:mb-12 max-w-2xl mx-auto">
+          <p className="text-xs lg:text-sm font-black uppercase tracking-[0.3em] text-[#c1ed00] mb-2 lg:mb-4">
             Método R3SET
           </p>
-          <h1 className="font-headline text-4xl sm:text-5xl font-black tracking-tighter uppercase mb-4">
+          <h1 className="font-headline text-4xl lg:text-5xl font-black tracking-tighter uppercase mb-2 lg:mb-4">
             Contanos sobre vos
           </h1>
-          <p className="text-white/50 text-base leading-relaxed">
+          <p className="text-white/50 text-sm lg:text-base leading-relaxed">
             Esta información me ayudará a evaluar tu caso.
           </p>
         </div>
@@ -52,8 +54,8 @@ export default function EvaluacionPage({
 
           {/* Columna izquierda — formulario (2/3) */}
           <div className="lg:col-span-2">
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8">
-              <div className="flex flex-col gap-5">
+            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-3 lg:p-8">
+              <div className="flex flex-col gap-2 lg:gap-5">
 
                 {/* Nombre */}
                 <div>
@@ -79,6 +81,31 @@ export default function EvaluacionPage({
                   <input type="text" value={ciudad} onChange={e => setCiudad(e.target.value)} placeholder="Ej: Buenos Aires, Argentina" className={inputClass} />
                 </div>
 
+                {/* Sexo */}
+                <div>
+                  <label className={labelClass}>Sexo</label>
+                  <select
+                    value={sexo}
+                    onChange={e => { setSexo(e.target.value); if (e.target.value !== 'Otro') setSexoOtro('') }}
+                    className={`${inputClass} appearance-none`}
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}
+                  >
+                    <option value="" disabled className="bg-[#1a1a1a]">Seleccioná tu sexo</option>
+                    <option value="Masculino" className="bg-[#1a1a1a]">Masculino</option>
+                    <option value="Femenino" className="bg-[#1a1a1a]">Femenino</option>
+                    <option value="Otro" className="bg-[#1a1a1a]">Otro</option>
+                  </select>
+                  {sexo === 'Otro' && (
+                    <input
+                      type="text"
+                      value={sexoOtro}
+                      onChange={e => setSexoOtro(e.target.value)}
+                      placeholder="Especificá..."
+                      className={`${inputClass} mt-2`}
+                    />
+                  )}
+                </div>
+
                 {/* Peso y Altura */}
                 <div className={`grid grid-cols-2 gap-4 transition-opacity ${skipMedidas ? 'opacity-40' : 'opacity-100'}`}>
                   <div>
@@ -92,7 +119,7 @@ export default function EvaluacionPage({
                 </div>
 
                 {/* Checkbox */}
-                <label className="flex items-start gap-3 cursor-pointer group">
+                <label className="flex items-start gap-2.5 cursor-pointer group">
                   <div className="relative flex-shrink-0 mt-0.5">
                     <input
                       type="checkbox"
@@ -100,16 +127,16 @@ export default function EvaluacionPage({
                       onChange={e => { setSkipMedidas(e.target.checked); if (e.target.checked) { setPeso(''); setAltura('') } }}
                       className="sr-only"
                     />
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${skipMedidas ? 'bg-[#c1ed00] border-[#c1ed00]' : 'border-white/20 bg-white/5 group-hover:border-white/40'}`}>
+                    <div className={`w-4 h-4 lg:w-5 lg:h-5 rounded border-2 flex items-center justify-center transition-colors ${skipMedidas ? 'bg-[#c1ed00] border-[#c1ed00]' : 'border-white/20 bg-white/5 group-hover:border-white/40'}`}>
                       {skipMedidas && (
-                        <svg className="w-3 h-3 text-[#0e0e0e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <svg className="w-2.5 h-2.5 text-[#0e0e0e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       )}
                     </div>
                   </div>
-                  <span className="text-sm text-white/50 leading-snug group-hover:text-white/70 transition-colors">
-                    Prefiero compartir mi peso y altura en la videollamada con Ale
+                  <span className="text-xs lg:text-sm text-white/50 leading-snug group-hover:text-white/70 transition-colors">
+                    Prefiero compartirlo en la videollamada con Ale.
                   </span>
                 </label>
 
@@ -138,13 +165,13 @@ export default function EvaluacionPage({
                     value={situacion}
                     onChange={e => setSituacion(e.target.value)}
                     placeholder="Escribí tu mensaje..."
-                    rows={5}
-                    className={`${inputClass} resize-none`}
+                    rows={3}
+                    className={`${inputClass} resize-none lg:rows-5`}
                   />
                 </div>
 
                 {/* Términos */}
-                <label className="flex items-start gap-3 cursor-pointer group">
+                <label className="flex items-start gap-2.5 cursor-pointer group">
                   <div className="relative flex-shrink-0 mt-0.5">
                     <input
                       type="checkbox"
@@ -152,15 +179,15 @@ export default function EvaluacionPage({
                       onChange={e => setTermsAccepted(e.target.checked)}
                       className="sr-only"
                     />
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${termsAccepted ? 'bg-[#c1ed00] border-[#c1ed00]' : 'border-white/20 bg-white/5 group-hover:border-white/40'}`}>
+                    <div className={`w-4 h-4 lg:w-5 lg:h-5 rounded border-2 flex items-center justify-center transition-colors ${termsAccepted ? 'bg-[#c1ed00] border-[#c1ed00]' : 'border-white/20 bg-white/5 group-hover:border-white/40'}`}>
                       {termsAccepted && (
-                        <svg className="w-3 h-3 text-[#0e0e0e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <svg className="w-2.5 h-2.5 text-[#0e0e0e]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       )}
                     </div>
                   </div>
-                  <span className="text-sm text-white/50 leading-snug group-hover:text-white/70 transition-colors">
+                  <span className="text-xs lg:text-sm text-white/50 leading-snug group-hover:text-white/70 transition-colors">
                     He leído y acepto los{' '}
                     <a href={`/${params.locale}`} className="text-[#c1ed00] underline hover:text-white transition-colors">
                       términos y condiciones
@@ -188,7 +215,7 @@ export default function EvaluacionPage({
                       const res = await fetch('/api/evaluacion', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nombre, email, whatsapp, ciudad, peso, altura, skipMedidas, objetivo, situacion }),
+                        body: JSON.stringify({ nombre, email, whatsapp, ciudad, sexo: sexo === 'Otro' ? sexoOtro || 'Otro' : sexo, peso, altura, skipMedidas, objetivo, situacion }),
                       })
                       const data = await res.json()
                       if (!res.ok) {
@@ -203,7 +230,7 @@ export default function EvaluacionPage({
                     }
                   }}
                   disabled={!termsAccepted || loading}
-                  className="w-full py-4 rounded-xl font-headline font-black text-sm bg-[#c1ed00] text-[#0e0e0e] hover:bg-[#d4ff00] transition-all uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-[0_0_20px_rgba(193,237,0,0.3)] disabled:hover:shadow-none"
+                  className="w-full py-3 lg:py-4 rounded-xl font-headline font-black text-sm bg-[#c1ed00] text-[#0e0e0e] hover:bg-[#d4ff00] transition-all uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-[0_0_20px_rgba(193,237,0,0.3)] disabled:hover:shadow-none"
                 >
                   {loading ? 'ENVIANDO...' : 'ENVIAR SOLICITUD →'}
                 </button>
@@ -213,25 +240,26 @@ export default function EvaluacionPage({
           </div>
 
           {/* Columna derecha — panel lateral (1/3) */}
-          <div className="lg:col-span-1">
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 sticky top-8">
-              <p className="text-sm font-black uppercase tracking-[0.2em] text-[#c1ed00] mb-8">
+          <div className="hidden lg:block lg:col-span-1">
+            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-4 lg:p-8 lg:sticky lg:top-8">
+              <p className="text-xs lg:text-sm font-black uppercase tracking-[0.2em] text-[#c1ed00] mb-4 lg:mb-8">
                 ¿Qué pasa después?
               </p>
-              <div className="flex flex-col gap-7">
+              <div className="grid grid-cols-2 lg:flex lg:flex-col gap-3 lg:gap-7">
                 {[
                   'Reviso personalmente tu formulario.',
                   'Te contacto por el medio que prefieras.',
-                  'Agendamos una charla personalizada para conocerte y analizar tu caso.',
-                  'Voy a explicarte el plan ideal para vos.',
+                  'Agendamos una charla para analizar tu caso.',
+                  'Te explico el plan ideal para vos.',
                 ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-7 h-7 rounded-full bg-[#c1ed00]/15 border border-[#c1ed00]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-3.5 h-3.5 text-[#c1ed00]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <div key={i} className="flex items-start gap-2 lg:gap-3">
+                    <div className="w-5 h-5 lg:w-7 lg:h-7 rounded-full bg-[#c1ed00]/15 border border-[#c1ed00]/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="lg:hidden text-[#c1ed00] font-black text-[10px] leading-none">{i + 1}</span>
+                      <svg className="w-3.5 h-3.5 text-[#c1ed00] hidden lg:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <p className="text-white/60 text-base leading-snug">{item}</p>
+                    <p className="text-white/60 text-xs lg:text-base leading-snug">{item}</p>
                   </div>
                 ))}
               </div>
