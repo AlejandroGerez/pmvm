@@ -367,10 +367,10 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
       <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-[#c1ed00]/5 blur-[160px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
       <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-[#00e3fd]/4 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 py-8 lg:py-16">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 py-4 lg:py-16">
 
         {/* Top bar */}
-        <div className="flex items-start justify-between mb-10">
+        <div className="flex items-start justify-between mb-4 lg:mb-10">
           <div>
             <Link href={`/${locale}/v4secret#pricing`} className="flex items-center gap-1 text-white/40 text-[11px] uppercase tracking-widest hover:text-white transition-colors mb-3">
               ← Volver a planes
@@ -388,20 +388,20 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
         </div>
 
         {/* Header */}
-        <div className="text-center mb-12">
-          <p className="text-[13px] font-black uppercase tracking-[0.25em] text-[#c1ed00] mb-2">CHECKOUT</p>
-          <h1 className="font-headline font-black text-3xl lg:text-4xl tracking-tight uppercase">COMPLETÁ TU SUSCRIPCIÓN</h1>
-          <p className="text-white/40 text-base mt-3">Estás a un paso de comenzar tu transformación.</p>
+        <div className="text-center mb-6 lg:mb-12">
+          <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#c1ed00] mb-1.5">CHECKOUT</p>
+          <h1 className="font-headline font-black text-2xl lg:text-4xl tracking-tight uppercase">COMPLETÁ TU SUSCRIPCIÓN</h1>
+          <p className="text-white/40 text-sm mt-2 lg:mt-3">Estás a un paso de comenzar tu transformación.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
 
           {/* ── LEFT: Form ── */}
           <div className="lg:col-span-7 order-2 lg:order-1">
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 lg:p-8">
+            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-4 lg:p-8">
 
               {/* Section title */}
-              <h2 className="font-headline font-bold text-lg uppercase tracking-tight mb-6">
+              <h2 className="font-headline font-bold text-base lg:text-lg uppercase tracking-tight mb-4 lg:mb-6">
                 <span className="text-[#c1ed00]">1.</span> Tus datos
               </h2>
 
@@ -571,11 +571,11 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
 
           {/* ── RIGHT: Plan summary ── */}
           <div className="lg:col-span-5 order-1 lg:order-2">
-            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 lg:p-8 lg:sticky lg:top-8">
+            <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-4 lg:p-8 lg:sticky lg:top-8">
 
               {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="font-headline font-bold text-lg uppercase tracking-tight">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-headline font-bold text-base lg:text-lg uppercase tracking-tight">
                   <span className="text-[#c1ed00]">2.</span> Tu plan
                 </h2>
                 {/* Change plan button with border */}
@@ -620,11 +620,11 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               </div>
 
               {/* Selected plan card */}
-              <div className="bg-[#c8f73a]/5 border border-[#c8f73a]/20 rounded-xl p-5 mb-6">
+              <div className="bg-[#c8f73a]/5 border border-[#c8f73a]/20 rounded-xl p-4 mb-4">
                 <p className="text-[10px] font-black uppercase tracking-widest text-[#c8f73a] mb-2">
                   Plan {plan.name[locale]}
                 </p>
-                <p className="font-headline font-black text-3xl text-white">
+                <p className="font-headline font-black text-2xl lg:text-3xl text-white">
                   {DISPLAY_PRICES[selectedPlan].monthly}
                   <span className="text-white/40 text-base font-normal font-body ml-1">/mes</span>
                 </p>
@@ -637,7 +637,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               </div>
 
               {/* Features — exact items from Plan Base */}
-              <div className="space-y-2.5 mb-2">
+              <div className="space-y-2 mb-2">
                 {[
                   'Rutina personalizada (gimnasio - hogar)',
                   'App exclusiva Android e iPhone',
@@ -647,31 +647,31 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                   'Comunidad privada de alumnos',
                   'Cancelá en cualquier momento',
                 ].map((feat, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <CheckCircle2 size={16} className="text-[#c8f73a] mt-0.5 flex-shrink-0" />
-                    <p className="text-white/70 text-sm">{feat}</p>
+                  <div key={i} className="flex items-start gap-2.5">
+                    <CheckCircle2 size={14} className="text-[#c8f73a] mt-0.5 flex-shrink-0" />
+                    <p className="text-white/70 text-xs lg:text-sm">{feat}</p>
                   </div>
                 ))}
               </div>
 
               {/* Additional benefits */}
-              <div className="mb-6">
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mt-4 mb-3">Complementá tu proceso con:</p>
-                <div className="space-y-2.5">
+              <div className="mb-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mt-3 mb-2">Complementá tu proceso con:</p>
+                <div className="space-y-2">
                   {[
                     'Consultas nutricionales con profesionales especializados',
                     'Acompañamiento psicológico para fortalecer hábitos y emociones',
                   ].map((feat, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <CheckCircle2 size={16} className="text-[#c8f73a] mt-0.5 flex-shrink-0" />
-                      <p className="text-white/70 text-sm">{feat}</p>
+                    <div key={i} className="flex items-start gap-2.5">
+                      <CheckCircle2 size={14} className="text-[#c8f73a] mt-0.5 flex-shrink-0" />
+                      <p className="text-white/70 text-xs lg:text-sm">{feat}</p>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Método de pago */}
-              <div className="border border-white/10 rounded-xl p-4 mb-6">
+              <div className="border border-white/10 rounded-xl p-3 mb-4">
                 <p className="font-headline font-bold text-base uppercase tracking-tight mb-3">
                   <span className="text-[#c1ed00]">3.</span> Método de pago
                 </p>

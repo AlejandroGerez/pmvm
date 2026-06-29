@@ -1008,7 +1008,7 @@ export default function V4Page() {
                 <span className="text-[#c1ed00] italic">ALEJANDRO GEREZ</span>
               </h2>
               {/* Bio mobile — versión corta */}
-              <div className="md:hidden font-body text-on-surface-variant text-sm leading-relaxed space-y-3 hyphens-none [word-break:normal]">
+              <div className="md:hidden font-body text-white text-sm leading-relaxed space-y-3 hyphens-none [word-break:normal]">
                 <p>
                   Usé la comida como escape y llegué a pesar <strong className="font-black text-[#c1ed00]">160 kg</strong>. Probé todo, sin resultados duraderos.
                 </p>
@@ -1045,7 +1045,7 @@ export default function V4Page() {
                 </p>
               </div>
               <motion.ul
-                className="space-y-2 md:space-y-3 font-body text-sm text-white/70 hyphens-none [word-break:normal]"
+                className="hidden md:block space-y-2 md:space-y-3 font-body text-sm text-white/70 hyphens-none [word-break:normal]"
                 variants={staggerContainer}
                 initial="hidden"
                 whileInView="visible"
@@ -1066,7 +1066,19 @@ export default function V4Page() {
               {/* Certificaciones */}
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-[#c1ed00] font-label font-bold mt-6 mb-3">Certificaciones</p>
-                <div className="flex flex-col gap-3">
+
+                {/* Mobile: chips compactos */}
+                <div className="flex md:hidden flex-wrap gap-2">
+                  {['Personal Fitness Trainer', 'Obesidad y Recomposición Corporal', 'Preparación Física'].map((cert) => (
+                    <span key={cert} className="border border-white/10 bg-white/5 rounded-full px-3 py-1.5 flex items-center gap-1.5">
+                      <Award className="w-3 h-3 text-[#c1ed00] flex-shrink-0" />
+                      <span className="text-[10px] uppercase tracking-wide text-white/70 font-label">{cert}</span>
+                    </span>
+                  ))}
+                </div>
+
+                {/* Desktop: badges grandes */}
+                <div className="hidden md:flex flex-col gap-3">
                   <div className="border border-white/10 bg-white/5 px-4 py-3 rounded-sm flex items-start gap-3">
                     <Award className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#c1ed00]" />
                     <div>
@@ -1080,6 +1092,13 @@ export default function V4Page() {
                     <div>
                       <p className="uppercase text-[11px] font-bold text-white font-label tracking-wide">Obesidad y Recomposición Corporal</p>
                       <p className="text-[10px] text-white/50 font-body mt-0.5">IFBB Federation</p>
+                    </div>
+                  </div>
+                  <div className="border border-white/10 bg-white/5 px-4 py-3 rounded-sm flex items-start gap-3">
+                    <Award className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#c1ed00]" />
+                    <div>
+                      <p className="uppercase text-[11px] font-bold text-white font-label tracking-wide">Profesor de Preparación Física</p>
+                      <p className="text-[10px] text-white/50 font-body mt-0.5">IPEF - Instituto Privado de Educación Física</p>
                     </div>
                   </div>
                 </div>

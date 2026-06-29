@@ -51,6 +51,15 @@ html {
   width: max-content;
   animation: r3set-marquee-right 30s linear infinite;
 }
+@media (max-width: 767px) {
+  .r3set-marquee-left {
+    animation-duration: 50s;
+  }
+  .r3set-marquee-right {
+    animation-duration: 50s;
+  }
+}
+
 .r3set-text-stroke {
   -webkit-text-stroke: 1px rgba(193, 237, 0, 0.55);
   color: rgba(193, 237, 0, 0.08);
