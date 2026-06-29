@@ -70,22 +70,33 @@ export async function POST(req: NextRequest) {
           createError.message.toLowerCase().includes('already registered') ||
           createError.message.toLowerCase().includes('email already') ||
           createError.status === 422
-        if (isAlreadyRegistered) {
+
+        if (isAlreadyRegistered && skipAccount) {
+          // skipAccount flow: user exists from a prior attempt — look them up and continue
+          const { data: existingByEmail } = await adminClient.auth.admin.listUsers()
+          const found = existingByEmail?.users?.find((u: { email?: string }) => u.email === email)
+          if (!found) {
+            return NextResponse.json({ error: 'No se pudo recuperar la cuenta existente.' }, { status: 500 })
+          }
+          userId = found.id
+          userEmail = email
+          isNewUser = false
+        } else if (isAlreadyRegistered) {
           return NextResponse.json({
             error: 'Ya existe una cuenta con ese email. Iniciá sesión primero.',
             code: 'USER_EXISTS',
           }, { status: 409 })
+        } else {
+          return NextResponse.json({ error: `Error al crear la cuenta: ${createError.message}` }, { status: 500 })
         }
-        return NextResponse.json({ error: `Error al crear la cuenta: ${createError.message}` }, { status: 500 })
+      } else {
+        if (!newUser.user) {
+          return NextResponse.json({ error: 'Error al crear la cuenta' }, { status: 500 })
+        }
+        userId = newUser.user.id
+        userEmail = email
+        isNewUser = true
       }
-
-      if (!newUser.user) {
-        return NextResponse.json({ error: 'Error al crear la cuenta' }, { status: 500 })
-      }
-
-      userId = newUser.user.id
-      userEmail = email
-      isNewUser = true
 
       // Update profile — only use columns that definitely exist
       await adminClient

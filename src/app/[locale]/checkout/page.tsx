@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useTranslations } from 'next-intl'
-import { CheckCircle2, Lock, Sparkles, X } from 'lucide-react'
+import { CheckCircle2, ChevronRight, Lock, Sparkles, X } from 'lucide-react'
 
 /* ── Plan catalog (matches API route + Supabase) ── */
 const PLANS = {
@@ -196,12 +196,12 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
   const [authLoading, setAuthLoading] = useState(true)
   const [mode, setMode] = useState<'register' | 'login'>('register')
 
-  // Form fields
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [phonePrefix, setPhonePrefix] = useState('')
-  const [phoneNumber, setPhoneNumber] = useState('')
+  // Form fields — pre-populated from sessionStorage if user came back from MP
+  const [fullName, setFullName] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('checkout_fullName') || '' : '')
+  const [email, setEmail] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('checkout_email') || '' : '')
+  const [phone, setPhone] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('checkout_phone') || '' : '')
+  const [phonePrefix, setPhonePrefix] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('checkout_phonePrefix') || '' : '')
+  const [phoneNumber, setPhoneNumber] = useState(() => typeof window !== 'undefined' ? sessionStorage.getItem('checkout_phoneNumber') || '' : '')
   const [password, setPassword] = useState('')
   const [acceptTerms, setAcceptTerms] = useState(false)
 
@@ -254,6 +254,13 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
         if (!email.trim() || !password) { setError(t.error_required); return }
       }
     }
+
+    // Persist form data so it survives back-navigation from MP
+    sessionStorage.setItem('checkout_fullName', fullName)
+    sessionStorage.setItem('checkout_email', email)
+    sessionStorage.setItem('checkout_phone', phone)
+    sessionStorage.setItem('checkout_phonePrefix', phonePrefix)
+    sessionStorage.setItem('checkout_phoneNumber', phoneNumber)
 
     setSubmitting(true)
 
@@ -397,7 +404,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
 
           {/* ── LEFT: Form ── */}
-          <div className="lg:col-span-7 order-2 lg:order-1">
+          <div className="lg:col-span-7 order-1 lg:order-1">
             <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-4 lg:p-8">
 
               {/* Section title */}
@@ -421,39 +428,43 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 </div>
               ) : (mode === 'register' || !cuentaHabilitada) ? (
                 /* ── Registration form ── */
-                <div className="space-y-4 mb-6">
+                <div className="space-y-3 mb-4 lg:space-y-4 lg:mb-6">
                   <div>
-                    <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">{t.name_label} *</label>
+                    <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1">{t.name_label} *</label>
                     <input type="text" value={fullName} onChange={e => setFullName(e.target.value)}
                       placeholder="Tu nombre completo"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
+                      autoComplete="name"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 lg:py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
                   </div>
                   <div>
-                    <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">{t.email_label} *</label>
+                    <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1">{t.email_label} *</label>
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                       placeholder={t.email_placeholder}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
+                      autoComplete="email"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 lg:py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all" />
                   </div>
                   <div className="flex gap-2">
                     <div className="flex-shrink-0 w-20">
-                      <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">Cod. País</label>
+                      <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1">Cod. País</label>
                       <input
-                        type="text"
+                        type="tel"
                         value={phonePrefix}
-                        onChange={e => { setPhonePrefix(e.target.value); setPhone(`${e.target.value} ${phoneNumber}`.trim()) }}
+                        onChange={e => { const raw = e.target.value.replace(/[^\d+]/g, ''); const val = raw && !raw.startsWith('+') ? '+' + raw : raw; setPhonePrefix(val); setPhone(`${val} ${phoneNumber}`.trim()) }}
                         placeholder="+54"
                         maxLength={6}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all text-center text-sm font-label"
+                        autoComplete="tel-country-code"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 lg:py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all text-center text-sm font-label"
                       />
                     </div>
                     <div className="flex-1">
-                      <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1.5">WhatsApp / Teléfono</label>
+                      <label className="font-label text-[10px] uppercase tracking-widest text-white/40 block mb-1">WhatsApp / Teléfono</label>
                       <input
                         type="tel"
                         value={phoneNumber}
-                        onChange={e => { setPhoneNumber(e.target.value); setPhone(`${phonePrefix} ${e.target.value}`.trim()) }}
+                        onChange={e => { const val = e.target.value.replace(/[^\d\s\-]/g, ''); setPhoneNumber(val); setPhone(`${phonePrefix} ${val}`.trim()) }}
                         placeholder="11 1234 5678"
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all"
+                        autoComplete="tel-national"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 lg:py-3 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#c8f73a]/50 transition-all"
                       />
                     </div>
                   </div>
@@ -503,74 +514,66 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               )}
 
               {/* Mentoría upsell */}
-              <div className="border border-[#c1ed00]/30 bg-[#c1ed00]/5 rounded-xl p-6 mt-auto mb-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-[#c1ed00]/15 border border-[#c1ed00]/25 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Sparkles size={18} className="text-[#c1ed00]" />
+              <Link
+                href={`/${locale}/evaluacion`}
+                className="block border border-[#c1ed00]/30 bg-[#c1ed00]/5 rounded-xl p-3 lg:p-6 mt-auto mb-4 lg:mb-6 active:scale-[0.98] transition-all hover:border-[#c1ed00]/50 hover:bg-[#c1ed00]/[0.08]"
+              >
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-[#c1ed00]/15 border border-[#c1ed00]/25 flex items-center justify-center flex-shrink-0">
+                    <Sparkles size={15} className="text-[#c1ed00]" />
                   </div>
                   <div>
-                    <p className="font-headline font-black text-sm uppercase tracking-tight text-[#c1ed00] mb-2">
-                      ¿Buscás un acompañamiento más personalizado?
+                    <p className="font-headline font-black text-xs lg:text-sm uppercase tracking-tight text-[#c1ed00] mb-0.5">
+                      ¿Buscás acompañamiento personalizado?
                     </p>
-                    <p className="text-white/50 text-sm leading-relaxed mb-1">
-                      Solicitá una evaluación para la Mentoría 1 a 1<br />con Ale Gerez.
+                    <p className="text-white/50 text-xs flex items-center justify-center gap-1">
+                      Solicitá evaluación para Mentoría 1 a 1
+                      <ChevronRight size={13} className="text-[#c1ed00]/60 flex-shrink-0" />
                     </p>
-                    <p className="text-white/30 text-xs mb-4">Cupos limitados.</p>
-                    <Link href={`/${locale}/evaluacion`} className="text-[#c1ed00] text-sm font-bold hover:underline">
-                      Solicitar evaluación →
-                    </Link>
                   </div>
                 </div>
-              </div>
+              </Link>
 
-              {/* T&C */}
-              <label className="flex items-start gap-3 mb-6 cursor-pointer group">
-                <input type="checkbox" checked={acceptTerms} onChange={e => setAcceptTerms(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 rounded border-white/20 bg-white/5 accent-[#c8f73a]" />
-                <span className="text-white/50 text-sm leading-tight">
-                  {t.terms}{' '}
-                  <button type="button" onClick={() => setShowTerms(true)} className="text-[#c8f73a] hover:underline">
-                    {t.terms_link}
-                  </button>
-                </span>
-              </label>
-
-              {/* Error */}
-              {error && (
-                <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-                  <p className="text-red-400 text-sm">{error}</p>
-                </div>
-              )}
-
-              {/* CTA */}
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="w-full bg-[#c8f73a] text-black font-headline font-black text-base py-4 rounded-xl hover:bg-[#d4ff45] transition-all disabled:opacity-60 tracking-wider uppercase active:scale-[0.98]"
-              >
-                {submitting ? t.cta_processing : 'CONTINUAR AL PAGO →'}
-              </button>
-
-              {/* Secure note */}
-              <div className="flex flex-col items-center gap-3 mt-5">
-                <div className="flex items-center justify-center gap-1.5">
-                  <Lock size={12} className="text-white/20 flex-shrink-0" />
-                  <p className="text-white/25 text-[11px]">Tus datos están protegidos. Proceso 100% seguro.</p>
-                </div>
-                <div className="flex items-center justify-center gap-2.5">
-                  <span style={{ color: '#666666', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Pagás con</span>
-                  <img
-                    src="/images/mercadopago/SVGs/MP_RGB_HANDSHAKE_pluma_horizontal.svg"
-                    alt="Mercado Pago"
-                    style={{ height: '28px', width: 'auto', opacity: 0.6 }}
-                  />
+              {/* T&C + CTA + Secure — solo desktop */}
+              <div className="hidden lg:block">
+                <label className="flex items-start gap-3 mb-6 cursor-pointer group">
+                  <input type="checkbox" checked={acceptTerms} onChange={e => setAcceptTerms(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded border-white/20 bg-white/5 accent-[#c8f73a]" />
+                  <span className="text-white/50 text-sm leading-tight">
+                    {t.terms}{' '}
+                    <button type="button" onClick={() => setShowTerms(true)} className="text-[#c8f73a] hover:underline">
+                      {t.terms_link}
+                    </button>
+                  </span>
+                </label>
+                {error && (
+                  <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                    <p className="text-red-400 text-sm">{error}</p>
+                  </div>
+                )}
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className="w-full bg-[#c8f73a] text-black font-headline font-black text-base py-4 rounded-xl hover:bg-[#d4ff45] transition-all disabled:opacity-60 tracking-wider uppercase active:scale-[0.98]"
+                >
+                  {submitting ? t.cta_processing : 'CONTINUAR AL PAGO →'}
+                </button>
+                <div className="flex flex-col items-center gap-3 mt-5">
+                  <div className="flex items-center justify-center gap-1.5">
+                    <Lock size={12} className="text-white/20 flex-shrink-0" />
+                    <p className="text-white/25 text-[11px]">Tus datos están protegidos. Proceso 100% seguro.</p>
+                  </div>
+                  <div className="flex items-center justify-center gap-2.5">
+                    <span style={{ color: '#666666', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Pagás con</span>
+                    <img src="/images/mercadopago/SVGs/MP_RGB_HANDSHAKE_pluma_horizontal.svg" alt="Mercado Pago" style={{ height: '28px', width: 'auto', opacity: 0.6 }} />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* ── RIGHT: Plan summary ── */}
-          <div className="lg:col-span-5 order-1 lg:order-2">
+          <div className="lg:col-span-5 order-2 lg:order-2">
             <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-4 lg:p-8 lg:sticky lg:top-8">
 
               {/* Header */}
@@ -671,7 +674,7 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               </div>
 
               {/* Método de pago */}
-              <div className="border border-white/10 rounded-xl p-3 mb-4">
+              <div className="hidden lg:block border border-white/10 rounded-xl p-3 mb-4">
                 <p className="font-headline font-bold text-base uppercase tracking-tight mb-3">
                   <span className="text-[#c1ed00]">3.</span> Método de pago
                 </p>
@@ -686,19 +689,56 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
               </div>
 
               {/* Resumen de compra */}
-              <div className="border-t border-white/10 pt-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-3">Resumen de compra</p>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-white/40 text-sm">{t.subtotal}</span>
-                    <span className="text-white/60 text-sm">{DISPLAY_PRICES[selectedPlan].monthly}/mes</span>
+              <div className="border-t border-white/10 pt-3">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Resumen de compra</p>
+                <div className="flex justify-between items-baseline">
+                  <span className="text-white/40 text-xs">{t.subtotal}</span>
+                  <span className="text-white/60 text-xs">{DISPLAY_PRICES[selectedPlan].monthly}/mes</span>
+                </div>
+                <div className="flex justify-between items-baseline mt-1">
+                  <span className="text-white font-bold text-sm">{t.total}</span>
+                  <span className="text-white font-headline font-black text-lg">
+                    {DISPLAY_PRICES[selectedPlan].total ?? DISPLAY_PRICES[selectedPlan].monthly}
+                  </span>
+                </div>
+              </div>
+
+              {/* T&C + CTA + Secure — solo mobile */}
+              <div className="block lg:hidden mt-3 border-t border-white/10 pt-3">
+                <label className="flex items-center gap-2.5 mb-3 cursor-pointer group">
+                  <input type="checkbox" checked={acceptTerms} onChange={e => setAcceptTerms(e.target.checked)}
+                    className="w-4 h-4 rounded border-white/20 bg-white/5 accent-[#c8f73a] flex-shrink-0" />
+                  <span className="text-white/50 text-xs leading-tight">
+                    {t.terms}{' '}
+                    <button type="button" onClick={() => setShowTerms(true)} className="text-[#c8f73a] hover:underline">
+                      {t.terms_link}
+                    </button>
+                  </span>
+                </label>
+                {error && (
+                  <div className="mb-3 p-2.5 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <p className="text-red-400 text-xs">{error}</p>
                   </div>
-                  <div className="flex justify-between items-baseline">
-                    <span className="text-white font-bold">{t.total}</span>
-                    <span className="text-white font-headline font-black text-xl">
-                      {DISPLAY_PRICES[selectedPlan].total ?? DISPLAY_PRICES[selectedPlan].monthly}
-                    </span>
+                )}
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className="w-full bg-[#c8f73a] text-black font-headline font-black text-sm py-3 rounded-xl hover:bg-[#d4ff45] transition-all disabled:opacity-60 tracking-wider uppercase active:scale-[0.98] flex items-center justify-center gap-2.5"
+                >
+                  {submitting ? t.cta_processing : (
+                    <>
+                      <img src="/images/mercadopago/SVGs/MP_RGB_HANDSHAKE_color_isotipo.svg" alt="" aria-hidden="true" style={{ height: '22px', width: 'auto' }} />
+                      CONTINUAR AL PAGO →
+                    </>
+                  )}
+                </button>
+                <div className="flex items-center justify-center gap-3 mt-3">
+                  <div className="flex items-center gap-1.5">
+                    <Lock size={13} className="text-white/30 flex-shrink-0" />
+                    <p className="text-white/40 text-xs">Proceso 100% seguro.</p>
                   </div>
+                  <span className="text-white/20 text-xs">·</span>
+                  <img src="/images/mercadopago/SVGs/MP_RGB_HANDSHAKE_pluma_horizontal.svg" alt="Mercado Pago" style={{ height: '34px', width: 'auto', opacity: 0.65 }} />
                 </div>
               </div>
 
