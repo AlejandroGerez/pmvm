@@ -188,7 +188,7 @@ function TransformationCarouselContent({ locale }: { locale: string }) {
           return (
             <CarouselItem
               key={item.clientName}
-              className={`basis-[90%] md:basis-1/2 lg:basis-1/3 flex-shrink-0 transition-opacity duration-300 ${
+              className={`basis-[78%] md:basis-1/2 lg:basis-1/3 flex-shrink-0 transition-opacity duration-300 ${
                 !isActive ? 'opacity-35 md:opacity-100' : 'opacity-100'
               }`}
             >
@@ -685,13 +685,13 @@ export default function V4Page() {
 
       {/* ── Hero ──────────────────────────────────────────────────── */}
       <section className="relative min-h-[100dvh] md:min-h-[90vh] flex flex-col justify-center md:justify-end px-6 pb-16 pt-24 md:pt-20 overflow-hidden">
-        <motion.div className="absolute inset-0 z-0" style={{ y: heroY }}>
+        <motion.div className="absolute inset-0 z-0 hero-no-parallax" style={{ y: heroY }}>
           <div className="absolute inset-0">
             <Image
               src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=1600&q=80&auto=format&fit=crop"
               alt="Entrenamiento de alto rendimiento"
               fill
-              className="object-cover opacity-50 scale-110"
+              className="object-cover opacity-35 scale-110"
               priority
               sizes="100vw"
             />
@@ -723,7 +723,7 @@ export default function V4Page() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5 }}
           >
-            Un sistema diseñado para cambiar tu cuerpo y tu mentalidad de forma sostenible. Sin extremos.<br />Sin culpa. Con resultados reales.
+            Un sistema diseñado para cambiar tu cuerpo y tu mentalidad de forma sostenible. <br className="md:hidden" />Sin extremos. <br className="hidden md:block" />Sin culpa. <br className="md:hidden" />Con resultados reales.
           </motion.p>
           <motion.div
             className="pt-2"
@@ -1110,7 +1110,7 @@ export default function V4Page() {
           <div
             ref={pricingRef}
             onScroll={handlePricingScroll}
-            className="flex md:grid md:grid-cols-2 gap-5 lg:gap-8 mb-4 md:mb-16 items-stretch overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 md:mx-0 px-6 md:px-0 pb-2 md:pb-0 max-w-4xl md:mx-auto [&::-webkit-scrollbar]:hidden pt-6 md:pt-8"
+            className="flex md:grid md:grid-cols-2 gap-5 lg:gap-8 mb-4 md:mb-16 items-stretch overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 md:mx-0 pl-6 md:px-0 pb-2 md:pb-0 max-w-4xl md:mx-auto [&::-webkit-scrollbar]:hidden pt-6 md:pt-8"
             style={{ scrollbarWidth: 'none' } as React.CSSProperties}
           >
             {[
@@ -1153,7 +1153,7 @@ export default function V4Page() {
               <div
                 key={plan.id}
                 ref={plan.id === 'mentoria' ? mentoriaCardRef : undefined}
-                className={`w-[76vw] flex-shrink-0 snap-center md:w-auto md:flex-shrink-0 overflow-visible flex flex-col${plan.id === 'mentoria' && mentoriaActive ? ' mentoria-active' : ''}`}
+                className={`w-[70vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink-0 overflow-visible flex flex-col${plan.id === 'mentoria' && mentoriaActive ? ' mentoria-active' : ''}`}
               >
                 <PricingCard plan={plan} locale={locale} activeSub={activeSub} />
               </div>
@@ -1220,14 +1220,14 @@ export default function V4Page() {
 
           {/* CTA */}
           <motion.div
-            className="mt-16 text-center"
+            className="mt-6 md:mt-16 text-center"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.6 }}
           >
             <p className="font-headline text-2xl lg:text-3xl font-bold uppercase tracking-tight mb-6">
-              Vos podés ser el <span className="text-[#c1ed00] italic">próximo caso</span>
+              ¡Vos podés ser el<br /><span className="text-[#c1ed00] italic">próximo caso!</span>
             </p>
             <a
               href="#pricing"

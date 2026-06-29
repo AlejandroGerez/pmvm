@@ -105,6 +105,13 @@ html {
   }
 }
 
+/* Hero — deshabilitar parallax en mobile */
+@media (max-width: 767px) {
+  .hero-no-parallax {
+    transform: none !important;
+  }
+}
+
 /* Mentoría — efecto activo en mobile (card centrada en carrusel) */
 @media (max-width: 767px) {
   .mentoria-active .mentoria-holographic {
