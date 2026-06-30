@@ -706,13 +706,22 @@ export default function V4Page() {
       <section className="relative min-h-[100dvh] md:min-h-[90vh] flex flex-col justify-center md:justify-end px-6 pb-16 pt-24 md:pt-20 overflow-hidden">
         <motion.div className="absolute inset-0 z-0 hero-no-parallax" style={{ y: heroY }}>
           <div className="absolute inset-0">
+            {/* URL original de respaldo: https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=1600&q=80&auto=format&fit=crop */}
             <Image
-              src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=1600&q=80&auto=format&fit=crop"
+              src="/images/hero/hero2-mobile.webp"
               alt="Entrenamiento de alto rendimiento"
               fill
-              className="object-cover opacity-35 scale-110"
               priority
               sizes="100vw"
+              className="object-cover object-center opacity-35 block md:hidden"
+            />
+            <Image
+              src="/images/hero/hero2.webp"
+              alt="Entrenamiento de alto rendimiento"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-[75%_center] opacity-35 scale-110 hidden md:block"
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/50 to-transparent" />
