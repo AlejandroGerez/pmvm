@@ -418,8 +418,14 @@ export default function V4Page() {
   const pillarRef = useRef<HTMLDivElement>(null)
   const [pillarSlide, setPillarSlide] = useState(0)
   const [pillarRatio, setPillarRatio] = useState(0)
+  const pillarUserScrolling = useRef(false)
+  const pillarTouching = useRef(false)
+  const pillarScrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   const handlePillarScroll = () => {
     if (!pillarRef.current) return
+    pillarUserScrolling.current = true
+    if (pillarScrollTimeout.current) clearTimeout(pillarScrollTimeout.current)
+    pillarScrollTimeout.current = setTimeout(() => { pillarUserScrolling.current = false }, 1200)
     const { scrollLeft, scrollWidth, clientWidth } = pillarRef.current
     const maxScroll = scrollWidth - clientWidth
     const ratio = maxScroll > 0 ? scrollLeft / maxScroll : 0
@@ -427,6 +433,16 @@ export default function V4Page() {
     setPillarSlide(Math.min(2, Math.max(0, Math.round(ratio * 2))))
   }
   const pillarColors = ['#ff734a', '#c1ed00', '#00e3fd']
+  useEffect(() => {
+    const t = setInterval(() => {
+      if (pillarUserScrolling.current || pillarTouching.current || !pillarRef.current) return
+      const { scrollWidth, clientWidth } = pillarRef.current
+      const cardWidth = (scrollWidth - clientWidth) / 2
+      const next = (pillarSlide + 1) % 3
+      pillarRef.current.scrollTo({ left: next * cardWidth, behavior: 'smooth' })
+    }, 4500)
+    return () => clearInterval(t)
+  }, [pillarSlide])
 
   // Pricing carousel (mobile)
   const pricingRef = useRef<HTMLDivElement>(null)
@@ -465,6 +481,7 @@ export default function V4Page() {
   // Coach carousel (mobile)
   const [coachSlide, setCoachSlide] = useState(0)
   const [coachDir, setCoachDir] = useState(1)
+  const coachTouchStart = useRef<number | null>(null)
   useEffect(() => {
     const t = setInterval(() => {
       setCoachDir(1)
@@ -472,6 +489,8 @@ export default function V4Page() {
     }, 3500)
     return () => clearInterval(t)
   }, [])
+  const coachSwipeNext = () => { setCoachDir(1); setCoachSlide(prev => (prev + 1) % COACH_PHOTOS.length) }
+  const coachSwipePrev = () => { setCoachDir(-1); setCoachSlide(prev => (prev - 1 + COACH_PHOTOS.length) % COACH_PHOTOS.length) }
 
   // Scroll
   const { scrollY } = useScroll()
@@ -781,6 +800,8 @@ export default function V4Page() {
           <motion.div
             ref={pillarRef}
             onScroll={handlePillarScroll}
+            onTouchStart={() => { pillarTouching.current = true }}
+            onTouchEnd={() => { pillarTouching.current = false }}
             className="flex md:grid md:grid-cols-12 gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-2 md:pb-0 -mx-6 md:mx-0 pl-6 md:px-0 scrollbar-hide [&::-webkit-scrollbar]:hidden"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
             variants={staggerContainer}
@@ -924,8 +945,17 @@ export default function V4Page() {
                 ANTES → DESPUÉS
               </span>
 
-              {/* Mobile: carrusel auto-play */}
-              <div className="md:hidden relative overflow-hidden h-[320px] mb-0.5">
+              {/* Mobile: carrusel auto-play + swipe */}
+              <div
+                className="md:hidden relative overflow-hidden h-[320px] mb-0.5"
+                onTouchStart={e => { coachTouchStart.current = e.touches[0].clientX }}
+                onTouchEnd={e => {
+                  if (coachTouchStart.current === null) return
+                  const diff = coachTouchStart.current - e.changedTouches[0].clientX
+                  if (Math.abs(diff) > 40) diff > 0 ? coachSwipeNext() : coachSwipePrev()
+                  coachTouchStart.current = null
+                }}
+              >
                 <AnimatePresence initial={false} custom={coachDir}>
                   <motion.img
                     key={coachSlide}
@@ -1013,10 +1043,10 @@ export default function V4Page() {
                   Usé la comida como escape y llegué a pesar <strong className="font-black text-[#c1ed00]">160 kg</strong>. Probé todo, sin resultados duraderos.
                 </p>
                 <p>
-                  <strong className="font-black text-[#c1ed00]">Bajé 70 kg</strong>. Participé del reality show <strong className="font-black text-[#00e3fd]">Cuestión de Peso</strong>, pero recuperé varios kilos, porque el cambio había sido físico, <strong className="font-black text-[#c1ed00] whitespace-nowrap uppercase">NO MENTAL</strong>.
+                  <strong className="font-black text-[#c1ed00]">Bajé 70 kg</strong>. Participé del reality show <strong className="font-black text-[#00e3fd]">Cuestión de Peso</strong>, pero recuperé varios kilos, porque el cambio había sido físico, <strong className="font-black text-white whitespace-nowrap uppercase">NO MENTAL</strong>.
                 </p>
                 <p className="text-white">
-                  Hoy no vivo en lucha. <span className="text-[#c1ed00]">Vivo en equilibrio.</span><br />Ese es el método que hoy<br /><strong className="font-black text-[#ff734a]">enseño y practico.</strong>
+                  Hoy no vivo en lucha. <span className="text-white">Vivo en equilibrio.</span><br />Ese es el método que hoy<br /><strong className="font-black text-white">enseño y practico.</strong>
                 </p>
               </div>
 
@@ -1028,20 +1058,20 @@ export default function V4Page() {
                 </p>
                 <p>
                   <strong className="font-black text-[#c1ed00]">Bajé 70 kg</strong> en total, participando en el programa televisivo <em className="font-black text-[#00e3fd]">Cuestión de Peso</em>, pero con el tiempo volví al mismo lugar.<br />
-                  Porque el cambio había sido físico, <strong className="font-black text-[#c1ed00] uppercase">NO MENTAL.</strong>
+                  Porque el cambio había sido físico, <strong className="font-black text-white uppercase">NO MENTAL.</strong>
                 </p>
                 <p>
                   Ahí entendí algo clave: la verdadera transformación no es una foto del antes y después,
-                  es lo que pasa <strong className="font-black text-[#ff734a]">cuando nadie está mirando.</strong>
+                  es lo que pasa <strong className="font-black text-white">cuando nadie está mirando.</strong>
                 </p>
                 <p>
                   Empecé a trabajar en mi mentalidad, mi relación con la comida y conmigo mismo.
                 </p>
                 <p className="text-white">
-                  Hoy no vivo en lucha. <span className="text-[#c1ed00]">Vivo en equilibrio.</span>
+                  Hoy no vivo en lucha. <span className="text-white">Vivo en equilibrio.</span>
                 </p>
                 <p>
-                  Y ese es el método que <span className="text-[#ff734a]">hoy enseño y practico.</span>
+                  Y ese es el método que <span className="text-white">hoy enseño y practico.</span>
                 </p>
               </div>
               <motion.ul
@@ -1069,7 +1099,7 @@ export default function V4Page() {
 
                 {/* Mobile: chips compactos */}
                 <div className="flex md:hidden flex-wrap gap-2">
-                  {['Personal Fitness Trainer', 'Obesidad y Recomposición Corporal', 'Preparación Física'].map((cert) => (
+                  {['Personal Fitness Trainer', 'Obesidad y Recomposición Corporal', 'Profesor de Preparación Física'].map((cert) => (
                     <span key={cert} className="border border-white/10 bg-white/5 rounded-full px-3 py-1.5 flex items-center gap-1.5">
                       <Award className="w-3 h-3 text-[#c1ed00] flex-shrink-0" />
                       <span className="text-[10px] uppercase tracking-wide text-white/70 font-label">{cert}</span>
