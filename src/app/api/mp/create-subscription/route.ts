@@ -71,21 +71,34 @@ export async function POST(req: NextRequest) {
           createError.message.toLowerCase().includes('email already') ||
           createError.status === 422
 
-        if (isAlreadyRegistered && skipAccount) {
-          // skipAccount flow: user exists from a prior attempt — look them up and continue
-          const { data: existingByEmail } = await adminClient.auth.admin.listUsers()
-          const found = existingByEmail?.users?.find((u: { email?: string }) => u.email === email)
-          if (!found) {
-            return NextResponse.json({ error: 'No se pudo recuperar la cuenta existente.' }, { status: 500 })
+        if (isAlreadyRegistered) {
+          // Email ya existe — buscar usuario eficientemente por email y reutilizarlo
+          // SEGURIDAD: no se cambia contraseña, no se crea sesión, no se devuelven credenciales
+          try {
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+            const serviceKey  = process.env.SUPABASE_SECRET_KEY!
+            const filterRes   = await fetch(
+              `${supabaseUrl}/auth/v1/admin/users?filter=${encodeURIComponent(email)}&per_page=10`,
+              { headers: { Authorization: `Bearer ${serviceKey}`, apikey: serviceKey } }
+            )
+            if (!filterRes.ok) {
+              console.error('GoTrue filter error:', filterRes.status, await filterRes.text())
+              return NextResponse.json({ error: 'No se pudo verificar la cuenta existente.' }, { status: 500 })
+            }
+            const filterData  = await filterRes.json()
+            const found       = (filterData?.users ?? []).find(
+              (u: { email?: string }) => u.email?.toLowerCase() === email.toLowerCase()
+            )
+            if (!found) {
+              return NextResponse.json({ error: 'No se pudo recuperar la cuenta existente.' }, { status: 500 })
+            }
+            userId    = found.id
+            userEmail = email
+            isNewUser = false
+          } catch (lookupErr) {
+            console.error('Error al buscar cuenta existente:', lookupErr)
+            return NextResponse.json({ error: 'No se pudo verificar la cuenta existente.' }, { status: 500 })
           }
-          userId = found.id
-          userEmail = email
-          isNewUser = false
-        } else if (isAlreadyRegistered) {
-          return NextResponse.json({
-            error: 'Ya existe una cuenta con ese email. Iniciá sesión primero.',
-            code: 'USER_EXISTS',
-          }, { status: 409 })
         } else {
           return NextResponse.json({ error: `Error al crear la cuenta: ${createError.message}` }, { status: 500 })
         }

@@ -138,6 +138,49 @@ async function mpFetch(path: string) {
 // ── Main handler ──────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
+    // ── Validación de firma MP ──────────────────────────────────────────────
+    const webhookSecret = process.env.WEBHOOK_SECRET
+    if (webhookSecret) {
+      const xSignature = req.headers.get('x-signature') ?? ''
+      const xRequestId = req.headers.get('x-request-id') ?? ''
+
+      // Extraer ts y v1 del header "ts=...,v1=..."
+      const parts: Record<string, string> = {}
+      xSignature.split(',').forEach(part => {
+        const [k, v] = part.split('=')
+        if (k && v) parts[k.trim()] = v.trim()
+      })
+      const ts = parts['ts'] ?? ''
+      const v1 = parts['v1'] ?? ''
+
+      // data.id desde query param (fuente que MP usa para firmar),
+      // fallback al body si no viene en la URL
+      const rawBody = await req.clone().json()
+      const url     = new URL(req.url)
+      const dataId  = url.searchParams.get('data.id') ?? rawBody?.data?.id ?? ''
+
+      // Template oficial MP
+      const template = `id:${dataId};request-id:${xRequestId};ts:${ts};`
+
+      // Comparación segura contra timing attacks
+      const { createHmac, timingSafeEqual } = await import('crypto')
+      const computed    = createHmac('sha256', webhookSecret).update(template).digest('hex')
+      const computedBuf = Buffer.from(computed, 'hex')
+      const v1Buf       = Buffer.from(v1.length % 2 === 0 ? v1 : '', 'hex')
+
+      const signatureValid =
+        computedBuf.length > 0 &&
+        v1Buf.length > 0 &&
+        computedBuf.length === v1Buf.length &&
+        timingSafeEqual(computedBuf, v1Buf)
+
+      if (!signatureValid) {
+        console.warn('Webhook MP: firma inválida')
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+    }
+    // ── Fin validación ──────────────────────────────────────────────────────
+
     const body = await req.json()
     console.log('MP Webhook recibido:', JSON.stringify(body))
 
