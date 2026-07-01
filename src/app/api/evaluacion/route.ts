@@ -94,22 +94,26 @@ async function notifyCoach({
       `📝 *Situación:*\n${situacion || 'No especificada'}`
 
     const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64')
-    await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Basic ${credentials}`,
-        },
-        body: new URLSearchParams({
-          From: fromNumber,
-          To:   `whatsapp:${coachNumber}`,
-          Body: message,
-        }),
-      }
-    )
-    console.log(`WhatsApp de evaluación enviado al coach: ${coachNumber}`)
+    try {
+      await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${credentials}`,
+          },
+          body: new URLSearchParams({
+            From: fromNumber,
+            To:   `whatsapp:${coachNumber}`,
+            Body: message,
+          }),
+        }
+      )
+      console.log(`WhatsApp de evaluación enviado al coach: ${coachNumber}`)
+    } catch (twErr) {
+      console.error('Error enviando WhatsApp de evaluación (no crítico):', twErr)
+    }
   }
 
   // ── Email al coach via Resend ──
@@ -178,7 +182,7 @@ async function notifyCoach({
 </body>
 </html>`
 
-      await fetch('https://api.resend.com/emails', {
+      const resendRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${resendKey}` },
         body: JSON.stringify({
@@ -188,7 +192,12 @@ async function notifyCoach({
           html,
         }),
       })
-      console.log('Email de evaluación enviado al coach')
+      if (resendRes.ok) {
+        console.log('Email de evaluación enviado al coach')
+      } else {
+        const errBody = await resendRes.text()
+        console.error(`Resend error [${resendRes.status}]:`, errBody)
+      }
     }
   } catch (emailErr) {
     console.error('Error enviando email de evaluación (no crítico):', emailErr)
