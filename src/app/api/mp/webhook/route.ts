@@ -557,7 +557,7 @@ async function sendEmail({
       Authorization: `Bearer ${resendKey}`,
     },
     body: JSON.stringify({
-      from: 'R3SET <hola@pesarmenosvivirmas.com>',
+      from: 'Ale Gerez Coach <info@alegerezcoach.com>',
       to: [userEmail],
       subject,
       html,
@@ -740,7 +740,7 @@ async function notifyCoach({
           Authorization: `Bearer ${resendKey}`,
         },
         body: JSON.stringify({
-          from: 'R3SET <hola@pesarmenosvivirmas.com>',
+          from: 'Ale Gerez Coach <info@alegerezcoach.com>',
           to: ['alegerezcoach@gmail.com'],
           subject,
           html,
