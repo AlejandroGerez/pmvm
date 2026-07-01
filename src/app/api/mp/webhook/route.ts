@@ -741,7 +741,7 @@ async function notifyCoach({
         },
         body: JSON.stringify({
           from: 'Ale Gerez Coach <info@alegerezcoach.com>',
-          to: ['alegerezcoach@gmail.com'],
+          to: ['info@alegerezcoach.com'],
           subject,
           html,
         }),
