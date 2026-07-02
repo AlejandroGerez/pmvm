@@ -63,7 +63,7 @@ const DISPLAY_PRICES: Record<string, { monthly: string; total: string | null; sa
   monthly:    { monthly: '$44.999', total: null,       savings: null },
   quarterly:  { monthly: '$39.999', total: '$119.999', savings: '11% off' },
   semiannual: { monthly: '$36.666', total: '$219.999', savings: '18% off' },
-  test:       { monthly: '$1',      total: null,       savings: null },
+  test:       { monthly: '$15',     total: null,       savings: null },
 }
 
 const PICKER_PLANS = ['monthly', 'quarterly', 'semiannual'] as const
