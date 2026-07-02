@@ -48,12 +48,22 @@ const PLANS = {
       pt: ['Tudo do plano Trimestral', 'Plano nutricional completo', 'Comunidade privada WhatsApp', 'Melhor custo-benefício'],
     },
   },
+  test: {
+    id: 'test',
+    name:      { es: 'Test',                       en: 'Test',                        pt: 'Test'                        },
+    price:     1,
+    isRecurring: true,
+    period:    { es: 'Prueba técnica',              en: 'Technical test',              pt: 'Teste técnico'               },
+    frequency: { es: 'Suscripción · precio prueba', en: 'Subscription · test price',  pt: 'Assinatura · preço de teste' },
+    features:  { es: ['Plan de prueba técnica'],    en: ['Technical test plan'],       pt: ['Plano de teste técnico']    },
+  },
 } as const
 
 const DISPLAY_PRICES: Record<string, { monthly: string; total: string | null; savings: string | null }> = {
   monthly:    { monthly: '$44.999', total: null,       savings: null },
   quarterly:  { monthly: '$39.999', total: '$119.999', savings: '11% off' },
   semiannual: { monthly: '$36.666', total: '$219.999', savings: '18% off' },
+  test:       { monthly: '$1',      total: null,       savings: null },
 }
 
 const PICKER_PLANS = ['monthly', 'quarterly', 'semiannual'] as const
