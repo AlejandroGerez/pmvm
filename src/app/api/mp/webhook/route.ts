@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminSupabaseClient } from '@supabase/supabase-js'
+import { sendWhatsAppMessage } from '@/lib/whatsapp'
 
 export const dynamic = 'force-dynamic'
 
@@ -577,37 +578,20 @@ async function sendWhatsApp({
   isReturning: boolean
   strings: typeof t['es']
 }) {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID
-  const authToken = process.env.TWILIO_AUTH_TOKEN
-  const fromNumber = process.env.TWILIO_WHATSAPP_FROM
-  if (!accountSid || !authToken || !fromNumber) {
-    console.warn('Twilio no configurado, saltando WhatsApp')
-    return
-  }
-
   const toNumber = phone.startsWith('+') ? phone : `+54${phone.replace(/^0/, '')}`
-  const message = isReturning
+  const body     = isReturning
     ? strings.wa.renew(displayName, planName)
     : strings.wa.new(displayName, planName)
+  const template = isReturning
+    ? (process.env.META_TEMPLATE_RENOVACION  ?? 'renovacion_r3set')
+    : (process.env.META_TEMPLATE_BIENVENIDA  ?? 'bienvenida_r3set')
 
-  const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64')
-
-  await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${credentials}`,
-      },
-      body: new URLSearchParams({
-        From: fromNumber,
-        To: `whatsapp:${toNumber}`,
-        Body: message,
-      }),
-    }
-  )
-
+  await sendWhatsAppMessage({
+    to: toNumber,
+    body,
+    template,
+    templateParams: [displayName, planName],
+  })
   console.log(`WhatsApp enviado a: ${toNumber} | ${isReturning ? 'renovación' : 'nuevo'}`)
 }
 
@@ -624,9 +608,6 @@ async function notifyCoach({
   isReturning: boolean
 }) {
   try {
-    const accountSid = process.env.TWILIO_ACCOUNT_SID
-    const authToken = process.env.TWILIO_AUTH_TOKEN
-    const fromNumber = process.env.TWILIO_WHATSAPP_FROM
     const resendKey = process.env.RESEND_API_KEY
     const coachPhone = process.env.NEXT_PUBLIC_COACH_WHATSAPP
 
@@ -635,8 +616,8 @@ async function notifyCoach({
     const vence = expiresAt.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })
     const telDisplay = phone || 'No proporcionado'
 
-    // ── WhatsApp al coach via Twilio ──
-    if (coachPhone && accountSid && authToken && fromNumber) {
+    // ── WhatsApp al coach ──
+    if (coachPhone) {
       const coachNumber = coachPhone.startsWith('+') ? coachPhone : `+${coachPhone}`
       const message =
         `🎉 *NUEVO PAGO RECIBIDO*\n\n` +
@@ -648,22 +629,12 @@ async function notifyCoach({
         `📅 *Vence:* ${vence}\n` +
         `⭐ *Tipo:* ${tipo}`
 
-      const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64')
-      await fetch(
-        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${credentials}`,
-          },
-          body: new URLSearchParams({
-            From: fromNumber,
-            To: `whatsapp:${coachNumber}`,
-            Body: message,
-          }),
-        }
-      )
+      await sendWhatsAppMessage({
+        to: coachNumber,
+        body: message,
+        template: process.env.META_TEMPLATE_AVISO_PAGO ?? 'aviso_pago_r3set',
+        templateParams: [displayName, userEmail, telDisplay, planName, monto, vence, tipo],
+      })
       console.log(`Notificación WhatsApp enviada al coach: ${coachNumber}`)
     }
 

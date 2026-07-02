@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
+import { sendWhatsAppMessage } from '@/lib/whatsapp'
 
 export const dynamic = 'force-dynamic'
 
@@ -68,14 +69,11 @@ async function notifyCoach({
   peso?: string; altura?: string; skipMedidas?: boolean
   objetivo?: string; situacion?: string
 }) {
-  const accountSid  = process.env.TWILIO_ACCOUNT_SID
-  const authToken   = process.env.TWILIO_AUTH_TOKEN
-  const fromNumber  = process.env.TWILIO_WHATSAPP_FROM
   const coachPhone  = process.env.NEXT_PUBLIC_COACH_WHATSAPP
 
-  // ── WhatsApp al coach via Twilio ──
-  if (!accountSid || !authToken || !fromNumber || !coachPhone) {
-    console.warn('Twilio no configurado — saltando WhatsApp de evaluación')
+  // ── WhatsApp al coach ──
+  if (!coachPhone) {
+    console.warn('NEXT_PUBLIC_COACH_WHATSAPP no configurado — saltando WhatsApp de evaluación')
   } else {
     const coachNumber   = coachPhone.startsWith('+') ? coachPhone : `+${coachPhone}`
     const objetivoLabel = OBJETIVO_LABELS[objetivo ?? ''] ?? objetivo ?? 'No especificado'
@@ -93,23 +91,13 @@ async function notifyCoach({
       `🎯 *Objetivo:* ${objetivoLabel}\n` +
       `📝 *Situación:*\n${situacion || 'No especificada'}`
 
-    const credentials = Buffer.from(`${accountSid}:${authToken}`).toString('base64')
     try {
-      await fetch(
-        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${credentials}`,
-          },
-          body: new URLSearchParams({
-            From: fromNumber,
-            To:   `whatsapp:${coachNumber}`,
-            Body: message,
-          }),
-        }
-      )
+      await sendWhatsAppMessage({
+        to: coachNumber,
+        body: message,
+        template: process.env.META_TEMPLATE_AVISO_EVALUACION ?? 'aviso_evaluacion_r3set',
+        templateParams: [nombre, email, whatsapp, ciudad || 'No especificada', medidas, objetivoLabel, situacion || 'No especificada'],
+      })
       console.log(`WhatsApp de evaluación enviado al coach: ${coachNumber}`)
     } catch (twErr) {
       console.error('Error enviando WhatsApp de evaluación (no crítico):', twErr)
