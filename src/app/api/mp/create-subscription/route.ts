@@ -21,7 +21,6 @@ const PLANS: Record<string, {
   monthly:    { name: 'Plan Mensual R3SET',    price: 44999,  days: 30,  isRecurring: true, frequency: 1, frequencyType: 'months' },
   quarterly:  { name: 'Plan Trimestral R3SET',  price: 119999, days: 90,  isRecurring: true, frequency: 3, frequencyType: 'months' },
   semiannual: { name: 'Plan Semestral R3SET',   price: 219999, days: 180, isRecurring: true, frequency: 6, frequencyType: 'months' },
-  test:       { name: 'Plan Test R3SET',        price: 15,     days: 1,   isRecurring: true, frequency: 1, frequencyType: 'months' },
   // Mentoría 1-1: sin cobro web. El flujo es solo por /evaluacion (formulario → coach).
 }
 
