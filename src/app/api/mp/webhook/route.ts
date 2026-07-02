@@ -351,7 +351,7 @@ async function handleOneTimePayment(paymentId: string) {
     return NextResponse.json({ ok: true })
   }
 
-  const supabase = createClient()
+  const supabase = getAdminClient()
 
   const { data: sub, error: subError } = await supabase
     .from('subscriptions')
