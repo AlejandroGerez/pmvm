@@ -2,6 +2,7 @@
 export const landingI18n = {
   es: {
     nav: {
+      tagline: "Coach en obesidad",
       method: "Método",
       coach: "Coach",
       transformations: "Transformaciones",
@@ -250,6 +251,8 @@ export const landingI18n = {
       privacy: "Privacidad",
       terms: "Términos",
       contact: "Contacto",
+      share: "Compartir",
+      copied: "Link copiado",
     },
     mobileNav: {
       method: "Método",
@@ -276,6 +279,7 @@ export const landingI18n = {
   },
   en: {
     nav: {
+      tagline: "Obesity coach",
       method: "Method",
       coach: "Coach",
       transformations: "Transformations",
@@ -524,6 +528,8 @@ export const landingI18n = {
       privacy: "Privacy",
       terms: "Terms",
       contact: "Contact",
+      share: "Share",
+      copied: "Link copied",
     },
     mobileNav: {
       method: "Method",

@@ -3,6 +3,40 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
+const LOGO = '/images/ale/ag_loader.png'
+
+// Logo con un brillo verde lima que lo cruza (shimmer)
+function Logo() {
+  const mask = {
+    WebkitMaskImage: `url(${LOGO})`,
+    maskImage: `url(${LOGO})`,
+    WebkitMaskSize: '100% 100%',
+    maskSize: '100% 100%',
+  } as const
+
+  return (
+    <motion.div
+      className="relative z-10 w-[min(50vw,260px)]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
+    >
+      <img src={LOGO} alt="Ale Gerez" className="w-full h-auto block" />
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          ...mask,
+          background: 'linear-gradient(110deg, transparent 35%, rgba(193,237,0,0.95) 50%, transparent 65%)',
+          backgroundSize: '250% 100%',
+        }}
+        initial={{ backgroundPositionX: '120%' }}
+        animate={{ backgroundPositionX: '-20%' }}
+        transition={{ duration: 1.3, ease: 'easeInOut', delay: 0.6 }}
+      />
+    </motion.div>
+  )
+}
+
 function V4Splash({ onFinish }: { onFinish: () => void }) {
   useEffect(() => {
     const t = setTimeout(onFinish, 2200)
@@ -42,25 +76,7 @@ function V4Splash({ onFinish }: { onFinish: () => void }) {
         transition={{ duration: 1.8, ease: 'easeOut', delay: 0.35 }}
       />
 
-      {/* Logo text */}
-      <motion.div
-        className="relative z-10 flex flex-col items-center gap-3"
-        initial={{ scale: 0.7, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <span className="font-headline text-6xl font-black tracking-tighter text-[#c1ed00] uppercase leading-none">
-          R3SET
-        </span>
-        <motion.p
-          className="text-[9px] font-label tracking-[0.35em] uppercase text-white/30"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          BY ALE GEREZ
-        </motion.p>
-      </motion.div>
+      <Logo />
 
       {/* Loading bar */}
       <motion.div

@@ -37,7 +37,8 @@ Nunca tocar `.env.local` — tiene configuraciones sensibles del sistema.
 - Solo tocar contenidos y textos, no el estilo general
 
 ## Lo que ya está construido en v4secret
-- Navbar con texto "MÉTODO R3SET" en verde lima
+- Loader de entrada (`src/components/v4/V4SplashScreen.tsx`): logo personal `public/images/ale/ag_loader.png` con brillo verde lima que lo cruza
+- Navbar con el logo personal AG + "Coach en obesidad" (texto en `src/data/landing-i18n.ts`, `nav.tagline`). R3SET es el método, la marca principal es Ale Gerez Coach
 - Hero con botón que va a la sección de precios
 - Sección "Los tres pilares" (Psicología, Entrenamiento, Nutrición)
 - Sección Coach con fotos reales de la transformación de Ale Gerez
@@ -45,7 +46,9 @@ Nunca tocar `.env.local` — tiene configuraciones sensibles del sistema.
 - Pricing: Plan Base ($44.999/mes) y Mentoría 1 a 1 (precio a consultar)
 - FAQ con 8 preguntas
 - Contacto: WhatsApp + alegerezcoach@gmail.com
-- Footer
+- Footer: logo AG, links a Privacidad (`/privacidad`) y Términos (`/terminos`), Contacto (WhatsApp), Instagram @alegerez y botón compartir
+- Páginas legales: textos en `src/data/legal-content.ts` (es/en), plantilla en `src/components/LegalPage.tsx`
+- Favicon redondo: `src/app/icon.png`
 
 ## Lo que se puede cambiar
 - Textos de cualquier sección

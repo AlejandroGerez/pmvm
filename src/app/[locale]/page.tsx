@@ -6,7 +6,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import V4SplashManager from '@/components/v4/V4SplashScreen'
-import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, LayoutDashboard, Brain, Dumbbell, Zap, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Megaphone, Award } from 'lucide-react'
+import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, LogOut, LayoutDashboard, Brain, Dumbbell, Zap, ArrowRight, Check, Plus, Utensils, Shield, MessageCircle, Mail, Share2, Instagram, Award } from 'lucide-react'
 import { PHONE_NUMBER } from '@/lib/data'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -482,6 +482,22 @@ export default function V4Page() {
   const pricingRef = useRef<HTMLDivElement>(null)
   const [pricingSlide, setPricingSlide] = useState(0)
   const [showScrollTop, setShowScrollTop] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
+
+  const handleShare = async () => {
+    const url = window.location.origin + window.location.pathname
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Ale Gerez Coach', url })
+      } else {
+        await navigator.clipboard.writeText(url)
+        setLinkCopied(true)
+        setTimeout(() => setLinkCopied(false), 2000)
+      }
+    } catch {
+      // el usuario canceló el menú de compartir: no hacemos nada
+    }
+  }
   useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 300)
     window.addEventListener('scroll', onScroll)
@@ -597,8 +613,11 @@ export default function V4Page() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         <div className="flex items-center justify-between px-5 sm:px-6 h-16">
-          {/* Logo */}
-          <span className="font-headline font-black text-base tracking-widest uppercase text-[#c1ed00]">MÉTODO R3SET</span>
+          {/* Logo personal + especialidad */}
+          <div className="flex items-center gap-2">
+            <Image src="/images/ale/ag_loader.png" alt="Ale Gerez" width={72} height={48} priority className="h-12 w-auto" />
+            <span className="font-label text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-white/50 leading-tight">{t.nav.tagline}</span>
+          </div>
 
           {/* Desktop nav links */}
           <div className="hidden md:flex items-center gap-8">
@@ -1447,25 +1466,52 @@ export default function V4Page() {
 
       {/* ── Footer ────────────────────────────────────────────────── */}
       <motion.footer
-        className="w-full py-6 md:py-12 px-6 border-t border-[#484847]/15 bg-[#000000] flex flex-col md:flex-row justify-between items-center gap-3 md:gap-6 pb-20 md:pb-12"
+        className="w-full pt-8 pb-24 md:pb-8 px-6 border-t border-[#484847]/15 bg-[#000000]"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <div className="flex flex-col items-center md:items-start gap-2">
-          <Image src="/images/icon-r3set.png" alt="MÉTODO R3SET" width={36} height={36} className="rounded-xl" />
-          <p className="font-label text-[8px] md:text-xs uppercase text-white/30 tracking-widest whitespace-nowrap">© {new Date().getFullYear()} MÉTODO R3SET. {t.footer.rights}</p>
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-5 md:gap-6">
+          <Image src="/images/ale/ag_loader.png" alt="Ale Gerez" width={60} height={40} className="h-10 w-auto" />
+          <div className="flex gap-6 md:gap-8">
+            <Link href={`/${locale}/privacidad`} className="font-label text-[10px] md:text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors duration-300">{t.footer.privacy}</Link>
+            <Link href={`/${locale}/terminos`} className="font-label text-[10px] md:text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors duration-300">{t.footer.terms}</Link>
+            <a
+              href={`https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(t.contact.whatsappMessage)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-label text-[10px] md:text-xs uppercase tracking-widest text-white/40 hover:text-white transition-colors duration-300"
+            >{t.footer.contact}</a>
+          </div>
+          <div className="flex items-center gap-5">
+            <a
+              href="https://www.instagram.com/alegerez/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="text-white/40 hover:text-[#c1ed00] transition-colors duration-300"
+            >
+              <Instagram className="w-5 h-5" />
+            </a>
+            <button
+              type="button"
+              onClick={handleShare}
+              aria-label={t.footer.share}
+              className="relative text-white/40 hover:text-[#c1ed00] transition-colors duration-300"
+            >
+              <Share2 className="w-5 h-5" />
+              {linkCopied && (
+                <span className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-[#c1ed00] px-2 py-1 font-label text-[10px] uppercase tracking-widest text-[#0e0e0e]">
+                  {t.footer.copied}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
-        <div className="flex gap-4 md:gap-8">
-          <a href="#" className="font-label text-[9px] md:text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">{t.footer.privacy}</a>
-          <a href="#" className="font-label text-[9px] md:text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">{t.footer.terms}</a>
-          <a href="#" className="font-label text-[9px] md:text-xs uppercase text-white/30 hover:text-white transition-colors duration-300">{t.footer.contact}</a>
-        </div>
-        <div className="hidden md:flex gap-4">
-          <Share2 className="w-5 h-5 text-white/30 hover:text-[#00e3fd] transition-colors duration-300 cursor-pointer" />
-          <Megaphone className="w-5 h-5 text-white/30 hover:text-[#00e3fd] transition-colors duration-300 cursor-pointer" />
-        </div>
+        <p className="max-w-6xl mx-auto mt-6 pt-5 border-t border-white/5 text-center md:text-left font-label text-[9px] md:text-[11px] uppercase text-white/25 tracking-widest">
+          © {new Date().getFullYear()} Ale Gerez Coach. {t.footer.rights}
+        </p>
       </motion.footer>
 
       {/* ── Scroll to top ─────────────────────────────────────────── */}
