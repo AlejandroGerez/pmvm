@@ -1174,6 +1174,9 @@ export default function V4Page() {
                   </div>
                 </div>
               </div>
+
+              {/* Firma */}
+              <Image src="/images/ale/ag_loader.png" alt="Ale Gerez" width={90} height={60} className="h-14 w-auto -ml-2 mt-2" />
             </motion.div>
           </div>
         </div>
